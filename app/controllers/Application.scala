@@ -22,58 +22,59 @@ object Application extends Controller {
   def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double) = Action {
     DB.withConnection { implicit conn =>
       val result = SQL("""
-          SELECT "business_name", "business_address", "business_lat", "business_lng", "business_pin_enabled"
+          SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled"
           FROM "business_list" WHERE 
-              ("business_lat" >= {lat_bl} AND "business_lat" <= {lat_ur}) AND
-              ("business_lng" >= {lng_bl} AND "business_lng" <= {lng_ur}) AND
+              ("business_latitude" >= {lat_bl} AND "business_latitude" <= {lat_ur}) AND
+              ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})
           LIMIT 50""").on(
               "lng_ur" -> lon_ur, "lat_ur" -> lat_ur,
               "lng_bl" -> lon_bl, "lat_bl" -> lat_bl)
-      Ok(
-          Json.arr(
-              result().map(p => Json.obj(
+      Ok(Json.toJson(
+              result().map(p => Map(
+                  "id" -> p[Long]("id").toString,
                   "name" -> p[String]("business_name"),
                   "address" -> p[String]("business_address"),
-                  "lat" -> p[Double]("business_lat"),
-                  "lng" -> p[Double]("business_lng"),
-                  "pin_enabled" -> p[Boolean]("business_pin_enabled")
-              ))
-          )
-      )
+                  "lat" -> p[Double]("business_latitude").toString,
+                  "lng" -> p[Double]("business_longitude").toString,
+                  "pin_enabled" -> p[Boolean]("business_pin_enabled").toString
+              )).toList
+      ))
     }
   }
   
   val addBusinessForm = Form(
       tuple(
-          "name" -> text,
-          "address" -> text,
-          "latitude" -> number,
-          "longitude" -> number,
-          "pin_enabled" -> checked("pin pad enabled")
+          "name" -> nonEmptyText,
+          "address" -> nonEmptyText,
+          "latitude" -> nonEmptyText,
+          "longitude" -> nonEmptyText,
+          "pin_enabled" -> boolean
       )
   )
   
   def addBusiness = Action { implicit request =>
     val (name, address, latitude, longitude, pin_enabled) = addBusinessForm.bindFromRequest.get
     DB.withTransaction { implicit conn =>
-      SQL("""
+      val result: Option[Long] = SQL("""
           INSERT INTO "business_list"
-          ("business_name", "business_address", "business_lat", "business_lng", "business_pin_enabled")
+          ("business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled")
           VALUES
           ({name}, {address}, {latitude}, {longitude}, {pin_enabled})
+          RETURNING "id"
       """).on(
           "name" -> name,
           "address" -> address,
-          "latitude" -> latitude,
-          "longitude" -> longitude,
-          "pin_enabled" -> pin_enabled).execute
+          "latitude" -> java.lang.Double.parseDouble(latitude),
+          "longitude" -> java.lang.Double.parseDouble(longitude),
+          "pin_enabled" -> pin_enabled).executeInsert()
+      Ok(Json.obj(
+          "id" -> result.get,
+          "name" -> name,
+          "address" -> address,
+          "lat" -> latitude,
+          "lng" -> longitude,
+          "pin_enabled" -> pin_enabled
+      ))
     }
-    Ok(Json.obj(
-        "name" -> name,
-        "address" -> address,
-        "lat" -> latitude,
-        "lng" -> longitude,
-        "pin_enabled" -> pin_enabled
-    ))
   }
 }
