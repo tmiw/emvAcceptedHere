@@ -9,6 +9,8 @@ import play.api.Play.current
 import play.api.data._
 import play.api.data.Forms._
 
+import com.typesafe.plugin._
+
 object Application extends Controller {
   
   def index = Action {
@@ -75,6 +77,27 @@ object Application extends Controller {
           "lng" -> longitude,
           "pin_enabled" -> pin_enabled
       ))
+    }
+  }
+  
+  def reportBusiness(id: Long) = Action { implicit request =>
+    DB.withConnection { implicit conn =>
+      val result = SQL("""
+          SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled"
+          FROM "business_list" WHERE
+          "id" = {id}""").on("id" -> id)
+      val business_info = result().toList.head
+      val name = business_info[String]("business_name")
+      val address = business_info[String]("business_address")
+      val reason = request.body.asFormUrlEncoded.get("reason")(0)
+      
+      val mail = use[MailerPlugin].email
+      mail.setSubject("Reported business")
+      mail.setRecipient(Play.current.configuration.getString("email.to").get)
+      mail.setFrom(Play.current.configuration.getString("email.from").get)
+      mail.send("ID: " + id + "\r\n" + "Business name: " + name + "\r\n" + "Address: " + address + "\r\nReason:\r\n" + reason)
+      
+      Ok(Json.toJson(true))
     }
   }
 }

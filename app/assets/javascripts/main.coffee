@@ -74,6 +74,17 @@ class MainController extends SimpleMVC.Controller
         google.maps.event.addListener this._map, "bounds_changed", this._navigateToNewBounds
         this._map.setZoom 15
     
+    reportError: (id) ->
+        result = ""
+        while result == ""
+        	result = window.prompt("Enter reason for reporting this entry:")
+        if result != null
+            query = $.ajax "/businesses/report/" + id, {type: "POST", data: {
+            	reason: result
+            }}
+            query.done () ->
+                $("#emvBusinessInfo .add-toolbar").text("reported")
+                
     addBusiness: () ->
         self = this;
         request = $.ajax "/businesses/add", {type: "POST", data: {

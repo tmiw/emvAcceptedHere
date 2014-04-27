@@ -9,6 +9,7 @@ GET     /loc/:lat/:lon              controllers.Application.indexWithLatLong(lat
 # AJAX API
 GET     /businesses/:lat_ur/:lon_ur/:lat_bl/:lon_bl       controllers.Application.businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double)
 POST    /businesses/add             controllers.Application.addBusiness
+POST    /businesses/report/:id      controllers.Application.reportBusiness(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
