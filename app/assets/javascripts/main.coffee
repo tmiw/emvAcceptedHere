@@ -18,12 +18,12 @@ class MainController extends SimpleMVC.Controller
             for i in data
                 # TODO: ick. Use views for this.
                 checked = ""
-                if i.pin_enabled == true
+                if i.pin_enabled == "true"
                     checked = "checked"
                 windowContents = '<div id="emvBusinessInfo">' +
                     '<div class="add-name">' + i.name + '</div>' +
                     '<div class="add-address"><address>' + i.address + '</address></div>' +
-                    '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true" ' + checked  + '" disabled /><label for="pinEnabled">business has PIN pad</label></div>' +
+                    '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true" ' + checked  + ' disabled /><label for="pinEnabled">business has PIN pad</label></div>' +
                     '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.reportError(' + i.id + ');">report errors</a></div></div>'
                     
                 newMarker = {
@@ -102,7 +102,7 @@ class MainController extends SimpleMVC.Controller
         	
             # TODO: ick. Use views for this.
             checked = ""
-            if data.pin_enabled == true
+            if data.pin_enabled == "true"
                 checked = "checked"
             windowContents = '<div id="emvBusinessInfo">' +
                 '<div class="add-name">' + data.name + '</div>' +
