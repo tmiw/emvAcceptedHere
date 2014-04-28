@@ -66,7 +66,6 @@ object Application extends Controller {
           ("business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled")
           VALUES
           ({name}, {address}, {latitude}, {longitude}, {pin_enabled})
-          RETURNING "id"
       """).on(
           "name" -> name,
           "address" -> address,
