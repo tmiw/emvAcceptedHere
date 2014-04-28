@@ -20,6 +20,10 @@ object Application extends Controller {
   def indexWithLatLong(lat: Double, lon: Double) = Action {
     Ok(views.html.index())
   }
+
+  def about = Action {
+    Ok(views.html.about())
+  }
   
   def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double) = Action {
     DB.withConnection { implicit conn =>

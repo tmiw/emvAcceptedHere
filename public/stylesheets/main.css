@@ -1,5 +1,12 @@
 html { height: 100% }
-body { height: 100%; margin: 0; padding: 0 }
+body { 
+    height: 100%; 
+    margin: 0; 
+    padding: 0; 
+    background-color: #ccffff; 
+    font-family: Verdana, Helvetica, sans-serif;
+    font-size: 10pt;
+}
 #map-canvas { height: 100% }
 
 #site-ui {
@@ -12,8 +19,6 @@ body { height: 100%; margin: 0; padding: 0 }
     border-bottom: 1px solid black;
     border-left: 1px solid black;
     
-    font-family: Verdana, Helvetica, sans-serif;
-    font-size: 10pt;
 }
 
 #address {
@@ -31,4 +36,12 @@ body { height: 100%; margin: 0; padding: 0 }
 
 .add-toolbar {
     text-align: right;
+}
+
+.faq-container {
+    width: 85%;
+    margin: 0 auto;
+    padding: 5px;
+    background-color: #ffffff;
+    border: 1px solid black;
 }
