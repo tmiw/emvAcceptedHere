@@ -131,7 +131,7 @@ class MainController extends SimpleMVC.Controller
     
     @route "loc/:lat/:long", (lat, lng) ->
         mapOptions = {
-            zoom: 8,
+            zoom: 5,
             center: new google.maps.LatLng(lat, lng),
             noClear: true
         }
@@ -154,9 +154,11 @@ class MainController extends SimpleMVC.Controller
             window.app.navigate "/loc/39.828175/-98.579500", true, false
         failFn()
 
+        self = this
         setTimeout(() ->
             if navigator.geolocation?
                 successFn = (pos) ->
+                    self._map.setZoom 8
                     window.app.navigate "/loc/" + pos.coords.latitude + "/" + pos.coords.longitude, true, false
                 
                 navigator.geolocation.getCurrentPosition successFn, () -> {}
