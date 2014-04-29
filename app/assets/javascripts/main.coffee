@@ -94,9 +94,9 @@ class MainController extends SimpleMVC.Controller
             alert "Name must be filled in before you can add this business to the map."
         else
             request = $.ajax "/businesses/add", {type: "POST", data: {
-        	    name: $("#businessName").val(),
-        	    address: $("#businessAddress").text(),
-        	    latitude: this._place.geometry.location.lat(),
+                name: $("#businessName").val(),
+                address: $("#businessAddress").text(),
+                latitude: this._place.geometry.location.lat(),
                 longitude: this._place.geometry.location.lng(),
                 pin_enabled: $("#pinEnabled").prop("checked")
             }}
