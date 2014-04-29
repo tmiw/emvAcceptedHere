@@ -90,38 +90,41 @@ class MainController extends SimpleMVC.Controller
                 
     addBusiness: () ->
         self = this;
-        request = $.ajax "/businesses/add", {type: "POST", data: {
-        	name: $("#businessName").val(),
-        	address: $("#businessAddress").text(),
-        	latitude: this._place.geometry.location.lat(),
-        	longitude: this._place.geometry.location.lng(),
-        	pin_enabled: $("#pinEnabled").prop("checked")
-        }}
-        request.done (data) ->
-            self._infoWindow.close()
+        if $("#businessName").val() == ""
+            alert "Name must be filled in before you can add this business to the map."
+        else
+            request = $.ajax "/businesses/add", {type: "POST", data: {
+        	    name: $("#businessName").val(),
+        	    address: $("#businessAddress").text(),
+        	    latitude: this._place.geometry.location.lat(),
+                longitude: this._place.geometry.location.lng(),
+                pin_enabled: $("#pinEnabled").prop("checked")
+            }}
+            request.done (data) ->
+                self._infoWindow.close()
         	
-            # TODO: ick. Use views for this.
-            checked = ""
-            if data.pin_enabled == "true"
-                checked = "checked"
-            windowContents = '<div id="emvBusinessInfo">' +
-                '<div class="add-name">' + data.name + '</div>' +
-                '<div class="add-address"><address>' + data.address + '</address></div>' +
-                '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true" ' + checked + ' disabled /><label for="pinEnabled">business has PIN pad</label></div>' +
-                '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.reportError(' + data.id + ');">report errors</a></div></div>'
+                # TODO: ick. Use views for this.
+                checked = ""
+                if data.pin_enabled == "true"
+                    checked = "checked"
+                windowContents = '<div id="emvBusinessInfo">' +
+                    '<div class="add-name">' + data.name + '</div>' +
+                    '<div class="add-address"><address>' + data.address + '</address></div>' +
+                    '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true" ' + checked + ' disabled /><label for="pinEnabled">business has PIN pad</label></div>' +
+                    '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.reportError(' + data.id + ');">report errors</a></div></div>'
                 
-            newMarker = {
-        	    marker: new google.maps.Marker({
-        	        position: new google.maps.LatLng(data.lat, data.lng),
-        	        map: self._map
-        	    }),
-        	    infoWindow: new google.maps.InfoWindow({
-        	        content: windowContents
-        	    })
-            }
-            google.maps.event.addListener newMarker.marker, "click", () ->
-                newMarker.infoWindow.open self._map, newMarker.marker
-            self._locations.push newMarker
+                newMarker = {
+        	        marker: new google.maps.Marker({
+        	            position: new google.maps.LatLng(data.lat, data.lng),
+        	            map: self._map
+        	        }),
+        	        infoWindow: new google.maps.InfoWindow({
+        	            content: windowContents
+        	        })
+                }
+                google.maps.event.addListener newMarker.marker, "click", () ->
+                    newMarker.infoWindow.open self._map, newMarker.marker
+                self._locations.push newMarker
     
     @route "loc/:lat/:long", (lat, lng) ->
         mapOptions = {
