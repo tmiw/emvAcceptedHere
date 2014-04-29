@@ -51,8 +51,11 @@ class MainController extends SimpleMVC.Controller
 
                 if not found
                     # TODO: ick. We should be using SimpleMVC views to render the popup.
+                    placeName = self._place.name
+                    if self._place.formatted_address.indexOf(placeName) > -1
+                        placeName = ""
                     contentString = '<div id="emvBusinessInfo">' +
-                        '<div class="add-name"><input type="text" id="businessName" value="' + self._place.name + '" placeholder="Name of the business" /></div>' +
+                        '<div class="add-name"><input type="text" id="businessName" value="' + placeName + '" placeholder="Name of the business" /></div>' +
                         '<div class="add-address"><address id="businessAddress">' + self._place.formatted_address + '</address></div>' +
                         '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true"/><label for="pinEnabled">business has PIN pad</label></div>' +
                         '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.addBusiness();">add business</a></div></div>'
