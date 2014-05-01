@@ -1,8 +1,11 @@
 class MainController extends SimpleMVC.Controller
     _navigateToNewBounds: () =>
         # Set not seen flag so we know which ones to remove later
-        for i in this._locations
-            i.notSeen = true
+        if not this._locations?
+            this._locations = []
+        else
+            for i in this._locations
+                i.notSeen = true
         
         mapBounds = this._map.getBounds()
         mapNE = mapBounds.getNorthEast()
