@@ -54,10 +54,10 @@ class MainController extends SimpleMVC.Controller
                     aMarker = newMarker.marker
                     aMarker._____refToSelf = newMarker
                     google.maps.event.addListener aMarker, "click", () ->
-                        if this._infoWindow?
-                            this._infoWindow.close()
+                        if self._infoWindow?
+                            self._infoWindow.close()
                         this._____refToSelf.infoWindow.open self._map, this._____refToSelf.marker
-                        this._infoWindow = this._____refToSelf.infoWindow
+                        self._infoWindow = this._____refToSelf.infoWindow
                     self._locations.push newMarker
 
             # Remove unseen items from list.
