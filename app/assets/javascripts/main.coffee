@@ -18,7 +18,7 @@ class MainController extends SimpleMVC.Controller
                 notExists = true
                 for j in self._locations
                     if i.id == j.id
-                        i.notSeen = false
+                        j.notSeen = false
                         notExists = false
 
                 if notExists
