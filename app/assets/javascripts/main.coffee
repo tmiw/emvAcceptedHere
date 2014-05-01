@@ -1,5 +1,13 @@
 class MainController extends SimpleMVC.Controller
+    _navigateDebounce: () =>
+        if this._navTimeoutId?
+            clearTimeout this._navTimeoutId
+        
+        this._navTimeoutId = setTimeout this._navigateToNewBounds, 100
+        
     _navigateToNewBounds: () =>
+        this._navTimeoutId = undefined
+        
         # Set not seen flag so we know which ones to remove later
         if not this._locations?
             this._locations = []
@@ -94,7 +102,7 @@ class MainController extends SimpleMVC.Controller
         placeLoc = this._place.geometry.location
         window.app.navigate "/loc/" + placeLoc.lat() + "/" + placeLoc.lng(), true, false
         this._handlePossibleAdd = true
-        google.maps.event.addListener this._map, "bounds_changed", this._navigateToNewBounds
+        google.maps.event.addListener this._map, "bounds_changed", this._navigateDebounce
         this._map.setZoom 15
     
     reportError: (id) ->
@@ -156,7 +164,7 @@ class MainController extends SimpleMVC.Controller
             this._map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions)
         	
             # handler so we can reload the list
-            google.maps.event.addListener this._map, "bounds_changed", this._navigateToNewBounds
+            google.maps.event.addListener this._map, "bounds_changed", this._navigateDebounce
         
             # initialize autocomplete widget
             this._autocomplete = new google.maps.places.Autocomplete(document.getElementById("address"))
