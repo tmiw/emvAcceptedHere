@@ -40,7 +40,8 @@ class MainController extends SimpleMVC.Controller
                         infoWindow: new google.maps.InfoWindow({
                             content: windowContents
                         }),
-                        notSeen: false
+                        notSeen: false,
+                        id: i.id
                     }
                     aMarker = newMarker.marker
                     aMarker._____refToSelf = newMarker
