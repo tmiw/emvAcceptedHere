@@ -1,12 +1,8 @@
 class MainController extends SimpleMVC.Controller
     _navigateToNewBounds: () =>
-        # Clear existing markers and info windows if needed.
-        if this._locations?
-            for i in this._locations
-                i.marker.setMap null
-            this._locations.length = 0
-        else
-            this._locations = []
+        # Set not seen flag so we know which ones to remove later
+        for i in this._locations
+            i.notSeen = true
         
         mapBounds = this._map.getBounds()
         mapNE = mapBounds.getNorthEast()
@@ -16,31 +12,48 @@ class MainController extends SimpleMVC.Controller
         self = this
         query.done (data) ->
             for i in data
-                # TODO: ick. Use views for this.
-                checked = ""
-                if i.pin_enabled == "true"
-                    checked = "checked"
-                windowContents = '<div id="emvBusinessInfo">' +
-                    '<div class="add-name">' + i.name + '</div>' +
-                    '<div class="add-address"><address>' + i.address + '</address></div>' +
-                    '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true" ' + checked  + ' disabled /><label for="pinEnabled">business has PIN pad</label></div>' +
-                    '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.reportError(' + i.id + ');">report errors</a></div></div>'
+                notExists = true
+                for j in self._locations
+                    if i.id == j.id
+                        i.notSeen = false
+                        notExists = false
+
+                if notExists
+                    # TODO: ick. Use views for this.
+                    checked = ""
+                    if i.pin_enabled == "true"
+                        checked = "checked"
+                    windowContents = '<div id="emvBusinessInfo">' +
+                        '<div class="add-name">' + i.name + '</div>' +
+                        '<div class="add-address"><address>' + i.address + '</address></div>' +
+                        '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true" ' + checked  + ' disabled /><label for="pinEnabled">business has PIN pad</label></div>' +
+                        '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.reportError(' + i.id + ');">report errors</a></div></div>'
                     
-                newMarker = {
-            	    marker: new google.maps.Marker({
-            	        position: new google.maps.LatLng(i.lat, i.lng),
-            	        map: self._map
-            	    }),
-            	    infoWindow: new google.maps.InfoWindow({
-            	        content: windowContents
-            	    })
-                }
-                aMarker = newMarker.marker
-                aMarker._____refToSelf = newMarker
-                google.maps.event.addListener aMarker, "click", () ->
-                    this._____refToSelf.infoWindow.open self._map, this._____refToSelf.marker
-                self._locations.push newMarker
-       
+                    newMarker = {
+                        marker: new google.maps.Marker({
+                            position: new google.maps.LatLng(i.lat, i.lng),
+                            map: self._map
+                        }),
+                        infoWindow: new google.maps.InfoWindow({
+                            content: windowContents
+                        }),
+                        notSeen: false
+                    }
+                    aMarker = newMarker.marker
+                    aMarker._____refToSelf = newMarker
+                    google.maps.event.addListener aMarker, "click", () ->
+                        this._____refToSelf.infoWindow.open self._map, this._____refToSelf.marker
+                    self._locations.push newMarker
+
+            # Remove unseen items from list.
+            tmp = []
+            for i in self._locations
+                if not i.notSeen
+                    tmp.push i
+                else
+                    i.marker.setMap null    	
+            self._locations = tmp
+            
             if self._handlePossibleAdd
                 self._handlePossibleAdd = false 
                 found = false
