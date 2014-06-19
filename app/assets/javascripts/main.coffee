@@ -34,11 +34,13 @@ class MainController extends SimpleMVC.Controller
                     checked = ""
                     if i.pin_enabled == "true"
                         checked = "checked"
+                    if i.contactless_enabled == "true"
+                        cl_checked = "checked"
                     windowContents = '<div id="emvBusinessInfo">' +
                         '<div class="add-name">' + i.name + '</div>' +
                         '<div class="add-address"><address>' + i.address + '</address></div>' +
                         '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true" ' + checked  + ' disabled /><label for="pinEnabled">business has PIN pad</label></div>' +
-                        '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true" ' + checked  + ' disabled /><label for="contactlessEnabled">business supports contactless cards</label></div>' +
+                        '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true" ' + cl_checked  + ' disabled /><label for="contactlessEnabled">business supports contactless cards</label></div>' +
                         '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.reportError(' + i.id + ');">report errors</a></div></div>'
                     
                     newMarker = {
@@ -141,11 +143,13 @@ class MainController extends SimpleMVC.Controller
                 checked = ""
                 if data.pin_enabled == "true"
                     checked = "checked"
+                if data.contactless_enabled == "true"
+                    cl_checked = "checked"
                 windowContents = '<div id="emvBusinessInfo">' +
                     '<div class="add-name">' + data.name + '</div>' +
                     '<div class="add-address"><address>' + data.address + '</address></div>' +
                     '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true" ' + checked + ' disabled /><label for="pinEnabled">business has PIN pad</label></div>' +
-                    '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true" ' + checked + ' disabled /><label for="contactlessEnabled">business supports contactless cards</label></div>' +
+                    '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true" ' + cl_checked + ' disabled /><label for="contactlessEnabled">business supports contactless cards</label></div>' +
                     '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.reportError(' + data.id + ');">report errors</a></div></div>'
                 
                 newMarker = {
