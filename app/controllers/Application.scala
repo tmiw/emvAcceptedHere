@@ -28,7 +28,7 @@ object Application extends Controller {
   def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double) = Action {
     DB.withConnection { implicit conn =>
       val result = SQL("""
-          SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled"
+          SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled"
           FROM "business_list" WHERE 
               ("business_latitude" >= {lat_bl} AND "business_latitude" <= {lat_ur}) AND
               ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})
@@ -42,7 +42,8 @@ object Application extends Controller {
                   "address" -> p[String]("business_address"),
                   "lat" -> p[Double]("business_latitude").toString,
                   "lng" -> p[Double]("business_longitude").toString,
-                  "pin_enabled" -> p[Boolean]("business_pin_enabled").toString
+                  "pin_enabled" -> p[Boolean]("business_pin_enabled").toString,
+                  "contactless_enabled" -> p[Boolean]("business_contactless_enabled").toString
               )).toList
       ))
     }
@@ -54,31 +55,34 @@ object Application extends Controller {
           "address" -> nonEmptyText,
           "latitude" -> nonEmptyText,
           "longitude" -> nonEmptyText,
-          "pin_enabled" -> boolean
+          "pin_enabled" -> boolean,
+          "contactless_enabled" -> boolean
       )
   )
   
   def addBusiness = Action { implicit request =>
-    val (name, address, latitude, longitude, pin_enabled) = addBusinessForm.bindFromRequest.get
+    val (name, address, latitude, longitude, pin_enabled, contactless_enabled) = addBusinessForm.bindFromRequest.get
     DB.withTransaction { implicit conn =>
       val result: Option[Long] = SQL("""
           INSERT INTO "business_list"
-          ("business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled")
+          ("business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled")
           VALUES
-          ({name}, {address}, {latitude}, {longitude}, {pin_enabled})
+          ({name}, {address}, {latitude}, {longitude}, {pin_enabled}, {contactless_enabled})
       """).on(
           "name" -> name,
           "address" -> address,
           "latitude" -> java.lang.Double.parseDouble(latitude),
           "longitude" -> java.lang.Double.parseDouble(longitude),
-          "pin_enabled" -> pin_enabled).executeInsert()
+          "pin_enabled" -> pin_enabled,
+          "contactless_enabled" -> contactless_enabled).executeInsert()
       Ok(Json.obj(
           "id" -> result.get,
           "name" -> name,
           "address" -> address,
           "lat" -> latitude,
           "lng" -> longitude,
-          "pin_enabled" -> pin_enabled
+          "pin_enabled" -> pin_enabled,
+          "contactless_enabled" -> contactless_enabled
       ))
     }
   }
@@ -86,7 +90,7 @@ object Application extends Controller {
   def reportBusiness(id: Long) = Action { implicit request =>
     DB.withConnection { implicit conn =>
       val result = SQL("""
-          SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled"
+          SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled"
           FROM "business_list" WHERE
           "id" = {id}""").on("id" -> id)
       val business_info = result().toList.head

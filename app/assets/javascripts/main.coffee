@@ -38,6 +38,7 @@ class MainController extends SimpleMVC.Controller
                         '<div class="add-name">' + i.name + '</div>' +
                         '<div class="add-address"><address>' + i.address + '</address></div>' +
                         '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true" ' + checked  + ' disabled /><label for="pinEnabled">business has PIN pad</label></div>' +
+                        '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true" ' + checked  + ' disabled /><label for="contactlessEnabled">business supports contactless cards</label></div>' +
                         '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.reportError(' + i.id + ');">report errors</a></div></div>'
                     
                     newMarker = {
@@ -86,6 +87,7 @@ class MainController extends SimpleMVC.Controller
                         '<div class="add-name"><input type="text" id="businessName" value="' + placeName + '" placeholder="Name of the business" /></div>' +
                         '<div class="add-address"><address id="businessAddress">' + self._place.formatted_address + '</address></div>' +
                         '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true"/><label for="pinEnabled">business has PIN pad</label></div>' +
+                        '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true"/><label for="contactlessEnabled">business supports contactless cards</label></div>' +
                         '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.addBusiness();">add business</a></div></div>'
         
                     if self._infoWindow?
@@ -129,7 +131,8 @@ class MainController extends SimpleMVC.Controller
                 address: $("#businessAddress").text(),
                 latitude: this._place.geometry.location.lat(),
                 longitude: this._place.geometry.location.lng(),
-                pin_enabled: $("#pinEnabled").prop("checked")
+                pin_enabled: $("#pinEnabled").prop("checked"),
+                contactless_enabled: $("#contactlessEnabled").prop("checked")
             }}
             request.done (data) ->
                 self._infoWindow.close()
@@ -142,6 +145,7 @@ class MainController extends SimpleMVC.Controller
                     '<div class="add-name">' + data.name + '</div>' +
                     '<div class="add-address"><address>' + data.address + '</address></div>' +
                     '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true" ' + checked + ' disabled /><label for="pinEnabled">business has PIN pad</label></div>' +
+                    '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true" ' + checked + ' disabled /><label for="contactlessEnabled">business supports contactless cards</label></div>' +
                     '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.reportError(' + data.id + ');">report errors</a></div></div>'
                 
                 newMarker = {
