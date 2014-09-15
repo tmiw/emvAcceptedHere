@@ -32,7 +32,8 @@ object Application extends Controller {
           FROM "business_list" WHERE 
               ("business_latitude" >= {lat_bl} AND "business_latitude" <= {lat_ur}) AND
               ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})
-          LIMIT 50""").on(
+          ORDER BY RANDOM()
+          LIMIT 100""").on(
               "lng_ur" -> lon_ur, "lat_ur" -> lat_ur,
               "lng_bl" -> lon_bl, "lat_bl" -> lat_bl)
       Ok(Json.toJson(
