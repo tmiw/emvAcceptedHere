@@ -25,6 +25,10 @@ object Application extends Controller {
     Ok(views.html.about())
   }
   
+  def news = Action {
+    Ok(views.html.news())
+  }
+  
   def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double) = Action {
     DB.withConnection { implicit conn =>
       val result = SQL("""

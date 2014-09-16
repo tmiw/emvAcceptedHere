@@ -14,7 +14,7 @@ body {
     right: 0px;
     background-color: #ffffff;
     width: 420px;
-    height: 45px;
+    height: 60px;
     z-index: 99;
     border-bottom: 1px solid black;
     border-left: 1px solid black;
@@ -45,4 +45,12 @@ body {
     padding: 5px;
     background-color: #ffffff;
     border: 1px solid black;
+}
+
+#note {
+	color: #ff0000;
+}
+
+#note a {
+	color: #ff0000;
 }
