@@ -36,17 +36,36 @@ class MainController extends SimpleMVC.Controller
                         checked = "checked"
                     if i.contactless_enabled == "true"
                         cl_checked = "checked"
+                    if i.mcx_member == "true
+                        mcx_checked = "checked"
                     windowContents = '<div id="emvBusinessInfo">' +
                         '<div class="add-name">' + i.name + '</div>' +
                         '<div class="add-address"><address>' + i.address + '</address></div>' +
                         '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true" ' + checked  + ' disabled /><label for="pinEnabled">business has PIN pad</label></div>' +
                         '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true" ' + cl_checked  + ' disabled /><label for="contactlessEnabled">business supports contactless cards</label></div>' +
+                        '<div class="add-options"><input type="checkbox" id="mcxMember" value="true" ' + mcx_checked  + ' disabled /><label for="mcxMember">business is a MCX member (<a href="/mcx" target="_blank">more info</a>)</label></div>' +
                         '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.reportError(' + i.id + ');">report errors</a></div></div>'
                     
+                    if i.mcx_member == "true"
+                        pinColor = "FE7569";
+                    else
+                        pinColor = "00FF00"
+                    
+                    pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+                        new google.maps.Size(21, 34),
+                        new google.maps.Point(0,0),
+                        new google.maps.Point(10, 34))
+                    pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+                        new google.maps.Size(40, 37),
+                        new google.maps.Point(0, 0),
+                        new google.maps.Point(12, 35))
+                        
                     newMarker = {
                         marker: new google.maps.Marker({
                             position: new google.maps.LatLng(i.lat, i.lng),
-                            map: self._map
+                            map: self._map,
+                            icon: pinImage,
+                            shadow: pinShadow
                         }),
                         infoWindow: new google.maps.InfoWindow({
                             content: windowContents
@@ -90,6 +109,7 @@ class MainController extends SimpleMVC.Controller
                         '<div class="add-address"><address id="businessAddress">' + self._place.formatted_address + '</address></div>' +
                         '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true"/><label for="pinEnabled">business has PIN pad</label></div>' +
                         '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true"/><label for="contactlessEnabled">business supports contactless cards</label></div>' +
+                        '<div class="add-options"><input type="checkbox" id="mcxMember" value="true"/><label for="mcxMember">business is a MCX member (<a href="/mcx" target="_blank">more info</a>)</label></div>' +
                         '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.addBusiness();">add business</a></div></div>'
         
                     if self._infoWindow?
@@ -134,7 +154,8 @@ class MainController extends SimpleMVC.Controller
                 latitude: this._place.geometry.location.lat(),
                 longitude: this._place.geometry.location.lng(),
                 pin_enabled: $("#pinEnabled").prop("checked"),
-                contactless_enabled: $("#contactlessEnabled").prop("checked")
+                contactless_enabled: $("#contactlessEnabled").prop("checked"),
+                mcx_member: $("#mcxMember").prop("checked")
             }}
             request.done (data) ->
                 self._infoWindow.close()
@@ -145,17 +166,37 @@ class MainController extends SimpleMVC.Controller
                     checked = "checked"
                 if data.contactless_enabled == "true"
                     cl_checked = "checked"
+                if data.mcx_member == "true"
+                	mcx_checked = "checked"
                 windowContents = '<div id="emvBusinessInfo">' +
                     '<div class="add-name">' + data.name + '</div>' +
                     '<div class="add-address"><address>' + data.address + '</address></div>' +
                     '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true" ' + checked + ' disabled /><label for="pinEnabled">business has PIN pad</label></div>' +
                     '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true" ' + cl_checked + ' disabled /><label for="contactlessEnabled">business supports contactless cards</label></div>' +
+                    '<div class="add-options"><input type="checkbox" id="mcxMember" value="true" ' + mcx_checked  + ' disabled /><label for="mcxMember">business is a MCX member (<a href="/mcx" target="_blank">more info</a>)</label></div>' +
                     '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.reportError(' + data.id + ');">report errors</a></div></div>'
                 
+                if data.mcx_member == "true"
+                    pinColor = "FE7569";
+                else
+                    pinColor = "00FF00"
+                    
+                    
+                pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+                    new google.maps.Size(21, 34),
+                    new google.maps.Point(0,0),
+                    new google.maps.Point(10, 34))
+                pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+                    new google.maps.Size(40, 37),
+                    new google.maps.Point(0, 0),
+                    new google.maps.Point(12, 35))
+                    
                 newMarker = {
         	        marker: new google.maps.Marker({
         	            position: new google.maps.LatLng(data.lat, data.lng),
-        	            map: self._map
+        	            map: self._map,
+        	            icon: pinImage,
+        	            shadow: pinShadow
         	        }),
         	        infoWindow: new google.maps.InfoWindow({
         	            content: windowContents

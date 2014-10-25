@@ -7,6 +7,7 @@ GET     /                           controllers.Application.index
 GET     /loc/:lat/:lon              controllers.Application.indexWithLatLong(lat: Double, lon: Double)
 GET     /about                      controllers.Application.about
 GET		/news						controllers.Application.news
+GET		/mcx						controllers.Application.mcx
 
 # AJAX API
 GET     /businesses/:lat_ur/:lon_ur/:lat_bl/:lon_bl       controllers.Application.businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double)
