@@ -26,7 +26,7 @@ object Application extends Controller {
   }
   
   def mcx = Action {
-    Ok(views.mcx.about())
+    Ok(views.html.mcx())
   }
   
   def news = Action {

@@ -36,7 +36,7 @@ class MainController extends SimpleMVC.Controller
                         checked = "checked"
                     if i.contactless_enabled == "true"
                         cl_checked = "checked"
-                    if i.mcx_member == "true
+                    if i.mcx_member == "true"
                         mcx_checked = "checked"
                     windowContents = '<div id="emvBusinessInfo">' +
                         '<div class="add-name">' + i.name + '</div>' +
