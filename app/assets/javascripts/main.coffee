@@ -32,6 +32,8 @@ class MainController extends SimpleMVC.Controller
                 if notExists
                     # TODO: ick. Use views for this.
                     checked = ""
+                    cl_checked = ""
+                    mcx_checked = ""
                     if i.pin_enabled == "true"
                         checked = "checked"
                     if i.contactless_enabled == "true"
@@ -162,6 +164,8 @@ class MainController extends SimpleMVC.Controller
         	
                 # TODO: ick. Use views for this.
                 checked = ""
+                cl_checked = ""
+                mcx_checked = ""
                 if data.pin_enabled == "true"
                     checked = "checked"
                 if data.contactless_enabled == "true"
@@ -180,7 +184,6 @@ class MainController extends SimpleMVC.Controller
                     pinColor = "FE7569";
                 else
                     pinColor = "00FF00"
-                    
                     
                 pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
                     new google.maps.Size(21, 34),
