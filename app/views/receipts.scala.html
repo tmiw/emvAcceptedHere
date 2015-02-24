@@ -1,0 +1,35 @@
+@(brands: List[models.TerminalBrands], receipt_urls: List[String])
+
+@main("Sample EMV receipts") {
+
+<form name="query_form">
+<table>
+<tr><th>Terminal brand/store:</th><td><select name="brand">
+@for(p <- brands) {
+<option value="@p.id">@p.name</option>
+}
+</select></td></tr>
+<tr><th>Transaction method:</th><td><select name="method">
+<option value="swiped">Swiped (non-EMV card)</option>
+<option value="inserted">Inserted (contact EMV)</option>
+<option value="fallback">Fallback (swipe of EMV card after chip failure)</option>
+<option value="emv_contactless">EMV Contactless</option>
+<option value="msd_contactless">MSD Contactless</option>
+</select></td></tr>
+<tr><th>Cardholder verification method (CVM):</th><td><select name="cvm">
+<option value="none">No CVM (typically for transactions < ~$25-$50 if chip/swipe and signature or contactless)</option>
+<option value="signature">Signature</option>
+<option value="pin">PIN</option>
+<option value="mobile">Mobile device e.g. Apple Pay (EMV contactless only); only for transactions &lt; ~$25-50</option>
+</select></td></tr>
+<tr><td>&nbsp;</td><td><input type="button" value="Search" onclick="search_now()" /></td></tr>
+</table>
+</form>
+
+<hr noshade/>
+
+@for(p <- receipt_urls) {
+<img src="@p" />
+}
+
+}

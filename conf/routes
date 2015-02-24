@@ -8,6 +8,8 @@ GET     /loc/:lat/:lon              controllers.Application.indexWithLatLong(lat
 GET     /about                      controllers.Application.about
 GET		/news						controllers.Application.news
 GET		/mcx						controllers.Application.mcx
+GET		/sample_receipts			controllers.Application.sample_receipt_home
+GET		/sample_receipts/:brand/:method/:cvm	controllers.Application.sample_receipts(brand: Int, method: String, cvm: String)
 
 # AJAX API
 GET     /businesses/:lat_ur/:lon_ur/:lat_bl/:lon_bl       controllers.Application.businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double)

@@ -1,6 +1,6 @@
 package controllers
 
-import anorm._ 
+import anorm._
 import play.api._
 import play.api.mvc._
 import play.api.db._
@@ -8,8 +8,8 @@ import play.api.libs.json.Json
 import play.api.Play.current
 import play.api.data._
 import play.api.data.Forms._
-
 import com.typesafe.plugin._
+import models.TerminalBrands
 
 object Application extends Controller {
   
@@ -118,6 +118,34 @@ object Application extends Controller {
       mail.send("ID: " + id + "\r\n" + "Business name: " + name + "\r\n" + "Address: " + address + "\r\nReason:\r\n" + reason)
       
       Ok(Json.toJson(true))
+    }
+  }
+  
+  def sample_receipt_home = Action { implicit request =>
+    DB.withConnection { implicit conn =>
+      val q = SQL("""
+          SELECT "id", "brand_name" FROM "receipt_terminal_brands" ORDER BY "brand_name"
+      """)
+      val result = q().map(p => TerminalBrands(p[Int]("id"), p[String]("brand_name"))).toList
+      
+      Ok(views.html.receipts(result, List[String]()))
+    }
+  }
+  
+  def sample_receipts(brand: Int, method: String, cvm: String) = Action {
+    DB.withConnection { implicit conn =>
+      val q = SQL("""
+          SELECT "id", "brand_name" FROM "receipt_terminal_brands" ORDER BY "brand_name"
+      """)
+      val brand_list = q().map(p => TerminalBrands(p[Int]("id"), p[String]("brand_name"))).toList
+      
+      val q_imgs = SQL("""
+          SELECT "image_file" FROM "receipts"
+          WHERE "brand" = {brand} AND "method" = {method} AND "cvm" = {cvm}
+      """).on("brand" -> brand, "method" -> method, "cvm" -> cvm)
+      val imgs = q_imgs().map(p => p[String]("image_file")).toList
+      
+      Ok(views.html.receipts(brand_list, imgs))
     }
   }
 }
