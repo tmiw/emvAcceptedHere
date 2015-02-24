@@ -141,7 +141,7 @@ object Application extends Controller {
       
       val q_imgs = SQL("""
           SELECT "image_file" FROM "receipts"
-          WHERE "brand" = {brand} AND "method" = {method} AND "cvm" = {cvm}
+          WHERE "brand" = {brand} AND "method" = {method}::txn_method AND "cvm" = {cvm}::txn_cvm
       """).on("brand" -> brand, "method" -> method, "cvm" -> cvm)
       val imgs = q_imgs().map(p => p[String]("image_file")).toList
       
