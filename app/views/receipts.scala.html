@@ -1,4 +1,4 @@
-@(brands: List[models.TerminalBrands], receipt_urls: List[String])
+@(brands: List[models.TerminalBrands], receipt_urls: List[models.TerminalReceipts])
 
 @main("Sample EMV receipts") {
 
@@ -22,14 +22,31 @@
 <option value="pin">PIN</option>
 <option value="mobile">Mobile device e.g. Apple Pay (EMV contactless only); only for transactions &lt; ~$25-50</option>
 </select></td></tr>
-<tr><td>&nbsp;</td><td><input type="button" value="Search" onclick="search_now()" /></td></tr>
+<tr><td><input type="button" value="Search" onclick="search_now()" /></td><td><input type="button" value="View All" onclick="view_all()" /></td></tr>
 </table>
 </form>
 
 <hr noshade/>
 
 @for(p <- receipt_urls) {
-<img src="@p" />
+<table>
+<tr><td colspan="2"><img src="@p.url" /></td></tr>
+<tr><th>Terminal brand:</th><td>@p.brand</td></tr>
+<tr><th>Transaction method:</th><td>@p.method match {
+	case "swiped" => {Swiped (non-EMV card)}
+	case "inserted" => {Inserted (contact EMV)}
+	case "fallback" => {Fallback (swipe of EMV card after chip failure)}
+	case "emv_contactless" => {EMV Contactless}
+	case "msd_contactless" => {MSD Contactless}
+}</td></tr>
+<tr><th>Transaction CVM:</th><td>@p.cvm match {
+	case "none" => {No CVM}
+	case "signature" => {Signature}
+	case "pin" => {PIN}
+	case "mobile" => {Mobile device}
+}</td></tr>
+</table>
+<hr noshade/>
 }
 
 }

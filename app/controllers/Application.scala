@@ -9,7 +9,7 @@ import play.api.Play.current
 import play.api.data._
 import play.api.data.Forms._
 import com.typesafe.plugin._
-import models.TerminalBrands
+import models._
 
 object Application extends Controller {
   
@@ -128,7 +128,14 @@ object Application extends Controller {
       """)
       val result = q().map(p => TerminalBrands(p[Int]("id"), p[String]("brand_name"))).toList
       
-      Ok(views.html.receipts(result, List[String]()))
+      val q_imgs = SQL("""
+          SELECT p.id as id, b.brand_name as brand_name, p.method as method, p.cvm as cvm, 
+                 p.image_file as image_file 
+          FROM "receipts" p inner join "receipt_terminal_brands" b on b.id=p.brand
+      """)
+      val imgs = q_imgs().map(p => TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file"))).toList
+      
+      Ok(views.html.receipts(result, imgs))
     }
   }
   
@@ -140,10 +147,12 @@ object Application extends Controller {
       val brand_list = q().map(p => TerminalBrands(p[Int]("id"), p[String]("brand_name"))).toList
       
       val q_imgs = SQL("""
-          SELECT "image_file" FROM "receipts"
+          SELECT p.id as id, b.brand_name as brand_name, p.method as method, p.cvm as cvm, 
+                 p.image_file as image_file 
+          FROM "receipts" p inner join "receipt_terminal_brands" b on b.id=p.brand
           WHERE "brand" = {brand} AND "method" = {method} AND "cvm" = {cvm}
       """).on("brand" -> brand, "method" -> method, "cvm" -> cvm)
-      val imgs = q_imgs().map(p => p[String]("image_file")).toList
+      val imgs = q_imgs().map(p => TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file"))).toList
       
       Ok(views.html.receipts(brand_list, imgs))
     }
