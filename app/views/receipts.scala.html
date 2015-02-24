@@ -2,6 +2,14 @@
 
 @main("Sample EMV receipts") {
 
+<script language="javascript">
+<!--
+    function search_now() {
+        location.href = "/sample_receipts/" + document.query_form.brand.value + "/" + document.query_form.method.value + "/" + document.query_form.cvm.value;
+    }
+// -->
+</script>
+
 <form name="query_form">
 <table>
 <tr><th>Terminal brand/store:</th><td><select name="brand">
@@ -20,7 +28,7 @@
 <option value="none">No CVM (typically for transactions < ~$25-$50 if chip/swipe and signature or contactless)</option>
 <option value="signature">Signature</option>
 <option value="pin">PIN</option>
-<option value="mobile">Mobile device e.g. Apple Pay (EMV contactless only); only for transactions &lt; ~$25-50</option>
+<option value="mobile">Mobile device e.g. Apple Pay (EMV contactless only); only for transactions &gt; ~$25-50</option>
 </select></td></tr>
 <tr><td><input type="button" value="Search" onclick="search_now()" /></td><td><input type="button" value="View All" onclick="view_all()" /></td></tr>
 </table>

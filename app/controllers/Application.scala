@@ -150,7 +150,7 @@ object Application extends Controller {
           SELECT p.id as id, b.brand_name as brand_name, p.method as method, p.cvm as cvm, 
                  p.image_file as image_file 
           FROM "receipts" p inner join "receipt_terminal_brands" b on b.id=p.brand
-          WHERE "brand" = {brand} AND "method" = {method} AND "cvm" = {cvm}
+          WHERE "brand" = {brand} AND "method" = {method}::txn_method AND "cvm" = {cvm}::txn_cvm
       """).on("brand" -> brand, "method" -> method, "cvm" -> cvm)
       val imgs = q_imgs().map(p => TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file"))).toList
       
