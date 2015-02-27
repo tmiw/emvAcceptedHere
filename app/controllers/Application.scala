@@ -158,7 +158,7 @@ object Application extends Controller {
     }
   }
   
-    def sample_receipts(brand: Int) = Action {
+    def sample_receipts_wo_method(brand: Int) = Action {
     DB.withConnection { implicit conn =>
       val q = SQL("""
           SELECT "id", "brand_name" FROM "receipt_terminal_brands" ORDER BY "brand_name"
@@ -177,7 +177,7 @@ object Application extends Controller {
     }
   }
     
-  def sample_receipts(brand: Int, method: String) = Action {
+  def sample_receipts_wo_cvm(brand: Int, method: String) = Action {
     DB.withConnection { implicit conn =>
       val q = SQL("""
           SELECT "id", "brand_name" FROM "receipt_terminal_brands" ORDER BY "brand_name"
