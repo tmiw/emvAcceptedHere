@@ -5,7 +5,20 @@
 <script language="javascript">
 <!--
     function search_now() {
-        location.href = "/sample_receipts/" + document.query_form.brand.value + "/" + document.query_form.method.value + "/" + document.query_form.cvm.value;
+    	var tmp_loc = "/sample_receipts";
+    	if (document.query_form.brand.value)
+    	{
+    		tmp_loc = tmp_loc + document.query_form.brand.value;
+    		if (document.query_form.method.value)
+    		{
+    			tmp_loc = tmp_loc + document.query_form.method.value;
+    			if (document.query_form.cvm.value)
+    			{
+    				tmp_loc = tmp_loc + document.query_form.cvm.value;
+    			}
+    		}
+    	}
+        location.href = tmp_loc;
     }
 // -->
 </script>
@@ -13,11 +26,13 @@
 <form name="query_form">
 <table>
 <tr><th>Terminal brand/store:</th><td><select name="brand">
+<option value="">(select)</option>
 @for(p <- brands) {
 <option value="@p.id">@p.name</option>
 }
 </select></td></tr>
 <tr><th>Transaction method:</th><td><select name="method">
+<option value="">(select)</option>
 <option value="swiped">Swiped (non-EMV card)</option>
 <option value="inserted">Inserted (contact EMV)</option>
 <option value="fallback">Fallback (swipe of EMV card after chip failure)</option>
@@ -25,6 +40,7 @@
 <option value="msd_contactless">MSD Contactless</option>
 </select></td></tr>
 <tr><th>Cardholder verification method (CVM):</th><td><select name="cvm">
+<option value="">(select)</option>
 <option value="none">No CVM (typically for transactions < ~$25-$50 if chip/swipe and signature or contactless)</option>
 <option value="signature">Signature</option>
 <option value="pin">PIN</option>

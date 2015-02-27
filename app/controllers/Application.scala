@@ -157,4 +157,42 @@ object Application extends Controller {
       Ok(views.html.receipts(brand_list, imgs))
     }
   }
+  
+    def sample_receipts(brand: Int) = Action {
+    DB.withConnection { implicit conn =>
+      val q = SQL("""
+          SELECT "id", "brand_name" FROM "receipt_terminal_brands" ORDER BY "brand_name"
+      """)
+      val brand_list = q().map(p => TerminalBrands(p[Int]("id"), p[String]("brand_name"))).toList
+      
+      val q_imgs = SQL("""
+          SELECT p.id as id, b.brand_name as brand_name, p.method as method, p.cvm as cvm, 
+                 p.image_file as image_file 
+          FROM "receipts" p inner join "receipt_terminal_brands" b on b.id=p.brand
+          WHERE "brand" = {brand}
+      """).on("brand" -> brand)
+      val imgs = q_imgs().map(p => TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file"))).toList
+      
+      Ok(views.html.receipts(brand_list, imgs))
+    }
+  }
+    
+  def sample_receipts(brand: Int, method: String) = Action {
+    DB.withConnection { implicit conn =>
+      val q = SQL("""
+          SELECT "id", "brand_name" FROM "receipt_terminal_brands" ORDER BY "brand_name"
+      """)
+      val brand_list = q().map(p => TerminalBrands(p[Int]("id"), p[String]("brand_name"))).toList
+      
+      val q_imgs = SQL("""
+          SELECT p.id as id, b.brand_name as brand_name, p.method as method, p.cvm as cvm, 
+                 p.image_file as image_file 
+          FROM "receipts" p inner join "receipt_terminal_brands" b on b.id=p.brand
+          WHERE "brand" = {brand} AND "method" = {method}::txn_method
+      """).on("brand" -> brand, "method" -> method)
+      val imgs = q_imgs().map(p => TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file"))).toList
+      
+      Ok(views.html.receipts(brand_list, imgs))
+    }
+  }
 }
