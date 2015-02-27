@@ -8,13 +8,13 @@
     	var tmp_loc = "/sample_receipts";
     	if (document.query_form.brand.value)
     	{
-    		tmp_loc = tmp_loc + document.query_form.brand.value;
+    		tmp_loc = tmp_loc + "/" + document.query_form.brand.value;
     		if (document.query_form.method.value)
     		{
-    			tmp_loc = tmp_loc + document.query_form.method.value;
+    			tmp_loc = tmp_loc + "/" + document.query_form.method.value;
     			if (document.query_form.cvm.value)
     			{
-    				tmp_loc = tmp_loc + document.query_form.cvm.value;
+    				tmp_loc = tmp_loc + "/" + document.query_form.cvm.value;
     			}
     		}
     	}
