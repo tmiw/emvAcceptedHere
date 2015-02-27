@@ -166,7 +166,7 @@ object Application extends Controller {
       val brand_list = q().map(p => TerminalBrands(p[Int]("id"), p[String]("brand_name"))).toList
       
       val q_imgs = SQL("""
-          SELECT p.id as id, b.brand_name as brand_name, p.method as method, p.cvm as cvm, 
+          SELECT p.id as id, b.brand_name as brand_name, p.method::varchar(255) as method, p.cvm::varchar(255) as cvm,
                  p.image_file as image_file 
           FROM "receipts" p inner join "receipt_terminal_brands" b on b.id=p.brand
           WHERE "brand" = {brand}
@@ -185,7 +185,7 @@ object Application extends Controller {
       val brand_list = q().map(p => TerminalBrands(p[Int]("id"), p[String]("brand_name"))).toList
       
       val q_imgs = SQL("""
-          SELECT p.id as id, b.brand_name as brand_name, p.method as method, p.cvm as cvm, 
+          SELECT p.id as id, b.brand_name as brand_name, p.method::varchar(255) as method, p.cvm::varchar(255) as cvm,
                  p.image_file as image_file 
           FROM "receipts" p inner join "receipt_terminal_brands" b on b.id=p.brand
           WHERE "brand" = {brand} AND "method" = {method}::txn_method
