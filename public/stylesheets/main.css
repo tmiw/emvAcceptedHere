@@ -21,6 +21,15 @@ body {
     
 }
 
+#site-key {
+    position: absolute;
+    bottom: 0px;
+    background-color: #ffffff;
+    z-index: 99;
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+}
+
 #address {
     width: 400px;
     height: 19px;
