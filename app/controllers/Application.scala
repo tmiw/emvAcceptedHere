@@ -71,7 +71,7 @@ object Application extends Controller {
   )
   
   def addBusiness = Action { implicit request =>
-    val (name, address, latitude, longitude, pin_enabled, contactless_enabled, confirmed_location) = addBusinessForm.bindFromRequest.get
+    val (name, address, latitude, longitude, pin_enabled, contactless_enabled) = addBusinessForm.bindFromRequest.get
     DB.withTransaction { implicit conn =>
       val result: Option[Long] = SQL("""
           INSERT INTO "business_list"
