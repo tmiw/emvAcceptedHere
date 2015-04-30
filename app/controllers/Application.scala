@@ -36,7 +36,7 @@ object Application extends Controller {
   def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double) = Action {
     DB.withConnection { implicit conn =>
       val result = SQL("""
-          SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_mcx" 
+          SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location" 
           FROM "business_list" WHERE 
               ("business_latitude" >= {lat_bl} AND "business_latitude" <= {lat_ur}) AND
               ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})
@@ -53,7 +53,7 @@ object Application extends Controller {
                   "lng" -> p[Double]("business_longitude").toString,
                   "pin_enabled" -> p[Boolean]("business_pin_enabled").toString,
                   "contactless_enabled" -> p[Boolean]("business_contactless_enabled").toString,
-                  "mcx_member" -> p[Boolean]("business_mcx").toString
+                  "confirmed_location" -> p[Boolean]("business_confirmed_location").toString
               )).toList
       ))
     }
@@ -66,19 +66,18 @@ object Application extends Controller {
           "latitude" -> nonEmptyText,
           "longitude" -> nonEmptyText,
           "pin_enabled" -> boolean,
-          "contactless_enabled" -> boolean,
-          "mcx_member" -> boolean
+          "contactless_enabled" -> boolean
       )
   )
   
   def addBusiness = Action { implicit request =>
-    val (name, address, latitude, longitude, pin_enabled, contactless_enabled, mcx_member) = addBusinessForm.bindFromRequest.get
+    val (name, address, latitude, longitude, pin_enabled, contactless_enabled, confirmed_location) = addBusinessForm.bindFromRequest.get
     DB.withTransaction { implicit conn =>
       val result: Option[Long] = SQL("""
           INSERT INTO "business_list"
-          ("business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_mcx")
+          ("business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location")
           VALUES
-          ({name}, {address}, {latitude}, {longitude}, {pin_enabled}, {contactless_enabled}, {mcx_member})
+          ({name}, {address}, {latitude}, {longitude}, {pin_enabled}, {contactless_enabled}, {confirmed_location})
       """).on(
           "name" -> name,
           "address" -> address,
@@ -86,7 +85,7 @@ object Application extends Controller {
           "longitude" -> java.lang.Double.parseDouble(longitude),
           "pin_enabled" -> pin_enabled,
           "contactless_enabled" -> contactless_enabled,
-          "mcx_member" -> mcx_member).executeInsert()
+          "confirmed_location" -> true).executeInsert()
       Ok(Json.obj(
           "id" -> result.get,
           "name" -> name,
@@ -95,7 +94,7 @@ object Application extends Controller {
           "lng" -> longitude,
           "pin_enabled" -> pin_enabled,
           "contactless_enabled" -> contactless_enabled,
-          "mcx_member" -> mcx_member
+          "confirmed_location" -> true
       ))
     }
   }
@@ -103,7 +102,7 @@ object Application extends Controller {
   def reportBusiness(id: Long) = Action { implicit request =>
     DB.withConnection { implicit conn =>
       val result = SQL("""
-          SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_mcx"
+          SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location"
           FROM "business_list" WHERE
           "id" = {id}""").on("id" -> id)
       val business_info = result().toList.head

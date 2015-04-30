@@ -33,22 +33,18 @@ class MainController extends SimpleMVC.Controller
                     # TODO: ick. Use views for this.
                     checked = ""
                     cl_checked = ""
-                    mcx_checked = ""
                     if i.pin_enabled == "true"
                         checked = "checked"
                     if i.contactless_enabled == "true"
                         cl_checked = "checked"
-                    if i.mcx_member == "true"
-                        mcx_checked = "checked"
                     windowContents = '<div id="emvBusinessInfo">' +
                         '<div class="add-name">' + i.name + '</div>' +
                         '<div class="add-address"><address>' + i.address + '</address></div>' +
                         '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true" ' + checked  + ' disabled /><label for="pinEnabled">business has PIN pad</label></div>' +
                         '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true" ' + cl_checked  + ' disabled /><label for="contactlessEnabled">business supports contactless cards</label></div>' +
-                        '<div class="add-options"><input type="checkbox" id="mcxMember" value="true" ' + mcx_checked  + ' disabled /><label for="mcxMember">business is a MCX member (<a href="/mcx" target="_blank">more info</a>)</label></div>' +
                         '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.reportError(' + i.id + ');">report errors</a></div></div>'
                     
-                    if i.mcx_member == "true"
+                    if i.confirmed_location != "true"
                         pinColor = "FE7569";
                     else
                         pinColor = "00FF00"
@@ -111,7 +107,6 @@ class MainController extends SimpleMVC.Controller
                         '<div class="add-address"><address id="businessAddress">' + self._place.formatted_address + '</address></div>' +
                         '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true"/><label for="pinEnabled">business has PIN pad</label></div>' +
                         '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true"/><label for="contactlessEnabled">business supports contactless cards</label></div>' +
-                        '<div class="add-options"><input type="checkbox" id="mcxMember" value="true"/><label for="mcxMember">business is a MCX member (<a href="/mcx" target="_blank">more info</a>)</label></div>' +
                         '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.addBusiness();">add business</a></div></div>'
         
                     if self._infoWindow?
@@ -157,7 +152,6 @@ class MainController extends SimpleMVC.Controller
                 longitude: this._place.geometry.location.lng(),
                 pin_enabled: $("#pinEnabled").prop("checked"),
                 contactless_enabled: $("#contactlessEnabled").prop("checked"),
-                mcx_member: $("#mcxMember").prop("checked")
             }}
             request.done (data) ->
                 self._infoWindow.close()
@@ -165,22 +159,18 @@ class MainController extends SimpleMVC.Controller
                 # TODO: ick. Use views for this.
                 checked = ""
                 cl_checked = ""
-                mcx_checked = ""
                 if data.pin_enabled == "true"
                     checked = "checked"
                 if data.contactless_enabled == "true"
                     cl_checked = "checked"
-                if data.mcx_member == "true"
-                	mcx_checked = "checked"
                 windowContents = '<div id="emvBusinessInfo">' +
                     '<div class="add-name">' + data.name + '</div>' +
                     '<div class="add-address"><address>' + data.address + '</address></div>' +
                     '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true" ' + checked + ' disabled /><label for="pinEnabled">business has PIN pad</label></div>' +
                     '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true" ' + cl_checked + ' disabled /><label for="contactlessEnabled">business supports contactless cards</label></div>' +
-                    '<div class="add-options"><input type="checkbox" id="mcxMember" value="true" ' + mcx_checked  + ' disabled /><label for="mcxMember">business is a MCX member (<a href="/mcx" target="_blank">more info</a>)</label></div>' +
                     '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.reportError(' + data.id + ');">report errors</a></div></div>'
                 
-                if data.mcx_member == "true"
+                if data.confirmed_location != "true"
                     pinColor = "FE7569";
                 else
                     pinColor = "00FF00"
