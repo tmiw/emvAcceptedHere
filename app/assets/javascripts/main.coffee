@@ -170,10 +170,7 @@ class MainController extends SimpleMVC.Controller
                     '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true" ' + cl_checked + ' disabled /><label for="contactlessEnabled">business supports contactless cards</label></div>' +
                     '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.reportError(' + data.id + ');">report errors</a></div></div>'
                 
-                if data.confirmed_location != "true"
-                    pinColor = "FE7569";
-                else
-                    pinColor = "00FF00"
+                pinColor = "00FF00"
                     
                 pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
                     new google.maps.Size(21, 34),
