@@ -1,3 +1,5 @@
+# --- !Ups
+
 CREATE TABLE "receipt_terminal_brands" (
     "id" serial primary key,
     "brand_name" varchar(255) NOT NULL

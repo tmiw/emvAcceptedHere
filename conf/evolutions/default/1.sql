@@ -1,3 +1,5 @@
+# --- !Ups
+
 CREATE TABLE "business_list" (
     "id" serial,
     "business_name" varchar(255) NOT NULL,

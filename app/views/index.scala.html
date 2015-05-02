@@ -1,17 +1,17 @@
 @main("Find chip enabled businesses") {
-  <div id="map-canvas"/>
+  <div class="site-container"><div id="map-canvas"/></div>
+  
+  <!-- Google Maps moves the rest of this HTML into site-container. Whyyyyyyyy -->
   <div id="site-ui">
     <div id="container">
       <input type="text" id="address" placeholder="Search for business to add (name or address)" />
       <div id="footer">
-        <div id="note"><a href="/news#news20150429" target="_blank">Important map update (4/29/2015)</a></div>
-        <a href="/about" target="_blank">About this site</a> | <a href="http://www.reddit.com/r/chipcards/" target="_blank">/r/chipcards on reddit</a><br/>
-        Copyright &copy; 2015 Mooneer Salem.
+        <span id="note"><a href="/news#news20150429" target="_blank">Important map update (4/29/2015)</a></span> | <a href="/about" target="_blank">About this site</a> | <a href="http://www.reddit.com/r/chipcards/" target="_blank">/r/chipcards on reddit</a> | Copyright &copy; 2015 Mooneer Salem.
       </div>
     </div>
   </div>
   <div id="site-key">
-    <img src="http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=•|00FF00" /> Chip support confirmed 
+    <img src="http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=•|00FF00" /> Chip support confirmed <br/>
     <img src="http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=•|FE7569" /> Significant rollout of chip, but not confirmed
   </div>
 }

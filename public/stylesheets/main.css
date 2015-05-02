@@ -1,47 +1,103 @@
-html { height: 100% }
-body { 
-    height: 100%; 
-    margin: 0; 
-    padding: 0; 
-    background-color: #ccffff; 
-    font-family: Verdana, Helvetica, sans-serif;
-    font-size: 10pt;
+html {
+  box-sizing: border-box;
 }
-#map-canvas { height: 100% }
-
-#site-ui {
-    position: absolute;
-    right: 0px;
-    background-color: #ffffff;
-    width: 420px;
-    height: 80px;
-    z-index: 99;
-    border-bottom: 1px solid black;
-    border-left: 1px solid black;
-    
+*, *:before, *:after {
+  box-sizing: inherit;
 }
 
-#site-key {
-    position: absolute;
-    bottom: 0px;
-    background-color: #ffffff;
-    z-index: 99;
-    border-top: 1px solid black;
-    border-right: 1px solid black;
+.site-container { position: relative; height: 100%; }
+
+@media screen and (min-device-width: 481px) {
+	html { height: 100% }
+	body { 
+	    height: 100%; 
+	    margin: 0; 
+	    padding: 0; 
+	    background-color: #ccffff; 
+	    font-family: Verdana, Helvetica, sans-serif;
+	    font-size: 10pt;
+	}
+	#map-canvas { height: 100% }
+	
+	#site-ui {
+	    position: absolute;
+	    right: 0px;
+	    background-color: #ffffff;
+	    width: 420px;
+	    height: 55px;
+	    z-index: 99;
+	    border-bottom: 1px solid black;
+	    border-left: 1px solid black;
+	    top: 0px;
+	}
+	
+	#site-key {
+	    position: absolute;
+	    bottom: 0px;
+	    background-color: #ffffff;
+	    z-index: 99;
+	    border-top: 1px solid black;
+	    border-right: 1px solid black;
+	    padding-right: 5px;
+	}
+	
+	#businessName {
+    	width: 296px;
+	}
 }
+
+@media screen and (max-device-width: 480px) {
+
+	html { position: fixed; height: 100%; width: 100%; }
+	
+	body { 
+		position:fixed; height: 100%; width: 100%;
+	    margin: 0; 
+	    padding: 0; 
+	    background-color: #ccffff; 
+	    font-family: Verdana, Helvetica, sans-serif;
+	    font-size: 10pt;
+	}
+	
+	#map-canvas { position: relative; padding-top: 80px; padding-bottom: 50px; height: 100%; }
+	
+	#site-ui {
+	    position: fixed;
+	    top: 0px;
+	    width: 100%;
+	    background-color: #ffffff;
+	    height: 80px;
+	    z-index: 99;
+	    border-bottom: 1px solid black;
+	    border-left: 1px solid black;
+	    
+	}
+	
+	#site-key {
+	    position: absolute;
+	    bottom: 0px;
+	    background-color: #ffffff;
+	    z-index: 99;
+	    border-top: 1px solid black;
+	    border-right: 1px solid black;
+	    border-left: 1px solid black;
+	    left: 75px;
+	}
+	
+	#footer {
+	    font-size: 10pt;
+	    width: 100%;
+	}
+
+	#businessName {
+    	width: 250px;
+	}
+}
+
 
 #address {
-    width: 400px;
+    width: 350px;
     height: 19px;
-}
-
-#businessName {
-    width: 296px;
-}
-
-#footer {
-    font-size: 10pt;
-    width: 100%;
 }
 
 .add-toolbar {
