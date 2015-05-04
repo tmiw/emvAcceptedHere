@@ -137,7 +137,12 @@ class MainController extends SimpleMVC.Controller
             }}
             query.done () ->
                 $("#emvBusinessInfo .add-toolbar").text("reported")
-                
+    
+    getDrivingDirections: (addr) ->
+        src = this._cur_lat + "," + this._cur_lon
+        encoded_dest = encodeURI(addr)
+        window.open "http://maps.apple.com/?daddr=" + encoded_dest + "&saddr=" + src
+    
     addBusiness: () ->
         self = this;
         if $("#businessName").val() == ""
@@ -219,6 +224,8 @@ class MainController extends SimpleMVC.Controller
         setTimeout(() ->
             if navigator.geolocation?
                 successFn = (pos) ->
+                    self._cur_lat = pos.coords.latitude
+                    self._cur_lon = pos.coords.longitude
                     self._map.setZoom 8
                     window.app.navigate "/loc/" + pos.coords.latitude + "/" + pos.coords.longitude, true, false
                 

@@ -27,6 +27,10 @@ templates.per_item_entry = """
     <a href="#" onclick="event.preventDefault(); window.app.reportError(' + {{id}} + ');">
       report errors
     </a>
+    |
+    <a href="#" onclick="event.preventDefault(); window.app.getDrivingDirections(' + {{address}} + ');">
+      get directions
+    </a>
     {{/edit_disabled}}
     {{^edit_disabled}}
     <a href="#" onclick="event.preventDefault(); window.app.addBusiness();">add business</a>
