@@ -30,20 +30,16 @@ class MainController extends SimpleMVC.Controller
                         notExists = false
 
                 if notExists
-                    # TODO: ick. Use views for this.
-                    checked = ""
-                    cl_checked = ""
-                    if i.pin_enabled == "true"
-                        checked = "checked"
-                    if i.contactless_enabled == "true"
-                        cl_checked = "checked"
-                    windowContents = '<div id="emvBusinessInfo">' +
-                        '<div class="add-name">' + i.name + '</div>' +
-                        '<div class="add-address"><address>' + i.address + '</address></div>' +
-                        '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true" ' + checked  + ' disabled /><label for="pinEnabled">business has PIN pad</label></div>' +
-                        '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true" ' + cl_checked  + ' disabled /><label for="contactlessEnabled">business supports contactless cards</label></div>' +
-                        '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.reportError(' + i.id + ');">report errors</a></div></div>'
+                    view = 
+                        id: i.id
+                        name: i.name
+                        address: i.address
+                        pin_enabled: i.pin_enabled == "true"
+                        contactless_enabled: i.contactless_enabled == "true"
+                        edit_disabled: true
                     
+                    windowContents = Mustache.render(templates.per_item_entry, view)
+                                        
                     if i.confirmed_location != "true"
                         pinColor = "FE7569";
                     else
@@ -98,16 +94,18 @@ class MainController extends SimpleMVC.Controller
                         found = true
 
                 if not found
-                    # TODO: ick. We should be using SimpleMVC views to render the popup.
                     placeName = self._place.name
                     if self._place.formatted_address.indexOf(placeName) > -1
                         placeName = ""
-                    contentString = '<div id="emvBusinessInfo">' +
-                        '<div class="add-name"><input type="text" id="businessName" value="' + placeName + '" placeholder="Name of the business" /></div>' +
-                        '<div class="add-address"><address id="businessAddress">' + self._place.formatted_address + '</address></div>' +
-                        '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true"/><label for="pinEnabled">business has PIN pad</label></div>' +
-                        '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true"/><label for="contactlessEnabled">business supports contactless cards</label></div>' +
-                        '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.addBusiness();">add business</a></div></div>'
+                    view = 
+                        id: 0
+                        name: placeName
+                        address: self._place.formatted_address
+                        pin_enabled: false
+                        contactless_enabled: false
+                        edit_disabled: false
+                    
+                    contentString = Mustache.render(templates.per_item_entry, view)
         
                     if self._infoWindow?
                         self._infoWindow.close()
@@ -156,20 +154,16 @@ class MainController extends SimpleMVC.Controller
             request.done (data) ->
                 self._infoWindow.close()
         	
-                # TODO: ick. Use views for this.
-                checked = ""
-                cl_checked = ""
-                if data.pin_enabled == "true"
-                    checked = "checked"
-                if data.contactless_enabled == "true"
-                    cl_checked = "checked"
-                windowContents = '<div id="emvBusinessInfo">' +
-                    '<div class="add-name">' + data.name + '</div>' +
-                    '<div class="add-address"><address>' + data.address + '</address></div>' +
-                    '<div class="add-options"><input type="checkbox" id="pinEnabled" value="true" ' + checked + ' disabled /><label for="pinEnabled">business has PIN pad</label></div>' +
-                    '<div class="add-options"><input type="checkbox" id="contactlessEnabled" value="true" ' + cl_checked + ' disabled /><label for="contactlessEnabled">business supports contactless cards</label></div>' +
-                    '<div class="add-toolbar"><a href="#" onclick="event.preventDefault(); window.app.reportError(' + data.id + ');">report errors</a></div></div>'
+                view = 
+                    id: data.id
+                    name: data.name
+                    address: data.address
+                    pin_enabled: data.pin_enabled == "true"
+                    contactless_enabled: data.contactless_enabled == "true"
+                    edit_disabled: true
                 
+                windowContents = Mustache.render(templates.per_item_entry, view)
+                                
                 pinColor = "00FF00"
                     
                 pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
