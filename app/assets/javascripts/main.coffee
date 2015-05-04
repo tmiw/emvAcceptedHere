@@ -19,7 +19,11 @@ class MainController extends SimpleMVC.Controller
         mapNE = mapBounds.getNorthEast()
         mapSW = mapBounds.getSouthWest()
         
-        query = $.ajax "/businesses/" + mapNE.lat() + "/" + mapNE.lng() + "/" + mapSW.lat() + "/" + mapSW.lng()
+        settings = 
+            data:
+                hideUnconfirmed: $("#hideUnconfirmed").prop("checked")
+                
+        query = $.ajax "/businesses/" + mapNE.lat() + "/" + mapNE.lng() + "/" + mapSW.lat() + "/" + mapSW.lng(), settings
         self = this
         query.done (data) ->
             for i in data

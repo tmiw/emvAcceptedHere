@@ -1,5 +1,9 @@
 name := "emvAcceptedHere"
 
+lazy val root = (project in file(".")).enablePlugins(PlayJava, SbtWeb)
+
+scalaVersion := "2.10.4"
+
 version := "1.0-SNAPSHOT"
 
 libraryDependencies ++= Seq(
@@ -10,4 +14,4 @@ libraryDependencies ++= Seq(
   "com.typesafe" %% "play-plugins-mailer" % "2.2.0"
 )     
 
-play.Project.playScalaSettings
+//play.Project.playScalaSettings

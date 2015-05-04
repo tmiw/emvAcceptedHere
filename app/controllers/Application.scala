@@ -33,17 +33,21 @@ object Application extends Controller {
     Ok(views.html.news())
   }
   
-  def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double) = Action {
+  def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, show_only_confirmed: Boolean) = Action { implicit request =>
+    val confirmed_vals = if (show_only_confirmed) Seq(true) else Seq(true, false)
+    
     DB.withConnection { implicit conn =>
       val result = SQL("""
           SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location" 
           FROM "business_list" WHERE 
               ("business_latitude" >= {lat_bl} AND "business_latitude" <= {lat_ur}) AND
-              ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})
+              ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur}) AND
+              "business_confirmed_location" IN ({confirmed_vals})
           ORDER BY RANDOM()
           LIMIT 100""").on(
               "lng_ur" -> lon_ur, "lat_ur" -> lat_ur,
-              "lng_bl" -> lon_bl, "lat_bl" -> lat_bl)
+              "lng_bl" -> lon_bl, "lat_bl" -> lat_bl,
+              "confirmed_vals" -> confirmed_vals)
       Ok(Json.toJson(
               result().map(p => Map(
                   "id" -> p[Long]("id").toString,

@@ -7,6 +7,8 @@ html {
 
 .site-container { position: relative; height: 100%; }
 
+#hideUnconfirmed { margin-right: 8px; margin-left: 5px; }
+
 @media screen and (min-device-width: 481px) {
 	html { height: 100% }
 	body { 
