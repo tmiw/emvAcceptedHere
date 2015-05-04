@@ -33,7 +33,7 @@ object Application extends Controller {
     Ok(views.html.news())
   }
   
-  def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, show_only_confirmed: Boolean) = Action { implicit request =>
+  def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean) = Action { implicit request =>
     val confirmed_sql = 
       if (show_only_confirmed) 
         """
