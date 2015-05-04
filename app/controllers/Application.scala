@@ -37,7 +37,7 @@ object Application extends Controller {
     val confirmed_sql = 
       if (hideUnconfirmed) 
         """
-"business_confirmed_location" = true
+AND "business_confirmed_location" = true
 """ else ""
     
     DB.withConnection { implicit conn =>
