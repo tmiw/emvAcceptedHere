@@ -35,7 +35,7 @@ object Application extends Controller {
   
   def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean) = Action { implicit request =>
     val confirmed_sql = 
-      if (show_only_confirmed) 
+      if (hideUnconfirmed) 
         """
 "business_confirmed_location" = true
 """ else ""
