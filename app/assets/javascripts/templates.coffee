@@ -24,11 +24,11 @@ templates.per_item_entry = """
   </div>
   <div class="add-toolbar">
     {{#edit_disabled}}
-    <a href="#" onclick="event.preventDefault(); window.app.reportError(' + {{id}} + ');">
+    <a href="#" onclick="event.preventDefault(); window.app.reportError('{{id}}');">
       report errors
     </a>
     |
-    <a href="#" onclick="event.preventDefault(); window.app.getDrivingDirections(' + {{address}} + ');">
+    <a href="#" onclick="event.preventDefault(); window.app.getDrivingDirections('{{address}}');">
       get directions
     </a>
     {{/edit_disabled}}
