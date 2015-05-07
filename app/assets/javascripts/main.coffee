@@ -221,7 +221,8 @@ class MainController extends SimpleMVC.Controller
     @route "", () ->
         # Load saved state of hide checkbox and attach event handler
         self = this
-        $("#hideUnconfirmed").prop("checked", window.localStorage.getItem('hideUnconfirmed'))
+        if window.localStorage.getItem('hideUnconfirmed') == true:
+            $("#hideUnconfirmed").prop("checked", true)
         $("#hideUnconfirmed").change(() -> 
     	    window.localStorage.setItem('hideUnconfirmed', $("#hideUnconfirmed").prop("checked"))
     	    self._navigateDebounce())
