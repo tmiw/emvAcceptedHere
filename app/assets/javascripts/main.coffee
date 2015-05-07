@@ -219,8 +219,14 @@ class MainController extends SimpleMVC.Controller
         
  
     @route "", () ->
-        # Navigate to center of the US to start. Geolocation will move us to the correct location later.
+        # Load saved state of hide checkbox and attach event handler
         self = this
+        $("#hideUnconfirmed").prop("checked", window.localStorage.getItem('hideUnconfirmed'))
+        $("#hideUnconfirmed").change(() -> 
+    	    window.localStorage.setItem('hideUnconfirmed', $("#hideUnconfirmed").prop("checked"))
+    	    self._navigateDebounce())
+    	
+        # Navigate to center of the US to start. Geolocation will move us to the correct location later.
         failFn = (errObj) ->
             self._cur_lat = 39.828175
             self._cur_lon = -98.579500
