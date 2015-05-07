@@ -8,7 +8,7 @@ import play.api.libs.json.Json
 import play.api.Play.current
 import play.api.data._
 import play.api.data.Forms._
-import com.typesafe.plugin._
+import play.api.libs.mailer._
 import models._
 
 object Application extends Controller {
@@ -116,11 +116,12 @@ AND "business_confirmed_location" = true
       val address = business_info[String]("business_address")
       val reason = request.body.asFormUrlEncoded.get("reason")(0)
       
-      val mail = use[MailerPlugin].email
-      mail.setSubject("Reported business")
-      mail.setRecipient(Play.current.configuration.getString("email.to").get)
-      mail.setFrom(Play.current.configuration.getString("email.from").get)
-      mail.send("ID: " + id + "\r\n" + "Business name: " + name + "\r\n" + "Address: " + address + "\r\nReason:\r\n" + reason)
+      val mail = Email(
+          "Reported business", 
+          Play.current.configuration.getString("email.from").get,
+          Seq(Play.current.configuration.getString("email.to").get),
+          Some("ID: " + id + "\r\n" + "Business name: " + name + "\r\n" + "Address: " + address + "\r\nReason:\r\n" + reason))
+      MailerPlugin.send(mail)
       
       Ok(Json.toJson(true))
     }
