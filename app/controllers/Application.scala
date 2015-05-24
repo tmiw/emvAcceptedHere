@@ -58,8 +58,8 @@ AND "business_confirmed_location" = true
       
       val result = SQL("""
          SELECT "t".* FROM (SELECT """ + result_cols + from_where_clause + """) "t"
-         WHERE RAND() < {prob}
-         ORDER BY RAND()
+         WHERE RANDOM() < {prob}
+         ORDER BY RANDOM()
          LIMIT {rows}""").on(
               "prob" -> result_probability,
               "rows" -> num_rows,
