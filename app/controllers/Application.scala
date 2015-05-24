@@ -1,6 +1,7 @@
 package controllers
 
 import anorm._
+import anorm.SqlParser._
 import play.api._
 import play.api.mvc._
 import play.api.db._
@@ -41,13 +42,27 @@ AND "business_confirmed_location" = true
 """ else ""
     
     DB.withConnection { implicit conn =>
+      val result_cols = """
+        "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location"
+        """
+      val from_where_clause = """
+        FROM "business_list" WHERE 
+             ("business_latitude" >= {lat_bl} AND "business_latitude" <= {lat_ur}) AND
+             ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})""" + confirmed_sql
+      val result_count = SQL("""SELECT COUNT("id")""" + from_where_clause).on(
+              "lng_ur" -> lon_ur, "lat_ur" -> lat_ur,
+              "lng_bl" -> lon_bl, "lat_bl" -> lat_bl).as(scalar[Int].singleOpt).getOrElse(0)
+      
+      val num_rows = 300
+      val result_probability = if (result_count > 0) num_rows / result_count.asInstanceOf[Double] else 0
+      
       val result = SQL("""
-          SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location" 
-          FROM "business_list" WHERE 
-              ("business_latitude" >= {lat_bl} AND "business_latitude" <= {lat_ur}) AND
-              ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})""" + confirmed_sql + """
-          ORDER BY RANDOM()
-          LIMIT 100""").on(
+         SELECT "t".* FROM (SELECT """ + result_cols + from_where_clause + """) "t"
+         WHERE RAND() < {prob}
+         ORDER BY RAND()
+         LIMIT {rows}""").on(
+              "prob" -> result_probability,
+              "rows" -> num_rows,
               "lng_ur" -> lon_ur, "lat_ur" -> lat_ur,
               "lng_bl" -> lon_bl, "lat_bl" -> lat_bl)
       Ok(Json.toJson(
