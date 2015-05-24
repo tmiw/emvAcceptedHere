@@ -1,4 +1,4 @@
-@(brands: scala.collection.immutable.List[models.TerminalBrands], receipt_urls: scala.collection.immutable.List[models.TerminalReceipts])
+@(brands: scala.collection.immutable.List[models.TerminalBrands], receipt_urls: scala.collection.immutable.List[models.TerminalReceipts], selected_brand: Option[Int], selected_method: Option[String], selected_cvm: Option[String])
 
 @main("Sample EMV receipts") {
 
@@ -30,24 +30,24 @@
 <tr><th>Terminal brand/store:</th><td><select name="brand">
 <option value="">(select)</option>
 @for(p <- brands) {
-<option value="@p.id">@p.name</option>
+<option value="@p.id" @if(selected_brand.getOrElse(0) == p.id) { selected }>@p.name</option>
 }
 </select></td></tr>
 <tr><th>Transaction method:</th><td><select name="method">
-<option value="">(select)</option>
-<option value="swiped">Swiped (non-EMV card)</option>
-<option value="inserted">Inserted (contact EMV)</option>
-<option value="fallback">Fallback (swipe of EMV card after chip failure)</option>
-<option value="emv_contactless">EMV Contactless</option>
-<option value="msd_contactless">MSD Contactless</option>
-<option value="manual">Manual entry</option>
+<option value="" @if(selected_method.getOrElse("") == "") { selected }>(select)</option>
+<option value="swiped" @if(selected_method.getOrElse("") == "swiped") { selected }>Swiped (non-EMV card)</option>
+<option value="inserted" @if(selected_method.getOrElse("") == "inserted") { selected }>Inserted (contact EMV)</option>
+<option value="fallback" @if(selected_method.getOrElse("") == "fallback") { selected }>Fallback (swipe of EMV card after chip failure)</option>
+<option value="emv_contactless" @if(selected_method.getOrElse("") == "emv_contactless") { selected }>EMV Contactless</option>
+<option value="msd_contactless" @if(selected_method.getOrElse("") == "msd_contactless") { selected }>MSD Contactless</option>
+<option value="manual" @if(selected_method.getOrElse("") == "manual") { selected }>Manual entry</option>
 </select></td></tr>
 <tr><th>Cardholder verification method (CVM):</th><td><select name="cvm">
-<option value="">(select)</option>
-<option value="none">No CVM (typically for transactions < ~$25-$50 if chip/swipe and signature or contactless)</option>
-<option value="signature">Signature</option>
-<option value="pin">PIN</option>
-<option value="mobile">Mobile device e.g. Apple Pay (EMV contactless only); only for transactions &gt; ~$25-50</option>
+<option value="" @if(selected_cvm.getOrElse("") == "") { selected }>(select)</option>
+<option value="none" @if(selected_cvm.getOrElse("") == "none") { selected }>No CVM (typically for transactions < ~$25-$50 if chip/swipe and signature or contactless)</option>
+<option value="signature" @if(selected_cvm.getOrElse("") == "signature") { selected }>Signature</option>
+<option value="pin" @if(selected_cvm.getOrElse("") == "pin") { selected }>PIN</option>
+<option value="mobile" @if(selected_cvm.getOrElse("") == "mobile") { selected }>Mobile device e.g. Apple Pay (EMV contactless only); only for transactions &gt; ~$25-50</option>
 </select></td></tr>
 <tr><td><input type="button" value="Search" onclick="search_now()" /></td><td><input type="button" value="View All" onclick="view_all()" /></td></tr>
 </table>

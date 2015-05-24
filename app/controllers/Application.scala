@@ -141,7 +141,7 @@ AND "business_confirmed_location" = true
       """)
       val imgs = q_imgs().map(p => TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file"))).toList
       
-      Ok(views.html.receipts(result, imgs))
+      Ok(views.html.receipts(result, imgs, None, None, None))
     }
   }
   
@@ -160,7 +160,7 @@ AND "business_confirmed_location" = true
       """).on("brand" -> brand, "method" -> method, "cvm" -> cvm)
       val imgs = q_imgs().map(p => TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file"))).toList
       
-      Ok(views.html.receipts(brand_list, imgs))
+      Ok(views.html.receipts(brand_list, imgs, Some(brand), Some(method), Some(cvm)))
     }
   }
   
@@ -179,7 +179,7 @@ AND "business_confirmed_location" = true
       """).on("brand" -> brand)
       val imgs = q_imgs().map(p => TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file"))).toList
       
-      Ok(views.html.receipts(brand_list, imgs))
+      Ok(views.html.receipts(brand_list, imgs, Some(brand), None, None))
     }
   }
     
@@ -198,7 +198,7 @@ AND "business_confirmed_location" = true
       """).on("brand" -> brand, "method" -> method)
       val imgs = q_imgs().map(p => TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file"))).toList
       
-      Ok(views.html.receipts(brand_list, imgs))
+      Ok(views.html.receipts(brand_list, imgs, Some(brand), Some(method), None))
     }
   }
 }
