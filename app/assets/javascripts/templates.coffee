@@ -20,7 +20,7 @@ templates.per_item_entry = """
   </div>
   <div class="add-options">
     <input type="checkbox" id="contactlessEnabled" value="true" {{#contactless_enabled}}checked{{/contactless_enabled}} {{#edit_disabled}}disabled{{/edit_disabled}} />
-    <label for="contactlessEnabled">business supports contactless cards</label>
+    <label for="contactlessEnabled">business supports Apple/Android Pay</label>
   </div>
   <div class="add-toolbar">
     {{#edit_disabled}}
