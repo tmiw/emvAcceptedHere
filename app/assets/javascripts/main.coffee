@@ -216,23 +216,14 @@ class MainController extends SimpleMVC.Controller
             google.maps.event.addListener this._autocomplete, 'place_changed', this._navigateToAddress
         else
             this._map.panTo mapOptions.center
+    
+    _goDefaultHome: (errObj) ->
+        self._cur_lat = 39.828175
+        self._cur_lon = -98.579500
+        window.app.navigate "/loc/39.828175/-98.579500", true, false
         
- 
-    @route "", () ->
-        # Load saved state of hide checkbox and attach event handler
+    goHome: () ->
         self = this
-        if window.localStorage.getItem('hideUnconfirmed') == "true"
-            $("#hideUnconfirmed").prop("checked", true)
-        $("#hideUnconfirmed").change(() -> 
-    	    window.localStorage.setItem('hideUnconfirmed', $("#hideUnconfirmed").prop("checked"))
-    	    self._navigateDebounce())
-    	
-        # Navigate to center of the US to start. Geolocation will move us to the correct location later.
-        failFn = (errObj) ->
-            self._cur_lat = 39.828175
-            self._cur_lon = -98.579500
-            window.app.navigate "/loc/39.828175/-98.579500", true, false
-        failFn()
 
         setTimeout(() ->
             if navigator.geolocation?
@@ -242,8 +233,24 @@ class MainController extends SimpleMVC.Controller
                     self._map.setZoom 10
                     window.app.navigate "/loc/" + pos.coords.latitude + "/" + pos.coords.longitude, true, false
                 
-                navigator.geolocation.getCurrentPosition successFn, () -> {}
+                options = 
+                    maximumAge: 1000 * 60 * 30
+                    
+                navigator.geolocation.getCurrentPosition successFn, self._goDefaultHome, options
         , 0)
+        
+    @route "", () ->
+        # Load saved state of hide checkbox and attach event handler
+        self = this
+        if window.localStorage.getItem('hideUnconfirmed') == "true"
+            $("#hideUnconfirmed").prop("checked", true)
+        $("#hideUnconfirmed").change(() -> 
+    	    window.localStorage.setItem('hideUnconfirmed', $("#hideUnconfirmed").prop("checked"))
+    	    self._navigateDebounce())
+    	
+    	# Navigate to center of the US to start. Geolocation will move us to the correct location later.
+        self._goDefaultHome()        
+        self.goHome()
         	
 # initialize app
 $(document).ready () ->
