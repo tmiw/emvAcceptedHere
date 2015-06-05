@@ -45,15 +45,15 @@ class MainController extends SimpleMVC.Controller
                     windowContents = Mustache.render(templates.per_item_entry, view)
                                         
                     if i.confirmed_location != "true"
-                        pinColor = "FE7569";
+                        pinColor = "red";
                     else
-                        pinColor = "00FF00"
+                        pinColor = "green"
                     
-                    pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+                    pinImage = new google.maps.MarkerImage("/assets/images/" + pinColor + "-pin.png",
                         new google.maps.Size(21, 34),
                         new google.maps.Point(0,0),
                         new google.maps.Point(10, 34))
-                    pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+                    pinShadow = new google.maps.MarkerImage("/assets/images/pin-shadow.png",
                         new google.maps.Size(40, 37),
                         new google.maps.Point(0, 0),
                         new google.maps.Point(12, 35))
@@ -173,13 +173,13 @@ class MainController extends SimpleMVC.Controller
                 
                 windowContents = Mustache.render(templates.per_item_entry, view)
                                 
-                pinColor = "00FF00"
+                pinColor = "green"
                     
-                pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+                pinImage = new google.maps.MarkerImage("/assets/images/" + pinColor + "-pin.png",
                     new google.maps.Size(21, 34),
                     new google.maps.Point(0,0),
                     new google.maps.Point(10, 34))
-                pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+                pinShadow = new google.maps.MarkerImage("/assets/images/pin-shadow.png",
                     new google.maps.Size(40, 37),
                     new google.maps.Point(0, 0),
                     new google.maps.Point(12, 35))
