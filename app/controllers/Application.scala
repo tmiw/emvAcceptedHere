@@ -142,6 +142,17 @@ AND "business_confirmed_location" = true
     }
   }
   
+  def recentBusinesses = Action { implicit request =>
+    DB.withConnection { implicit conn =>
+      val q = SQL("""
+        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location"
+        FROM "business_list"
+        ORDER BY "id" DESC
+        LIMIT 10""")
+      val result = q().map({ p => BusinessListing.CreateFromResult(p) }).toList
+      Ok(views.html.recent_businesses(result))
+    }
+  }
   def sample_receipt_home = Action { implicit request =>
     DB.withConnection { implicit conn =>
       val q = SQL("""

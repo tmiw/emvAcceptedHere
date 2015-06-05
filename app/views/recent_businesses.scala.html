@@ -1,0 +1,21 @@
+@(results: scala.collection.immutable.List[models.BusinessListing])
+
+@main("Recently added businesses") {
+
+<table width="100%">
+<tr><th>Business name</th><th>Address</th><th>Latitude</th><th>Longitude</th><th>PIN support?</th><th>Apple/Android Pay support?</th><th>Confirmed?</th></tr>
+@for(p <- results) {
+<table>
+<tr>
+<td>@p.name</td>
+<td>@p.address</td>
+<td>@p.latitude</td>
+<td>@p.longitude</td>
+<td>@if(p.pin_enabled) { Yes } else { No }</td>
+<td>@if(p.contactless_enabled) { Yes } else { No }</td>
+<td>@if(p.confirmed_location) { Yes } else { No }</td>
+</tr>
+}
+</table>
+
+}
