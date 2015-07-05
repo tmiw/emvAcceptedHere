@@ -46,7 +46,7 @@ class MainController extends SimpleMVC.Controller
                 
                 aMarker = newMarker.marker
                 aMarker._____refToSelf = newMarker
-                aMarker.infoWindow.ourStuff = val
+                aMarker._____refToSelf.infoWindow.ourStuff = val
                 self = this
                 google.maps.event.addListener aMarker, "click", () ->
                     if self._infoWindow?
