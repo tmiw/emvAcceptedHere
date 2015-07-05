@@ -46,6 +46,13 @@ html {
 	#businessName {
     	width: 296px;
 	}
+	
+	/* This (and the mobile version below) allows for the entire parent <div>
+	   to scroll once there's enough data (!) There be dragons.
+	   Tested: iPhone 6, Chrome v44, Safari 9 */
+	.emvBusinessList {
+       max-height: 5em;
+    }
 }
 
 @media screen and (max-device-width: 480px) {
@@ -94,8 +101,12 @@ html {
 	#businessName {
     	width: 250px;
 	}
-}
 
+    .emvBusinessList {
+       max-height: 2em;
+    }	
+	
+}
 
 #address {
     width: 330px;

@@ -42,6 +42,8 @@ AND "business_confirmed_location" = true
 """ else ""
     
     DB.withConnection { implicit conn =>
+      // First we need an accurate count of the number of businesses in the bounding
+      // box for the next query.
       val result_cols = """
         "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location"
         """
@@ -56,8 +58,11 @@ AND "business_confirmed_location" = true
       val num_rows = 300
       val result_probability = if (result_count > 0) num_rows / result_count.asInstanceOf[Double] else 0
       
-      val result = SQL("""
-         SELECT "t".* FROM (SELECT """ + result_cols + from_where_clause + """) "t"
+      // This next query retrieves a random unique list of (up to) num_rows lat/long pairs. 
+      // We could retrieve all of the business info here but some locations (such as malls)
+      // can have multiple businesses with varying EMV status. 
+      val lat_longs = SQL("""
+         SELECT "t"."business_latitude", "t"."business_longitude" FROM (SELECT """ + result_cols + from_where_clause + """) "t"
          WHERE RANDOM() < {prob}
          ORDER BY RANDOM()
          LIMIT {rows}""").on(
@@ -65,18 +70,39 @@ AND "business_confirmed_location" = true
               "rows" -> num_rows,
               "lng_ur" -> lon_ur, "lat_ur" -> lat_ur,
               "lng_bl" -> lon_bl, "lat_bl" -> lat_bl)
-      Ok(Json.toJson(
-              result().map(p => Map(
-                  "id" -> p[Long]("id").toString,
-                  "name" -> p[String]("business_name"),
-                  "address" -> p[String]("business_address"),
-                  "lat" -> p[Double]("business_latitude").toString,
-                  "lng" -> p[Double]("business_longitude").toString,
-                  "pin_enabled" -> p[Boolean]("business_pin_enabled").toString,
-                  "contactless_enabled" -> p[Boolean]("business_contactless_enabled").toString,
-                  "confirmed_location" -> p[Boolean]("business_confirmed_location").toString
-              )).toList
-      ))
+      
+      // The final query actually retrieves all businesses at the locations retrieved above.
+      // This ensures that we have every single business in for example a mall.
+      val lat_long_list = 
+        lat_longs().map(p => (p[Double]("business_latitude"), p[Double]("business_longitude")))
+                   .distinct
+      
+      if (lat_long_list.length > 0)
+      {
+        val lat_long_cond_string = 
+          lat_long_list.map(q => """("business_latitude" = """ + q._1.toString() + 
+                            """ AND "business_longitude" = """ + q._2.toString() + ") ")
+     
+        val result = SQL("""SELECT """ + result_cols + """ FROM "business_list" WHERE """ +
+          lat_long_cond_string.mkString(" OR ") + confirmed_sql)
+          
+        Ok(Json.toJson(
+                result().map(p => Map(
+                    "id" -> p[Long]("id").toString,
+                    "name" -> p[String]("business_name"),
+                    "address" -> p[String]("business_address"),
+                    "lat" -> p[Double]("business_latitude").toString,
+                    "lng" -> p[Double]("business_longitude").toString,
+                    "pin_enabled" -> p[Boolean]("business_pin_enabled").toString,
+                    "contactless_enabled" -> p[Boolean]("business_contactless_enabled").toString,
+                    "confirmed_location" -> p[Boolean]("business_confirmed_location").toString
+                )).toList
+        ))
+      }
+      else
+      {
+        Ok("[]")
+      }
     }
   }
   
