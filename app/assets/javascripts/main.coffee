@@ -46,6 +46,7 @@ class MainController extends SimpleMVC.Controller
                 
                 aMarker = newMarker.marker
                 aMarker._____refToSelf = newMarker
+                aMarker.infoWindow.ourStuff = val
                 self = this
                 google.maps.event.addListener aMarker, "click", () ->
                     if self._infoWindow?
@@ -61,8 +62,8 @@ class MainController extends SimpleMVC.Controller
                     self._infoWindow.setContent('<div id="x"></div>')
                     x = document.getElementById('x')
                     if x
-                        x.innerHTML = templates.per_item_entry(val)
-                    val.foundPlaceName = ""
+                        x.innerHTML = templates.per_item_entry(self._infoWindow.ourStuff)
+                    self._infoWindow.ourStuff.foundPlaceName = ""
                         
     _navigateToNewBounds: () =>
         this._navTimeoutId = undefined
