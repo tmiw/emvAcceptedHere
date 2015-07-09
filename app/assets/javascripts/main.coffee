@@ -82,7 +82,13 @@ class MainController extends SimpleMVC.Controller
         settings = 
             data:
                 hideUnconfirmed: $("#hideUnconfirmed").prop("checked")
-                
+
+        # Google Analytics notification so it can tell the session is active.
+        ga('send', 'event', {
+            'eventCategory': 'map',
+            'eventAction': 'move'
+        })
+
         query = $.ajax "/businesses/" + mapNE.lat() + "/" + mapNE.lng() + "/" + mapSW.lat() + "/" + mapSW.lng(), settings
         self = this
         query.done (data) ->
