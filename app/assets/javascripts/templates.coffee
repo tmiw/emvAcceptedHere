@@ -67,7 +67,7 @@ templates.per_item_entry = """
   	  <input type="checkbox" value="true" {{#pin_enabled}}checked{{/pin_enabled}} disabled /> PIN
       <input type="checkbox" value="true" {{#contactless_enabled}}checked{{/contactless_enabled}} disabled /> NFC
       <input type="checkbox" value="true" {{#confirmed_location}}checked{{/confirmed_location}} disabled /> Confirmed
-    (<a href="#" onclick="event.preventDefault(); window.app.reportError('{{id}}');"><span id="report-errors-{{id}}">report errors</span></a>)
+    (<span id="report-errors-{{id}}"><a href="#" onclick="event.preventDefault(); window.app.reportError('{{id}}');">report errors</a></span>)
 </div>
 {{/each}}
 </div>
