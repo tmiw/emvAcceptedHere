@@ -200,7 +200,7 @@ class MainController extends SimpleMVC.Controller
     
     reportError: (id) ->
         result = ""
-        while result == ""
+        while result != null and result == ""
             result = window.prompt("Enter reason for reporting this entry:")
         if result != null
             query = $.ajax "/businesses/report/" + id, {type: "POST", data: {
