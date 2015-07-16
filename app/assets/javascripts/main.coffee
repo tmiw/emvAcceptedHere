@@ -199,10 +199,10 @@ class MainController extends SimpleMVC.Controller
         this._map.setZoom 15
     
     reportError: (id) ->
-        result = ""
-        while result? and result == ""
-            result = window.prompt("Enter reason for reporting this entry:")
-        if result?
+        result = " "
+        while result? and result == " "
+            result = window.prompt("Enter reason for reporting this entry:", " ")
+        if result? and (result != "")
             query = $.ajax "/businesses/report/" + id, {type: "POST", data: {
                 reason: result
             }}
