@@ -219,8 +219,9 @@ class MainController extends SimpleMVC.Controller
             }}
             
             $("#report-overlay").css("display", "none")
+            self = this
             query.done () ->
-                $("#report-errors-" + this._reportId).text("reported")
+                $("#report-errors-" + self._reportId).text("reported")
     
     cancelReport: () ->
         $("#report-overlay").css("display", "none")

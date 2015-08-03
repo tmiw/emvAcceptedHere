@@ -156,7 +156,7 @@ AND "business_confirmed_location" = true
       val name = business_info[String]("business_name")
       val address = business_info[String]("business_address")
       val reason = request.body.asFormUrlEncoded.get("reason")(0)
-      val submitter_email = request.body.asFormUrlEncoded.get("submitter_email").orElse("(not provided)")
+      val submitter_email = request.body.asFormUrlEncoded.get("submitter_email")(0)
       val mail = Email(
           "Reported business", 
           Play.current.configuration.getString("email.from").get,
