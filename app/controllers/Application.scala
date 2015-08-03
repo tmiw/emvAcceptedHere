@@ -156,12 +156,12 @@ AND "business_confirmed_location" = true
       val name = business_info[String]("business_name")
       val address = business_info[String]("business_address")
       val reason = request.body.asFormUrlEncoded.get("reason")(0)
-      
+      val submitter_email = request.body.asFormUrlEncoded.get("submitter_email").orElse("(not provided)")
       val mail = Email(
           "Reported business", 
           Play.current.configuration.getString("email.from").get,
           Seq(Play.current.configuration.getString("email.to").get),
-          Some("ID: " + id + "\r\n" + "Business name: " + name + "\r\n" + "Address: " + address + "\r\nReason:\r\n" + reason))
+          Some("ID: " + id + "\r\n" + "Submitter: " + submitter_email + "\r\n" + "Business name: " + name + "\r\n" + "Address: " + address + "\r\nReason:\r\n" + reason))
       MailerPlugin.send(mail)
       
       Ok(Json.toJson(true))

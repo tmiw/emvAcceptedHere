@@ -203,16 +203,28 @@ class MainController extends SimpleMVC.Controller
         this._map.setZoom 15
     
     reportError: (id) ->
-        result = " "
-        while result? and result == " "
-            result = window.prompt("Enter reason for reporting this entry:", " ")
-        if result? and (result != "")
-            query = $.ajax "/businesses/report/" + id, {type: "POST", data: {
-                reason: result
+        this._reportId = id
+        
+        # Only show report popup here; doReport() will actually submit.
+        $("#report-reason").val("")
+        $("#report-overlay").css("display", "block")
+        
+    doReport: () ->
+        if $("#report-reason").val() == ""
+            alert("A reason must be provided in order to submit a report.")
+        else
+            query = $.ajax "/businesses/report/" + this._reportId, {type: "POST", data: {
+                reason: $("#report-reason").val()
+                submitter_email: $("#report-email").val()
             }}
+            
+            $("#report-overlay").css("display", "none")
             query.done () ->
-                $("#report-errors-" + id).text("reported")
+                $("#report-errors-" + this._reportId).text("reported")
     
+    cancelReport: () ->
+        $("#report-overlay").css("display", "none")
+        
     getDrivingDirections: (addr) ->
         src = this._cur_lat + "," + this._cur_lon
         encoded_dest = encodeURI(addr)

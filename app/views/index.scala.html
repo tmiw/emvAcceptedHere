@@ -5,6 +5,19 @@
       page to view the map. Otherwise, please view this site in a recent-ish browser (such as Chrome,
       Safari or IE &gt;9.0).
     </div>
+    <div id="report-overlay">
+        <div id="report-overlay-content">
+            <h4>Report business</h4>
+            <label for="report-email">Your email (if you want a response):
+            <input type="text" id="report-email" size="45" placeholder="you@@yourisp.com" /></label><br/>
+            <label for="report-reason">Explain the issue below:</label><br/>
+            <textarea id="report-reason" rows="5" cols="45"></textarea><br/>
+            <div class="add-toolbar">
+                <a href="#" onclick="event.preventDefault(); window.app.doReport();">submit report</a> |
+                <a href="#" onclick="event.preventDefault(); window.app.cancelReport();">cancel</a>
+            </div>
+        </div>
+    </div>
   <div class="site-container"><div id="map-canvas"/></div>
   
   <!-- Google Maps moves the rest of this HTML into site-container. Whyyyyyyyy -->
