@@ -110,12 +110,16 @@ class MainController extends SimpleMVC.Controller
                             contactless_enabled: i.contactless_enabled == "true"
                             confirmed_location: i.confirmed_location == "true"
                         }
+                    
+                    if Object.keys(self._locations[latlon].businesses).length > 1
+                        self._locations[latlon].onlyOneBusiness = false
                 else
                     # Need to add new entry for this location
                     newobj = {}
                     newobj.notSeen = false
                     newobj.needToCreatePin = true
                     newobj.edit_disabled = true
+                    newobj.onlyOneBusiness = true
                     newobj.businesses = {}
                     newobj.businesses[i.id] = {
                         id: i.id
@@ -214,6 +218,19 @@ class MainController extends SimpleMVC.Controller
         encoded_dest = encodeURI(addr)
         window.open "http://maps.apple.com/?daddr=" + encoded_dest + "&saddr=" + src
     
+    addNewBusiness: (id) ->
+        # Clear form and make it editable.
+        $("#businessName").val("")
+        $("#businessName").prop("disabled", false)
+        $("#pinEnabled").prop("disabled", false)
+        $("#pinEnabled").prop("checked", false)
+        $("#contactlessEnabled").prop("disabled", false)
+        $("#contactlessEnabled").prop("checked", false)
+        $("#addBusinessLink").css("display", "inline")
+        $("#addNewBusinessLink").css("display", "none")
+        $("#getDirectionsLink").css("display", "none")
+        $("#report-errors-" + id).css("display", "none")
+        
     addBusiness: () ->
         self = this
         validated = true
@@ -242,6 +259,7 @@ class MainController extends SimpleMVC.Controller
             
                 key = data.lat + "," + data.lng
                 if self._locations[key]?
+                    self._locations[key].onlyOneBusiness = false
                     self._locations[key].businesses[data.id] =
                         id: data.id
                         name: data.name
@@ -261,6 +279,7 @@ class MainController extends SimpleMVC.Controller
                 else
                     view = 
                         edit_disabled: true
+                        onlyOneBusiness: true
                         needToCreatePin: true
                         businesses: {}
                 

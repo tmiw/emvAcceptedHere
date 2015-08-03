@@ -39,6 +39,31 @@ templates.per_item_entry = """
 {{/getSingleItem}}
 {{/edit_disabled}}
 {{#edit_disabled}}
+{{#if onlyOneBusiness}}
+{{#getSingleItem this}}
+<div id="emvBusinessInfo">
+  <div class="add-name">
+      <input type="text" id="businessName" value="{{name}}" disabled placeholder="Name of the business" />
+  </div>
+  <div class="add-address" id="businessAddress"><address>{{address}}</address></div>
+  <div class="add-options">
+    <input type="checkbox" id="pinEnabled" disabled value="true" {{#if pin_enabled}}checked{{/if}}/>
+    <label for="pinEnabled">business has PIN pad</label>
+  </div>
+  <div class="add-options">
+    <input type="checkbox" id="contactlessEnabled" disabled {{#if contactless_enabled}}checked{{/if}} value="true" />
+    <label for="contactlessEnabled">business supports Apple/Android Pay (NFC)</label>
+  </div>
+  <div class="add-toolbar">
+    <a id="addBusinessLink" style="display: none;" href="#" onclick="event.preventDefault(); window.app.addBusiness();">add business</a>
+    <span id="addNewBusinessLink"><a href="#" onclick="event.preventDefault(); window.app.addNewBusiness('{{id}}');">add additional business</a> | </span>
+    <span id="getDirectionsLink"><a href="#" onclick="event.preventDefault(); window.app.getDrivingDirections('{{address}}');">get directions</a> | </span>
+    <span id="report-errors-{{id}}"><a href="#" onclick="event.preventDefault(); window.app.reportError('{{id}}');">report errors</a></span>
+  </div>
+</div>
+{{/getSingleItem}}
+{{/if}}
+{{^if onlyOneBusiness}}
 <div id="emvBusinessInfo">
   <div class="add-name">
       <input type="text" id="businessName" value="{{foundPlaceName}}" placeholder="Name of the business" />
@@ -59,7 +84,7 @@ templates.per_item_entry = """
   {{/getSingleItem}}
 </div>
 {{#moreThanZero businesses}}
-<h4>Other businesses at this address</h4>
+<h4>More than one business at this address</h4>
 <div class="emvBusinessList">
 {{#each this}}
 <div class="slimEmvBusinessInfo">
@@ -72,6 +97,7 @@ templates.per_item_entry = """
 {{/each}}
 </div>
 {{/moreThanZero}}
+{{/if}}
 {{/edit_disabled}}
 """
 
