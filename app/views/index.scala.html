@@ -1,4 +1,12 @@
 @main("Find chip enabled businesses", Some(true)) {
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.4&appId=196859687102727";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
     <div class="noscriptmsg">
       JavaScript is required to view this site. If you are using NoScript or a similar browser extension
       you can choose "Allow emvacceptedhere.com" from its settings/right-click menu and then reload this
@@ -27,7 +35,8 @@
       <div style="display: inline-block;">
       <a onclick="window.app.goHome();" href="#"><img src="@routes.Assets.at("images/current-loc-button.png")" height="20" width="20" style="vertical-align: middle;"/></a></div>
       <div id="footer">
-        <span id="note"><a href="/news#news20150802" target="_blank">UI improvements (8/2/2015)</a></span> | <a href="/about" target="_blank">About this site</a> | <a href="http://www.reddit.com/r/chipcards/" target="_blank">/r/chipcards on reddit</a> | Copyright &copy; 2015 Mooneer Salem.
+        <span id="note"><a href="/news#news20150802" target="_blank">UI improvements (8/2/2015)</a></span> | <a href="/about" target="_blank">About</a> | <a href="http://www.reddit.com/r/chipcards/" target="_blank">/r/chipcards</a><br/>
+        <div class="fb-share-button" data-href="https://emvacceptedhere.com" data-layout="button"></div> <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://emvacceptedhere.com/" data-text="I found local businesses who care about security using" data-count="none" data-hashtags="EMV">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script> | Copyright &copy; 2015 Mooneer Salem.
       </div>
     </div>
   </div>
