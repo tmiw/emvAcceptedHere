@@ -43,7 +43,7 @@ AND "business_confirmed_location" = true
     val chain_sql = 
       if (hideChains)
         """
-AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "chain_name" LIKE "business_list"."business_name" || '%')
+AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "chain_name" LIKE ("business_list"."business_name" || '%'))
 """ else ""
         
     DB.withConnection { implicit conn =>
