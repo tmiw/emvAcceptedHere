@@ -82,7 +82,8 @@ class MainController extends SimpleMVC.Controller
         settings = 
             data:
                 hideUnconfirmed: $("#hideUnconfirmed").prop("checked")
-
+                hideChains: $("#hideChains").prop("checked")
+				
         # Google Analytics notification so it can tell the session is active.
         ga('send', 'event', {
             'eventCategory': 'map',
@@ -357,10 +358,15 @@ class MainController extends SimpleMVC.Controller
         $(".site-container").css("display", "block");
         if window.localStorage.getItem('hideUnconfirmed') == "true"
             $("#hideUnconfirmed").prop("checked", true)
+        if window.localStorage.getItem('hideChains') == "true"
+            $("#hideChains").prop("checked", true)
         $("#hideUnconfirmed").change(() -> 
             window.localStorage.setItem('hideUnconfirmed', $("#hideUnconfirmed").prop("checked"))
             self._navigateDebounce())
-        
+        $("#hideChains").change(() -> 
+            window.localStorage.setItem('hideChains', $("#hideChains").prop("checked"))
+            self._navigateDebounce())
+			
         # Navigate to center of the US to start. Geolocation will move us to the correct location later.
         self._goDefaultHome()        
         self.goHome()

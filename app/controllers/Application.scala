@@ -34,13 +34,18 @@ object Application extends Controller {
     Ok(views.html.news())
   }
   
-  def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean) = Action { implicit request =>
+  def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean, hideChains: Boolean) = Action { implicit request =>
     val confirmed_sql = 
       if (hideUnconfirmed) 
         """
 AND "business_confirmed_location" = true
 """ else ""
-    
+    val chain_sql = 
+      if (hideChains)
+        """
+AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "chain_name" LIKE "business_list"."business_name" || '%')
+""" else ""
+        
     DB.withConnection { implicit conn =>
       // First we need an accurate count of the number of businesses in the bounding
       // box for the next query.
@@ -50,7 +55,7 @@ AND "business_confirmed_location" = true
       val from_where_clause = """
         FROM "business_list" WHERE 
              ("business_latitude" >= {lat_bl} AND "business_latitude" <= {lat_ur}) AND
-             ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})""" + confirmed_sql
+             ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})""" + confirmed_sql + chain_sql
       val result_count = SQL("""SELECT COUNT("id")""" + from_where_clause).on(
               "lng_ur" -> lon_ur, "lat_ur" -> lat_ur,
               "lng_bl" -> lon_bl, "lat_bl" -> lat_bl).as(scalar[Int].singleOpt).getOrElse(0)
