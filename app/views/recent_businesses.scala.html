@@ -1,9 +1,10 @@
-@(results: scala.collection.immutable.List[models.BusinessListing])
+@(results: scala.collection.immutable.List[models.BusinessListing], small_results: scala.collection.immutable.List[models.BusinessListing], num_businesses: Int, num_small_businesses: Int, num_nfc_businesses: Int)
 
 @main("Recently added businesses", None) {
 
 <p><a href="/">Back to emvacceptedhere.com</a></p>
 
+<h3>Latest additions</h3>
 <table width="100%">
 <tr><th>Business name</th><th>Address</th><th>Latitude</th><th>Longitude</th><th>PIN support?</th><th>Apple/Android Pay support?</th><th>Confirmed?</th></tr>
 @for(p <- results) {
@@ -19,4 +20,26 @@
 }
 </table>
 
+<h3>Latest small retailer additions</h3>
+<table width="100%">
+<tr><th>Business name</th><th>Address</th><th>Latitude</th><th>Longitude</th><th>PIN support?</th><th>Apple/Android Pay support?</th><th>Confirmed?</th></tr>
+@for(p <- small_results) {
+<tr>
+<td>@p.name</td>
+<td>@p.address</td>
+<td>@p.latitude</td>
+<td>@p.longitude</td>
+<td>@if(p.pin_enabled) { Yes } else { No }</td>
+<td>@if(p.contactless_enabled) { Yes } else { No }</td>
+<td>@if(p.confirmed_location) { Yes } else { No }</td>
+</tr>
+}
+</table>
+
+<h3>Map statistics</h3>
+<table>
+<tr><th>Total number of locations:</th><td>@num_businesses</td></tr>
+<tr><th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Excluding large retailers:</th><td>@num_small_businesses</td></tr>
+<tr><th>NFC supporting locations:</th><td>@num_nfc_businesses (@("%.01f%%".format(num_nfc_businesses*100.0/num_businesses)) of all locations)</td></tr>
+</table>
 }

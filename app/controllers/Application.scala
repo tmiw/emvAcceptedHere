@@ -181,9 +181,35 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "chain_name" LIKE ("business_li
         ORDER BY "id" DESC
         LIMIT 10""")
       val result = q().map({ p => BusinessListing.CreateFromResult(p) }).toList
-      Ok(views.html.recent_businesses(result))
+      
+      val small_result = SQL("""
+        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location"
+        FROM "business_list"
+        WHERE NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "chain_name" LIKE ("business_list"."business_name" || '%'))
+        ORDER BY "id" DESC
+        LIMIT 10
+        """)().map({ p => BusinessListing.CreateFromResult(p) }).toList
+        
+      val num_businesses = SQL("""
+        SELECT COUNT("id") AS "cnt"
+        FROM "business_list"
+        """)().head[Int]("cnt")
+        
+      val num_small_businesses = SQL("""
+        SELECT COUNT("id") AS "cnt"
+        FROM "business_list"
+        WHERE NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "chain_name" LIKE ("business_list"."business_name" || '%'))
+        """)().head[Int]("cnt")
+      
+      val num_nfc_businesses = SQL("""
+        SELECT COUNT("id") AS "cnt"
+        FROM "business_list"
+        WHERE "business_contactless_enabled" IS true""")().head[Int]("cnt")
+        
+      Ok(views.html.recent_businesses(result, small_result, num_businesses, num_small_businesses, num_nfc_businesses))
     }
   }
+  
   def sample_receipt_home = Action { implicit request =>
     DB.withConnection { implicit conn =>
       val q = SQL("""
