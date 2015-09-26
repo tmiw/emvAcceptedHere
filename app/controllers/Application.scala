@@ -43,7 +43,7 @@ AND "business_confirmed_location" = true
     val chain_sql = 
       if (hideChains)
         """
-AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "chain_name" LIKE ("business_list"."business_name" || '%'))
+AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name" LIKE ("chain_name" || '%'))
 """ else ""
         
     DB.withConnection { implicit conn =>
@@ -185,7 +185,7 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "chain_name" LIKE ("business_li
       val small_result = SQL("""
         SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location"
         FROM "business_list"
-        WHERE NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "chain_name" LIKE ("business_list"."business_name" || '%'))
+        WHERE NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name" LIKE ("chain_name" || '%'))
         ORDER BY "id" DESC
         LIMIT 10
         """)().map({ p => BusinessListing.CreateFromResult(p) }).toList
@@ -198,7 +198,7 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "chain_name" LIKE ("business_li
       val num_small_businesses = SQL("""
         SELECT COUNT("id") AS "cnt"
         FROM "business_list"
-        WHERE NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "chain_name" LIKE ("business_list"."business_name" || '%'))
+        WHERE NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name" LIKE ("chain_name" || '%'))
         """)().head[Int]("cnt")
       
       val num_nfc_businesses = SQL("""
