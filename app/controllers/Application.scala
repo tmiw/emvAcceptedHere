@@ -192,7 +192,7 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
       
       val num_retailers = SQL("""
         SELECT COUNT(*) AS "cnt"
-        FROM (SELECT "business_name" FROM "business_list" GROUP BY "business_name") c
+        FROM (SELECT "business_name" FROM "business_list" GROUP BY "business_name") "c"
         """)().head[Int]("cnt")
       
       val num_small_retailers = SQL("""
@@ -201,7 +201,7 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
             SELECT "business_name" 
             FROM "business_list" 
             WHERE NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name" LIKE ("chain_name" || '%'))
-            GROUP BY "business_name") c
+            GROUP BY "business_name") "c"
         """)().head[Int]("cnt")
         
       val num_businesses = SQL("""
