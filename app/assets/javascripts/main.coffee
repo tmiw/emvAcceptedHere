@@ -148,17 +148,21 @@ class MainController extends SimpleMVC.Controller
             self._createMarkersForBusinesses()
             
             if self._handlePossibleAdd
-                self._handlePossibleAdd = false 
-                placeName = self._place.name
-                if self._place.formatted_address.indexOf(placeName) > -1
+                self._handlePossibleAdd = false
+                if self._place? 
+                    centerLocString = self._place.geometry.location.lat() + "," + self._place.geometry.location.lng()
+                    placeName = self._place.name
+                    if self._place.formatted_address.indexOf(placeName) > -1
+                        placeName = ""
+                else
                     placeName = ""
+                    centerLocString = self._cur_lat + "," + self._cur_lon
                 found = false
                 for k, v of self._locations
                 	loc = null
                 	for id, l of v.businesses
                         loc = l
                     locString = loc.lat + "," + loc.lon
-                    centerLocString = self._place.geometry.location.lat() + "," + self._place.geometry.location.lng()
                     if locString == centerLocString
                         v.foundPlaceName = placeName
                         self._infoWindow = v.marker.infoWindow
@@ -317,6 +321,10 @@ class MainController extends SimpleMVC.Controller
             center: new google.maps.LatLng(lat, lng),
             noClear: true
         }
+        if this._first_nav
+            mapOptions.zoom = 15
+            this._handlePossibleAdd = true
+            this._first_nav = false
         if not this._map?
             this._map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions)
             
@@ -367,9 +375,22 @@ class MainController extends SimpleMVC.Controller
             window.localStorage.setItem('hideChains', $("#hideChains").prop("checked"))
             self._navigateDebounce())
 			
-        # Navigate to center of the US to start. Geolocation will move us to the correct location later.
-        self._goDefaultHome()        
-        self.goHome()
+        if window.location.hash
+            # We're going to navigate directly to a particular location on the map.
+            hash_without_hash = window.location.hash.substring 1
+            components = hash_without_hash.split ","
+            if components.length == 2
+                self._cur_lat = components[0]
+                self._cur_lon = components[1]
+                self._first_nav = true
+                window.app.navigate "/loc/" + components[0] + "/" + components[1], true, false
+            else
+                self._goDefaultHome()        
+                self.goHome()
+        else
+            # Navigate to center of the US to start. Geolocation will move us to the correct location later.        
+            self._goDefaultHome()        
+            self.goHome()
             
 # initialize app
 google.maps.event.addDomListener window, "load", () ->
