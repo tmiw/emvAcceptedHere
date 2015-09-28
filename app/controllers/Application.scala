@@ -189,6 +189,20 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
         ORDER BY "id" DESC
         LIMIT 10
         """)().map({ p => BusinessListing.CreateFromResult(p) }).toList
+      
+      val num_retailers = SQL("""
+        SELECT COUNT(*) AS "cnt"
+        FROM (SELECT "business_name" FROM "business_list" GROUP BY "business_name")
+        """)().head[Int]("cnt")
+      
+      val num_small_retailers = SQL("""
+        SELECT COUNT(*) AS "cnt"
+        FROM (
+            SELECT "business_name" 
+            FROM "business_list" 
+            WHERE NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name" LIKE ("chain_name" || '%'))
+            GROUP BY "business_name")
+        """)().head[Int]("cnt")
         
       val num_businesses = SQL("""
         SELECT COUNT("id") AS "cnt"
@@ -206,7 +220,7 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
         FROM "business_list"
         WHERE "business_contactless_enabled" IS true""")().head[Int]("cnt")
         
-      Ok(views.html.recent_businesses(result, small_result, num_businesses, num_small_businesses, num_nfc_businesses))
+      Ok(views.html.recent_businesses(result, small_result, num_businesses, num_small_businesses, num_nfc_businesses, num_retailers, num_small_retailers))
     }
   }
   
