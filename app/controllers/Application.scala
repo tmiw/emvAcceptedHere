@@ -219,8 +219,18 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
         SELECT COUNT("id") AS "cnt"
         FROM "business_list"
         WHERE "business_contactless_enabled" IS true""")().head[Int]("cnt")
+      
+      val num_nfc_retailers = SQL("""
+        SELECT COUNT(*) AS "cnt2"
+        FROM (
+            SELECT "business_name", count("business_contactless_enabled") AS "cnt" 
+            FROM "business_list"
+            GROUP BY "business_name", "business_contactless_enabled"
+            HAVING "business_contactless_enabled" IS true 
+            ORDER BY "cnt" DESC) x
+        """)().head[Int]("cnt2")
         
-      Ok(views.html.recent_businesses(result, small_result, num_businesses, num_small_businesses, num_nfc_businesses, num_retailers, num_small_retailers))
+      Ok(views.html.recent_businesses(result, small_result, num_businesses, num_small_businesses, num_nfc_businesses, num_nfc_retailers, num_retailers, num_small_retailers))
     }
   }
   
