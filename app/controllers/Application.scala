@@ -11,8 +11,9 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.mailer._
 import models._
+import javax.inject.Inject
 
-object Application extends Controller {
+class Application @Inject() (mailerClient: MailerClient) extends Controller {
   
   def index = Action {
     Ok(views.html.index())
@@ -78,9 +79,13 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
       
       // The final query actually retrieves all businesses at the locations retrieved above.
       // This ensures that we have every single business in for example a mall.
+      val ll_parser = RowParser[(Double, Double)] {
+        case Row(lat: Double, lon: Double) => Success((lat, lon))
+        case row => Error(TypeDoesNotMatch(s"unexpected: $row"))
+      }
       val lat_long_list = 
-        lat_longs().map(p => (p[Double]("business_latitude"), p[Double]("business_longitude")))
-                   .distinct
+        lat_longs.as(ll_parser.*)
+                 .distinct
       
       if (lat_long_list.length > 0)
       {
@@ -90,9 +95,10 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
      
         val result = SQL("""SELECT """ + result_cols + """ FROM "business_list" WHERE """ +
           lat_long_cond_string.mkString(" OR ") + confirmed_sql)
-          
-        Ok(Json.toJson(
-                result().map(p => Map(
+        
+        val result_parser = RowParser[Map[String, String]] {
+          case p => 
+            Success(Map(
                     "id" -> p[Long]("id").toString,
                     "name" -> p[String]("business_name"),
                     "address" -> p[String]("business_address"),
@@ -100,9 +106,9 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
                     "lng" -> p[Double]("business_longitude").toString,
                     "pin_enabled" -> p[Boolean]("business_pin_enabled").toString,
                     "contactless_enabled" -> p[Boolean]("business_contactless_enabled").toString,
-                    "confirmed_location" -> p[Boolean]("business_confirmed_location").toString
-                )).toList
-        ))
+                    "confirmed_location" -> p[Boolean]("business_confirmed_location").toString))
+        }
+        Ok(Json.toJson(result.as(result_parser.*)))
       }
       else
       {
@@ -156,10 +162,12 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
       val result = SQL("""
           SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location"
           FROM "business_list" WHERE
-          "id" = {id}""").on("id" -> id)
-      val business_info = result().toList.head
-      val name = business_info[String]("business_name")
-      val address = business_info[String]("business_address")
+          "id" = {id}""").on("id" -> id).as(RowParser[(String, String)] {
+            case p => Success((p[String]("business_name"), p[String]("business_address")))
+          }.*)
+      val business_info = result.head
+      val name = business_info._1
+      val address = business_info._2
       val reason = request.body.asFormUrlEncoded.get("reason")(0)
       val submitter_email = request.body.asFormUrlEncoded.get("submitter_email")(0)
       val mail = Email(
@@ -167,7 +175,7 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
           Play.current.configuration.getString("email.from").get,
           Seq(Play.current.configuration.getString("email.to").get),
           Some("ID: " + id + "\r\n" + "Submitter: " + submitter_email + "\r\n" + "Business name: " + name + "\r\n" + "Address: " + address + "\r\nReason:\r\n" + reason))
-      MailerPlugin.send(mail)
+      mailerClient.send(mail)
       
       Ok(Json.toJson(true))
     }
@@ -180,7 +188,10 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
         FROM "business_list"
         ORDER BY "id" DESC
         LIMIT 10""")
-      val result = q().map({ p => BusinessListing.CreateFromResult(p) }).toList
+      val q_parser = RowParser[BusinessListing] {
+        case p => Success(BusinessListing.CreateFromResult(p))
+      }
+      val result = q.as(q_parser.*)
       
       val small_result = SQL("""
         SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location"
@@ -188,12 +199,12 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
         WHERE NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name" LIKE ("chain_name" || '%'))
         ORDER BY "id" DESC
         LIMIT 10
-        """)().map({ p => BusinessListing.CreateFromResult(p) }).toList
+        """).as(q_parser.*)
       
       val num_retailers = SQL("""
         SELECT COUNT(*) AS "cnt"
         FROM (SELECT "business_name" FROM "business_list" GROUP BY "business_name") "c"
-        """)().head[Int]("cnt")
+        """).as(scalar[Int].*).head
       
       val num_small_retailers = SQL("""
         SELECT COUNT(*) AS "cnt"
@@ -202,23 +213,23 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
             FROM "business_list" 
             WHERE NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name" LIKE ("chain_name" || '%'))
             GROUP BY "business_name") "c"
-        """)().head[Int]("cnt")
+        """).as(scalar[Int].*).head
         
       val num_businesses = SQL("""
         SELECT COUNT("id") AS "cnt"
         FROM "business_list"
-        """)().head[Int]("cnt")
+        """).as(scalar[Int].*).head
         
       val num_small_businesses = SQL("""
         SELECT COUNT("id") AS "cnt"
         FROM "business_list"
         WHERE NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name" LIKE ("chain_name" || '%'))
-        """)().head[Int]("cnt")
+        """).as(scalar[Int].*).head
       
       val num_nfc_businesses = SQL("""
         SELECT COUNT("id") AS "cnt"
         FROM "business_list"
-        WHERE "business_contactless_enabled" IS true""")().head[Int]("cnt")
+        WHERE "business_contactless_enabled" IS true""").as(scalar[Int].*).head
       
       val num_nfc_retailers = SQL("""
         SELECT COUNT(*) AS "cnt2"
@@ -228,7 +239,7 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
             GROUP BY "business_name", "business_contactless_enabled"
             HAVING "business_contactless_enabled" IS true 
             ORDER BY "cnt" DESC) x
-        """)().head[Int]("cnt2")
+        """).as(scalar[Int].*).head
         
       Ok(views.html.recent_businesses(result, small_result, num_businesses, num_small_businesses, num_nfc_businesses, num_nfc_retailers, num_retailers, num_small_retailers))
     }
@@ -239,14 +250,18 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
       val q = SQL("""
           SELECT "id", "brand_name" FROM "receipt_terminal_brands" ORDER BY "brand_name"
       """)
-      val result = q().map(p => TerminalBrands(p[Int]("id"), p[String]("brand_name"))).toList
+      val result = q.as(RowParser[TerminalBrands] { 
+        case p => Success(TerminalBrands(p[Int]("id"), p[String]("brand_name")))
+      }.*)
       
       val q_imgs = SQL("""
           SELECT p.id as id, b.brand_name as brand_name, p.method::varchar(255) as method, p.cvm::varchar(255) as cvm, 
                  p.image_file as image_file 
           FROM "receipts" p inner join "receipt_terminal_brands" b on b.id=p.brand
       """)
-      val imgs = q_imgs().map(p => TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file"))).toList
+      val imgs = q_imgs.as(RowParser[TerminalReceipts] { 
+        case p => Success(TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file")))
+      }.*)
       
       Ok(views.html.receipts(result, imgs, None, None, None))
     }
@@ -257,7 +272,9 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
       val q = SQL("""
           SELECT "id", "brand_name" FROM "receipt_terminal_brands" ORDER BY "brand_name"
       """)
-      val brand_list = q().map(p => TerminalBrands(p[Int]("id"), p[String]("brand_name"))).toList
+      val brand_list = q.as(RowParser[TerminalBrands] { 
+        case p => Success(TerminalBrands(p[Int]("id"), p[String]("brand_name")))
+      }.*)
       
       val q_imgs = SQL("""
           SELECT p.id as id, b.brand_name as brand_name, p.method::varchar(255) as method, p.cvm::varchar(255) as cvm, 
@@ -265,7 +282,9 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
           FROM "receipts" p inner join "receipt_terminal_brands" b on b.id=p.brand
           WHERE "brand" = {brand} AND "method" = {method}::txn_method AND "cvm" = {cvm}::txn_cvm
       """).on("brand" -> brand, "method" -> method, "cvm" -> cvm)
-      val imgs = q_imgs().map(p => TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file"))).toList
+      val imgs = q_imgs.as(RowParser[TerminalReceipts] { 
+        case p => Success(TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file")))
+      }.*)
       
       Ok(views.html.receipts(brand_list, imgs, Some(brand), Some(method), Some(cvm)))
     }
@@ -276,7 +295,9 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
       val q = SQL("""
           SELECT "id", "brand_name" FROM "receipt_terminal_brands" ORDER BY "brand_name"
       """)
-      val brand_list = q().map(p => TerminalBrands(p[Int]("id"), p[String]("brand_name"))).toList
+      val brand_list = q.as(RowParser[TerminalBrands] { 
+        case p => Success(TerminalBrands(p[Int]("id"), p[String]("brand_name")))
+      }.*)
       
       val q_imgs = SQL("""
           SELECT p.id as id, b.brand_name as brand_name, p.method::varchar(255) as method, p.cvm::varchar(255) as cvm,
@@ -284,7 +305,9 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
           FROM "receipts" p inner join "receipt_terminal_brands" b on b.id=p.brand
           WHERE "brand" = {brand}
       """).on("brand" -> brand)
-      val imgs = q_imgs().map(p => TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file"))).toList
+      val imgs = q_imgs.as(RowParser[TerminalReceipts] { 
+        case p => Success(TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file")))
+      }.*)
       
       Ok(views.html.receipts(brand_list, imgs, Some(brand), None, None))
     }
@@ -295,7 +318,9 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
       val q = SQL("""
           SELECT "id", "brand_name" FROM "receipt_terminal_brands" ORDER BY "brand_name"
       """)
-      val brand_list = q().map(p => TerminalBrands(p[Int]("id"), p[String]("brand_name"))).toList
+      val brand_list = q.as(RowParser[TerminalBrands] { 
+        case p => Success(TerminalBrands(p[Int]("id"), p[String]("brand_name")))
+      }.*)
       
       val q_imgs = SQL("""
           SELECT p.id as id, b.brand_name as brand_name, p.method::varchar(255) as method, p.cvm::varchar(255) as cvm,
@@ -303,7 +328,9 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
           FROM "receipts" p inner join "receipt_terminal_brands" b on b.id=p.brand
           WHERE "brand" = {brand} AND "method" = {method}::txn_method
       """).on("brand" -> brand, "method" -> method)
-      val imgs = q_imgs().map(p => TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file"))).toList
+      val imgs = q_imgs.as(RowParser[TerminalReceipts] { 
+        case p => Success(TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file")))
+      }.*)
       
       Ok(views.html.receipts(brand_list, imgs, Some(brand), Some(method), None))
     }
