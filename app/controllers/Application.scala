@@ -80,8 +80,7 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
       // The final query actually retrieves all businesses at the locations retrieved above.
       // This ensures that we have every single business in for example a mall.
       val ll_parser = RowParser[(Double, Double)] {
-        case Row(lat: Double, lon: Double) => Success((lat, lon))
-        case row => Error(TypeDoesNotMatch(s"unexpected: $row"))
+        case row => Success((row[Double]("business_latitude"), row[Double]("business_longitude")))
       }
       val lat_long_list = 
         lat_longs.as(ll_parser.*)
