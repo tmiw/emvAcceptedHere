@@ -392,7 +392,13 @@ class MainController extends SimpleMVC.Controller
             self._goDefaultHome()        
             self.goHome()
             
-# initialize app
-google.maps.event.addDomListener window, "load", () ->
-    window.app = new MainController
-    window.app.start()
+# initialize app once Google Maps API loads.
+$(document).ready(() ->
+   s = document.createElement("script")
+   s.type = "text/javascript"
+   s.src  = "https://maps.google.com/maps/api/js?libraries=places&sensor=false&callback=gmap_draw"
+   window.gmap_draw = () ->
+       window.app = new MainController
+       window.app.start()
+   $("head").append(s)
+)
