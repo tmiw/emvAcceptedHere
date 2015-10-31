@@ -6,7 +6,16 @@
   js = d.createElement(s); js.id = id;
   js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.4&appId=196859687102727";
   fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+}(document, 'script', 'facebook-jssdk'));
+
+// Note: need to have these here so that Play can give us the correct URLs
+// during template execution.
+window.emv = {};
+window.emv.image_urls = {};
+window.emv.image_urls["red"] = "@routes.Assets.versioned("images/red-pin.png")";
+window.emv.image_urls["green"] = "@routes.Assets.versioned("images/green-pin.png")";
+window.emv.image_urls["yellow"] = "@routes.Assets.versioned("images/yellow-pin.png")";
+</script>
     <div class="noscriptmsg">
       JavaScript is required to view this site. If you are using NoScript or a similar browser extension
       you can choose "Allow emvacceptedhere.com" from its settings/right-click menu and then reload this

@@ -25,7 +25,7 @@ class MainController extends SimpleMVC.Controller
                     else
                         pinColor = "red"
                 
-                pinImage = new google.maps.MarkerImage("/assets/images/" + pinColor + "-pin.png",
+                pinImage = new google.maps.MarkerImage(window.emv.image_urls[pinColor],
                     new google.maps.Size(21, 34),
                     new google.maps.Point(0,0),
                     new google.maps.Point(10, 34))
@@ -290,7 +290,7 @@ class MainController extends SimpleMVC.Controller
                     
                     # Make marker yellow since there are now 2+ items at the same lat/lon
                     self._locations[key].marker.marker.setIcon(
-                        new google.maps.MarkerImage("/assets/images/yellow-pin.png",
+                        new google.maps.MarkerImage(window.emv.image_urls["yellow"],
                             new google.maps.Size(21, 34),
                             new google.maps.Point(0,0),
                             new google.maps.Point(10, 34)))
