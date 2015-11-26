@@ -7,7 +7,6 @@
         <title>@title | EMV Accepted Here</title>
         @if(useViewport.getOrElse(false) == true) { <meta name="viewport" content="initial-scale=1, maximum-scale=1" /> }
         <link rel="apple-touch-icon" href="@routes.Assets.versioned("images/iphone-icon.png")" />
-        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
         <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -18,6 +17,17 @@
   ga('create', 'UA-64717624-1', 'auto');
   ga('send', 'pageview');
 
+</script>
+<script>
+      var cb = function() {
+        var l = document.createElement('link'); l.rel = 'stylesheet';
+        l.href = "@routes.Assets.versioned("stylesheets/main.css")";
+        var h = document.getElementsByTagName('head')[0]; h.parentNode.insertBefore(l, h);
+      };
+      var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+          webkitRequestAnimationFrame || msRequestAnimationFrame;
+      if (raf) raf(cb);
+      else window.addEventListener('load', cb);
 </script>
         <meta name="description" content="Allows you to find and add businesses in your area that accept chip-enabled credit and debit cards onto an interactive map. These businesses take the security of your personal information seriously and should be preferred over others." />
     </head>
