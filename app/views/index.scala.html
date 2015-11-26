@@ -1,21 +1,4 @@
 @main("Find chip enabled businesses", Some(true)) {
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.4&appId=196859687102727";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
-
-// Note: need to have these here so that Play can give us the correct URLs
-// during template execution.
-window.emv = {};
-window.emv.image_urls = {};
-window.emv.image_urls["red"] = "@routes.Assets.versioned("images/red-pin.png")";
-window.emv.image_urls["green"] = "@routes.Assets.versioned("images/green-pin.png")";
-window.emv.image_urls["yellow"] = "@routes.Assets.versioned("images/yellow-pin.png")";
-</script>
     <div class="noscriptmsg">
       <div class="progress"><div>Loading...</div></div>
       
@@ -44,8 +27,14 @@ window.emv.image_urls["yellow"] = "@routes.Assets.versioned("images/yellow-pin.p
       <div style="display: inline-block;">
       <a onclick="window.app.goHome();" href="#"><img src="@routes.Assets.versioned("images/current-loc-button.png")" alt="Move map to your current location" height="20" width="20" style="vertical-align: middle;"/></a></div>
       <div id="footer">
-        <span id="note"><a href="/news#news20151122" target="_blank">Happy Holidays (11/22/2015)</a></span> | <a href="/about" target="_blank">About</a> | <a href="http://www.reddit.com/r/chipcards/" target="_blank">/r/chipcards</a><br/>
-        <div class="fb-share-button" data-href="https://emvacceptedhere.com" data-layout="button"></div> <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://emvacceptedhere.com/" data-text="I found local businesses who care about security using" data-count="none" data-hashtags="EMV">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script> | Copyright &copy; 2015 Mooneer Salem.
+        <div class="line1"><span id="note"><a href="/news#news20151122" target="_blank">Happy Holidays (11/22/2015)</a></span> | <a href="/about" target="_blank">About</a> | <a href="http://www.reddit.com/r/chipcards/" target="_blank">/r/chipcards</a></div>
+        <div class="line2">
+        <ul class="share-buttons">
+  			<li><a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Femvaccpetedhere.com&t=" title="Share on Facebook" target="_blank" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(document.URL) + '&t=' + encodeURIComponent(document.URL)); return false;"><img src="@routes.Assets.versioned("images/Facebook.png")"></a></li>
+  			<li><a href="https://twitter.com/intent/tweet?source=https%3A%2F%2Femvaccpetedhere.com&text=I+found+local+businesses+who+care+about+security+using+%23EMV+https%3A%2F%2Femvaccpetedhere.com" target="_blank" title="Tweet" onclick="window.open('https://twitter.com/intent/tweet?text=I+found+local+businesses+who+care+about+security+using+%23EMV+'  + encodeURIComponent(document.URL)); return false;"><img src="@routes.Assets.versioned("images/Twitter.png")"></a></li>
+  			<li><a href="https://plus.google.com/share?url=https%3A%2F%2Femvaccpetedhere.com" target="_blank" title="Share on Google+" onclick="window.open('https://plus.google.com/share?url=' + encodeURIComponent(document.URL)); return false;"><img src="@routes.Assets.versioned("images/Google+.png")"></a></li>
+		</ul> 
+		<span class="copyright">| Copyright &copy; 2015-2016 Mooneer Salem.</span></div>
       </div>
     </div>
   </div>
@@ -92,6 +81,14 @@ window.emv.image_urls["yellow"] = "@routes.Assets.versioned("images/yellow-pin.p
 		});
 	}
 	
+	// Note: need to have these here so that Play can give us the correct URLs
+	// during template execution.
+	window.emv = {};
+	window.emv.image_urls = {};
+	window.emv.image_urls["red"] = "@routes.Assets.versioned("images/red-pin.png")";
+	window.emv.image_urls["green"] = "@routes.Assets.versioned("images/green-pin.png")";
+	window.emv.image_urls["yellow"] = "@routes.Assets.versioned("images/yellow-pin.png")";
+
 	loadScript([
 	    "@routes.Assets.versioned("javascripts/jquery-1.9.0.min.js")",
 	    "@routes.Assets.versioned("javascripts/handlebars-v3.0.3.js")",

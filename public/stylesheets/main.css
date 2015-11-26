@@ -61,7 +61,7 @@ html {
 	    right: 0px;
 	    background-color: #ffffff;
 	    width: 420px;
-	    height: 65px;
+	    height: 70px;
 	    z-index: 99;
 	    border-bottom: 1px solid black;
 	    border-left: 1px solid black;
@@ -231,3 +231,28 @@ html {
 	transform: rotate(-135deg);
 	background: #bbb;
 }
+
+/* Simple Share Buttons (https://simplesharingbuttons.com) */
+ul.share-buttons{
+  list-style: none;
+  padding: 0;
+  margin-top: 2px;
+  display: inline;
+}
+
+ul.share-buttons li{
+  display: inline;
+}
+
+ul.share-buttons li img {
+  width: 24px;
+}
+
+.copyright 
+{
+	display: inline-block;
+	vertical-align: middle;
+	margin-top: -15px;
+}
+
+.line2 { height: 24px; padding-top: 5px; }
