@@ -27,5 +27,6 @@ routesGenerator := InjectedRoutesGenerator
 pipelineStages := Seq(rjs, digest, gzip)
 
 libraryDependencies += specs2 % Test
+libraryDependencies += filters
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
