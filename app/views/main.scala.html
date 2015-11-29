@@ -17,18 +17,8 @@
   ga('create', 'UA-64717624-1', 'auto');
   ga('send', 'pageview');
 
-</script>
-<script>
-      var cb = function() {
-        var l = document.createElement('link'); l.rel = 'stylesheet';
-        l.href = "@routes.Assets.versioned("stylesheets/main.css")";
-        var h = document.getElementsByTagName('head')[0]; h.parentNode.insertBefore(l, h);
-      };
-      var raf = requestAnimationFrame || mozRequestAnimationFrame ||
-          webkitRequestAnimationFrame || msRequestAnimationFrame;
-      if (raf) raf(cb);
-      else window.addEventListener('load', cb);
-</script>
+        </script>
+		<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")" />
         <meta name="description" content="Allows you to find and add businesses in your area that accept chip-enabled credit and debit cards onto an interactive map." />
     </head>
     <body>
