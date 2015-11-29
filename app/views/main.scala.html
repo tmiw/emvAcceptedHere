@@ -4,7 +4,7 @@
 
 <html>
     <head>
-        <title>@title | EMV Accepted Here</title>
+        <title>@title | Find chip-enabled businesses in your area with EMV Accepted Here</title>
         @if(useViewport.getOrElse(false) == true) { <meta name="viewport" content="initial-scale=1, maximum-scale=1" /> }
         <link rel="apple-touch-icon" href="@routes.Assets.versioned("images/iphone-icon.png")" />
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
@@ -19,12 +19,12 @@
 
         </script>
 		<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")" />
-        <meta name="description" content="Allows you to find and add businesses in your area that accept chip-enabled credit and debit cards onto an interactive map." />
-        <meta property="og:title" content="@title | EMV Accepted Here" />
+        <meta name="description" content="Tracks chip-enabled businesses in your local area on an interactive map and allows users to add listings." />
+        <meta property="og:title" content="@title | Find chip-enabled businesses in your area with EMV Accepted Here" />
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content="https://emvacceptedhere.com@request.uri" />
 		<meta property="og:image" content="https://emvacceptedhere.com/@routes.Assets.versioned("images/favicon.png")" />
-		<meta property="og:description" content="Find and add businesses in your area that accept chip-enabled credit and debit cards onto an interactive map." />
+		<meta property="og:description" content="Tracks chip-enabled businesses in your local area on an interactive map and allows users to add listings." />
     </head>
     <body>
         @content
