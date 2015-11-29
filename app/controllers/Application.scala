@@ -13,26 +13,47 @@ import play.api.libs.mailer._
 import models._
 import javax.inject.Inject
 
+object JavaContext {
+
+  import play.mvc.Http
+  import play.core.j.JavaHelpers
+
+  def withContext[Status](block: => Status)(implicit header: RequestHeader): Status = {
+    try {
+      Http.Context.current.set(JavaHelpers.createJavaContext(header))
+      block
+    }
+    finally {
+      Http.Context.current.remove()
+    }
+  }
+}
+
 class Application @Inject() (mailerClient: MailerClient) extends Controller {
   
   def index = Action {
-    Ok(views.html.index())
+    implicit requestHeader: RequestHeader =>
+    JavaContext.withContext { Ok(views.html.index()) }
   }
 
   def indexWithLatLong(lat: Double, lon: Double) = Action {
-    Ok(views.html.index())
+    implicit requestHeader: RequestHeader =>
+    JavaContext.withContext { Ok(views.html.index()) }
   }
 
   def about = Action {
-    Ok(views.html.about())
+    implicit requestHeader: RequestHeader =>
+    JavaContext.withContext { Ok(views.html.about()) }
   }
   
   def mcx = Action {
-    Ok(views.html.mcx())
+    implicit requestHeader: RequestHeader =>
+    JavaContext.withContext { Ok(views.html.mcx()) }
   }
   
   def news = Action {
-    Ok(views.html.news())
+    implicit requestHeader: RequestHeader =>
+    JavaContext.withContext { Ok(views.html.news()) }
   }
   
   def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean, hideChains: Boolean) = Action { implicit request =>
@@ -239,8 +260,8 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
             HAVING "business_contactless_enabled" IS true 
             ORDER BY "cnt" DESC) x
         """).as(scalar[Int].*).head
-        
-      Ok(views.html.recent_businesses(result, small_result, num_businesses, num_small_businesses, num_nfc_businesses, num_nfc_retailers, num_retailers, num_small_retailers))
+      
+      JavaContext.withContext { Ok(views.html.recent_businesses(result, small_result, num_businesses, num_small_businesses, num_nfc_businesses, num_nfc_retailers, num_retailers, num_small_retailers)) }
     }
   }
   
@@ -262,7 +283,7 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
         case p => Success(TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file")))
       }.*)
       
-      Ok(views.html.receipts(result, imgs, None, None, None))
+      JavaContext.withContext { Ok(views.html.receipts(result, imgs, None, None, None)) }
     }
   }
   
@@ -285,7 +306,8 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
         case p => Success(TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file")))
       }.*)
       
-      Ok(views.html.receipts(brand_list, imgs, Some(brand), Some(method), Some(cvm)))
+      implicit requestHeader: RequestHeader =>
+      JavaContext.withContext { Ok(views.html.receipts(brand_list, imgs, Some(brand), Some(method), Some(cvm))) }
     }
   }
   
@@ -308,7 +330,8 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
         case p => Success(TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file")))
       }.*)
       
-      Ok(views.html.receipts(brand_list, imgs, Some(brand), None, None))
+      implicit requestHeader: RequestHeader =>
+      JavaContext.withContext { Ok(views.html.receipts(brand_list, imgs, Some(brand), None, None)) }
     }
   }
     
@@ -331,7 +354,8 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
         case p => Success(TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file")))
       }.*)
       
-      Ok(views.html.receipts(brand_list, imgs, Some(brand), Some(method), None))
+      implicit requestHeader: RequestHeader =>
+      JavaContext.withContext { Ok(views.html.receipts(brand_list, imgs, Some(brand), Some(method), None)) }
     }
   }
 }
