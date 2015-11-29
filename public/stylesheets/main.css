@@ -44,7 +44,53 @@ html {
 
 #hideUnconfirmed { margin-right: 8px; margin-left: 5px; }
 
-@media all and (min-device-width: 481px) {
+@media screen and (min-device-width: 481px) {
+	html { height: 100% }
+	body { 
+	    height: 100%; 
+	    margin: 0; 
+	    padding: 0; 
+	    background-color: #fffff0; 
+	    font-family: Verdana, Helvetica, sans-serif;
+	    font-size: 10pt;
+	}
+	#map-canvas { height: 100% }
+	
+	#site-ui {
+	    position: absolute;
+	    right: 0px;
+	    background-color: #ffffff;
+	    width: 420px;
+	    height: 70px;
+	    z-index: 99;
+	    border-bottom: 1px solid black;
+	    border-left: 1px solid black;
+	    top: 0px;
+	}
+	
+	#site-key {
+	    position: absolute;
+	    bottom: 0px;
+	    background-color: #ffffff;
+	    z-index: 99;
+	    border-top: 1px solid black;
+	    border-right: 1px solid black;
+	    padding-right: 5px;
+	}
+	
+	#businessName {
+    	width: 296px;
+	}
+	
+	/* This (and the mobile version below) allows for the entire parent <div>
+	   to scroll once there's enough data (!) There be dragons.
+	   Tested: iPhone 6, Chrome v44, Safari 9 */
+	.emvBusinessList {
+       max-height: 5em;
+    }
+}
+
+@media print and (min-device-width: 481px) {
 	html { height: 100% }
 	body { 
 	    height: 100%; 
