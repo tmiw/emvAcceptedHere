@@ -396,7 +396,7 @@ class MainController extends SimpleMVC.Controller
 $(document).ready(() ->
    s = document.createElement("script")
    s.type = "text/javascript"
-   s.src  = "https://maps.google.com/maps/api/js?libraries=places&sensor=false&callback=gmap_draw"
+   s.src  = "https://maps.google.com/maps/api/js?libraries=places&callback=gmap_draw"
    window.gmap_draw = () ->
        window.app = new MainController
        window.app.start()
