@@ -24,3 +24,6 @@ target
 logs
 RUNNING_PID
 conf/application.conf
+
+# OS X
+.DS_Store
