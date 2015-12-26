@@ -88,6 +88,17 @@ html {
 	.emvBusinessList {
        max-height: 5em;
     }
+    
+    #address {
+    	width: 330px;
+    	height: 19px;
+	}
+	
+	#recenterButton {
+		width: 20px;
+		height: 20px;
+		vertical-align: middle;
+	}
 }
 
 @media print and (min-device-width: 481px) {
@@ -134,6 +145,17 @@ html {
 	.emvBusinessList {
        max-height: 5em;
     }
+    
+    #address {
+    	width: 330px;
+    	height: 19px;
+	}
+	
+	#recenterButton {
+		width: 20px;
+		height: 20px;
+		vertical-align: middle;
+	}
 }
 
 @media screen and (max-device-width: 480px) {
@@ -156,7 +178,7 @@ html {
 	    top: 0px;
 	    width: 100%;
 	    background-color: #ffffff;
-	    height: 80px;
+	    height: 88px;
 	    z-index: 99;
 	    border-bottom: 1px solid black;
 	    border-left: 1px solid black;
@@ -165,13 +187,12 @@ html {
 	
 	#site-key {
 	    position: absolute;
-	    bottom: 0px;
+	    bottom: 20px;
 	    background-color: #ffffff;
 	    z-index: 99;
-	    border-top: 1px solid black;
-	    border-right: 1px solid black;
-	    border-left: 1px solid black;
-	    left: 75px;
+	    border: 1px solid black;
+	    left: 30px;
+	    width: 300px;
 	}
 	
 	#footer {
@@ -186,12 +207,21 @@ html {
     .emvBusinessList {
        max-height: 2em;
     }	
-	
-}
 
-#address {
-    width: 330px;
-    height: 19px;
+	#address {
+    	width: calc(100% - 35px);
+    	height: 29px;
+	}
+	
+	#recenterButton {
+		width: 29px;
+		height: 29px;
+		vertical-align: middle;
+	}	
+	
+	#footer > .line1 {
+		padding-top: 5px;
+	}
 }
 
 .add-toolbar {
