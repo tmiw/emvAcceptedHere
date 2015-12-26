@@ -39,9 +39,10 @@
     </div>
   </div>
   <div id="site-key">
-    <img src="@routes.Assets.versioned("images/green-pin.png")" alt="Green pin" /> Chip support confirmed (<a href="/recent_businesses" target="_blank">recently added</a>) <br/>
-    <img src="@routes.Assets.versioned("images/red-pin.png")" alt="Red pin" /> Significant rollout of chip, but not confirmed <br/>
-    Hide: <input type="checkbox" id="hideUnconfirmed" /><label for="hideUnconfirmed">unconfirmed</label> | <input type="checkbox" id="hideChains" /> <label for="hideChains"><a href="/news#news20151011" target="_blank">large/major retailers</a></label>
+    <div class="circle green"></div> Chip support confirmed (<a href="/recent_businesses" target="_blank">recently added</a>) <br/>
+    <div class="circle red"></div> Unconfirmed location <br/>
+    <div class="circle yellow"></div> Multiple businesses at location<br/>
+    Hide: <input type="checkbox" id="hideUnconfirmed" /><label for="hideUnconfirmed">unconfirmed</label> | <input type="checkbox" id="hideChains" /> <label for="hideChains"><a href="/news#news20151011" target="_blank">major retailers</a></label>
   </div>
   <script type="text/javascript">
   <!--
