@@ -72,7 +72,7 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
       // First we need an accurate count of the number of businesses in the bounding
       // box for the next query.
       val result_cols = """
-        "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location"
+        "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_confirmed_location"
         """
       val from_where_clause = """
         FROM "business_list" WHERE 
@@ -126,7 +126,8 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
                     "lng" -> p[Double]("business_longitude").toString,
                     "pin_enabled" -> p[Boolean]("business_pin_enabled").toString,
                     "contactless_enabled" -> p[Boolean]("business_contactless_enabled").toString,
-                    "confirmed_location" -> p[Boolean]("business_confirmed_location").toString))
+                    "confirmed_location" -> p[Boolean]("business_confirmed_location").toString,
+                    "gas_pump_working" -> p[Boolean]("business_gas_pump_working").toString))
         }
         Ok(Json.toJson(result.as(result_parser.*)))
       }
@@ -144,18 +145,19 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
           "latitude" -> nonEmptyText,
           "longitude" -> nonEmptyText,
           "pin_enabled" -> boolean,
-          "contactless_enabled" -> boolean
+          "contactless_enabled" -> boolean,
+          "gas_pump_working" -> boolean
       )
   )
   
   def addBusiness = Action { implicit request =>
-    val (name, address, latitude, longitude, pin_enabled, contactless_enabled) = addBusinessForm.bindFromRequest.get
+    val (name, address, latitude, longitude, pin_enabled, contactless_enabled, gas_pump_working) = addBusinessForm.bindFromRequest.get
     DB.withTransaction { implicit conn =>
       val result: Option[Long] = SQL("""
           INSERT INTO "business_list"
-          ("business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location")
+          ("business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location", "business_gas_pump_working")
           VALUES
-          ({name}, {address}, {latitude}, {longitude}, {pin_enabled}, {contactless_enabled}, {confirmed_location})
+          ({name}, {address}, {latitude}, {longitude}, {pin_enabled}, {contactless_enabled}, {confirmed_location}, {gas_pump_working})
       """).on(
           "name" -> name,
           "address" -> address,
@@ -163,6 +165,7 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
           "longitude" -> java.lang.Double.parseDouble(longitude),
           "pin_enabled" -> pin_enabled,
           "contactless_enabled" -> contactless_enabled,
+          "gas_pump_working" -> gas_pump_working,
           "confirmed_location" -> true).executeInsert()
       Ok(Json.obj(
           "id" -> result.get,
@@ -172,6 +175,7 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
           "lng" -> longitude,
           "pin_enabled" -> pin_enabled,
           "contactless_enabled" -> contactless_enabled,
+          "gas_pump_working" -> gas_pump_working,
           "confirmed_location" -> true
       ))
     }
@@ -204,7 +208,7 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
   def recentBusinesses = Action { implicit request =>
     DB.withConnection { implicit conn =>
       val q = SQL("""
-        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location"
+        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_confirmed_location"
         FROM "business_list"
         ORDER BY "id" DESC
         LIMIT 10""")
@@ -214,7 +218,7 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
       val result = q.as(q_parser.*)
       
       val small_result = SQL("""
-        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location"
+        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_confirmed_location"
         FROM "business_list"
         WHERE NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name" LIKE ("chain_name" || '%'))
         ORDER BY "id" DESC

@@ -12,8 +12,8 @@ class MainController extends SimpleMVC.Controller
                     # Multiple businesses at this location
                     pinColor = "yellow"
                     for k, v of val.businesses
-                    	lat = v.lat
-                    	lon = v.lon
+                        lat = v.lat
+                        lon = v.lon
                 else
                     entry = null
                     for k, v of val.businesses
@@ -37,7 +37,7 @@ class MainController extends SimpleMVC.Controller
                         icon: pinImage
                     }),
                     infoWindow: new google.maps.InfoWindow({
-                    	content: "<div id='x'></div>"
+                        content: "<div id='x'></div>"
                     })
                 }
                 
@@ -83,7 +83,7 @@ class MainController extends SimpleMVC.Controller
             data:
                 hideUnconfirmed: $("#hideUnconfirmed").prop("checked")
                 hideChains: $("#hideChains").prop("checked")
-				
+                
         # Google Analytics notification so it can tell the session is active.
         ga('send', 'event', {
             'eventCategory': 'map',
@@ -110,6 +110,7 @@ class MainController extends SimpleMVC.Controller
                             pin_enabled: i.pin_enabled == "true"
                             contactless_enabled: i.contactless_enabled == "true"
                             confirmed_location: i.confirmed_location == "true"
+                            gas_pump_working: i.gas_pump_working == "true"
                         }
                     
                     if Object.keys(self._locations[latlon].businesses).length > 1
@@ -131,6 +132,7 @@ class MainController extends SimpleMVC.Controller
                         pin_enabled: i.pin_enabled == "true"
                         contactless_enabled: i.contactless_enabled == "true"
                         confirmed_location: i.confirmed_location == "true"
+                        gas_pump_working: i.gas_pump_working == "true"
                     }
                     self._locations[latlon] = newobj
             
@@ -159,8 +161,8 @@ class MainController extends SimpleMVC.Controller
                     centerLocString = self._cur_lat + "," + self._cur_lon
                 found = false
                 for k, v of self._locations
-                	loc = null
-                	for id, l of v.businesses
+                    loc = null
+                    for id, l of v.businesses
                         loc = l
                     locString = loc.lat + "," + loc.lon
                     if locString == centerLocString
@@ -179,6 +181,7 @@ class MainController extends SimpleMVC.Controller
                                 address: self._place.formatted_address
                                 pin_enabled: false
                                 contactless_enabled: false
+                                gas_pump_working: false
         
                     if self._infoWindow?
                         self._infoWindow.close()
@@ -244,6 +247,8 @@ class MainController extends SimpleMVC.Controller
         $("#pinEnabled").prop("checked", false)
         $("#contactlessEnabled").prop("disabled", false)
         $("#contactlessEnabled").prop("checked", false)
+        $("#gasPumpWorking").prop("disabled", false)
+        $("#gasPumpWorking").prop("checked", false)
         $("#addBusinessLink").css("display", "inline")
         $("#addNewBusinessLink").css("display", "none")
         $("#getDirectionsLink").css("display", "none")
@@ -264,6 +269,7 @@ class MainController extends SimpleMVC.Controller
         if validated
             pin_enabled = $("#pinEnabled").prop("checked")
             contactless_enabled = $("#contactlessEnabled").prop("checked")
+            gas_pump_working = $("#gasPumpWorking").prop("checked")
             request = $.ajax "/businesses/add", {type: "POST", data: {
                 name: $("#businessName").val(),
                 address: $("#businessAddress").text(),
@@ -271,6 +277,7 @@ class MainController extends SimpleMVC.Controller
                 longitude: this._place.geometry.location.lng(),
                 pin_enabled: pin_enabled,
                 contactless_enabled: contactless_enabled,
+                gas_pump_working: gas_pump_working
             }}
             request.done (data) ->
                 self._infoWindow.close()
@@ -286,6 +293,7 @@ class MainController extends SimpleMVC.Controller
                         lon: data.lng
                         pin_enabled: data.pin_enabled == "true" or data.pin_enabled == true
                         contactless_enabled: data.contactless_enabled == "true" or data.contactless_enabled == true
+                        gas_pump_working: data.gas_pump_working == "true" or data.gas_pump_working == true
                         confirmed_location: true
                     
                     # Make marker yellow since there are now 2+ items at the same lat/lon
@@ -309,6 +317,7 @@ class MainController extends SimpleMVC.Controller
                         lon: data.lng
                         pin_enabled: data.pin_enabled == "true" or data.pin_enabled == true
                         contactless_enabled: data.contactless_enabled == "true" or data.contactless_enabled == true
+                        gas_pump_working: data.gas_pump_working == "true" or data.gas_pump_working == true
                         confirmed_location: true
                     
                     self._locations[key] = view
@@ -374,7 +383,7 @@ class MainController extends SimpleMVC.Controller
         $("#hideChains").change(() -> 
             window.localStorage.setItem('hideChains', $("#hideChains").prop("checked"))
             self._navigateDebounce())
-			
+            
         if window.location.hash
             # We're going to navigate directly to a particular location on the map.
             hash_without_hash = window.location.hash.substring 1

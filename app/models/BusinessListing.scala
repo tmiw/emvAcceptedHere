@@ -13,7 +13,8 @@ object BusinessListing {
         row[Double]("business_longitude"),
         row[Boolean]("business_pin_enabled"),
         row[Boolean]("business_contactless_enabled"), 
-        row[Boolean]("business_confirmed_location")
+        row[Boolean]("business_confirmed_location"),
+        row[Boolean]("business_gas_pump_working")
     )
   }
 }
@@ -26,5 +27,6 @@ case class BusinessListing(
     longitude: Double,
     pin_enabled: Boolean,
     contactless_enabled: Boolean,
-    confirmed_location: Boolean
+    confirmed_location: Boolean,
+    gas_pump_working: Boolean
 )
