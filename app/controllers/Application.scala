@@ -46,6 +46,11 @@ class Application @Inject() (mailerClient: MailerClient) extends Controller {
     JavaContext.withContext { Ok(views.html.about()) }
   }
   
+  def itemlegend = Action {
+    implicit requestHeader: RequestHeader =>
+    JavaContext.withContext { Ok(views.html.itemlegend()) }
+  }
+  
   def mcx = Action {
     implicit requestHeader: RequestHeader =>
     JavaContext.withContext { Ok(views.html.mcx()) }

@@ -9,6 +9,7 @@ GET     /about                      controllers.Application.about
 GET		/recent_businesses			controllers.Application.recentBusinesses
 GET		/news						controllers.Application.news
 GET		/mcx						controllers.Application.mcx
+GET		/itemlegend					controllers.Application.itemlegend
 GET		/sample_receipts			controllers.Application.sample_receipt_home
 GET		/sample_receipts/:brand/:method/:cvm	controllers.Application.sample_receipts(brand: Int, method: String, cvm: String)
 GET		/sample_receipts/:brand/:method	controllers.Application.sample_receipts_wo_cvm(brand: Int, method: String)
