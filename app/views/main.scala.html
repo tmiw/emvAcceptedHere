@@ -5,7 +5,16 @@
 <html>
     <head>
         <title>@title | Find chip-enabled businesses with EMV Accepted Here</title>
-        @if(useViewport.getOrElse(false) == true) { <meta name="viewport" content="initial-scale=1, maximum-scale=1" /> }
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1" />
+        @if(useViewport.getOrElse(false) == true) { 
+        <style type="text/css">
+        @@media screen and (max-device-width: 480px) {
+            html { position: fixed; height: 100%; width: 100%; }
+            body { position:fixed; height: 100%; width: 100%; }
+        }
+        </style> 
+        }
         <link rel="apple-touch-icon" href="@routes.Assets.versioned("images/iphone-icon.png")" />
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
         <script>

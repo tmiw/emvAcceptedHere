@@ -159,11 +159,8 @@ html {
 }
 
 @media screen and (max-device-width: 480px) {
-
-	html { position: fixed; height: 100%; width: 100%; }
 	
 	body { 
-		position:fixed; height: 100%; width: 100%;
 	    margin: 0; 
 	    padding: 0; 
 	    background-color: #fffff0; 
