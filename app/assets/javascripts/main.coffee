@@ -359,7 +359,7 @@ class MainController extends SimpleMVC.Controller
                 successFn = (pos) ->
                     self._cur_lat = pos.coords.latitude
                     self._cur_lon = pos.coords.longitude
-                    self._map.setZoom 10
+                    self._map.setZoom 15
                     window.app.navigate "/loc/" + pos.coords.latitude + "/" + pos.coords.longitude, true, false
                 
                 options = 
