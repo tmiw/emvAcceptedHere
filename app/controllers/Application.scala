@@ -225,7 +225,10 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
       val small_result = SQL("""
         SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_confirmed_location"
         FROM "business_list"
-        WHERE NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name" LIKE ("chain_name" || '%'))
+        WHERE "business_name" IN (
+          (SELECT DISTINCT "business_name" FROM "business_list") EXCEPT 
+          (SELECT DISTINCT "business_name" FROM "business_list" 
+           INNER JOIN "chain_list" ON "business_name" LIKE ("chain_name" || '%')))
         ORDER BY "id" DESC
         LIMIT 10
         """).as(q_parser.*)
@@ -238,10 +241,9 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
       val num_small_retailers = SQL("""
         SELECT COUNT(*) AS "cnt"
         FROM (
-            SELECT "business_name" 
-            FROM "business_list" 
-            WHERE NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name" LIKE ("chain_name" || '%'))
-            GROUP BY "business_name") "c"
+            (SELECT DISTINCT "business_name" FROM "business_list") EXCEPT 
+            (SELECT DISTINCT "business_name" FROM "business_list" 
+             INNER JOIN "chain_list" ON "business_name" LIKE ("chain_name" || '%'))) "c"
         """).as(scalar[Int].*).head
         
       val num_businesses = SQL("""
@@ -252,7 +254,11 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
       val num_small_businesses = SQL("""
         SELECT COUNT("id") AS "cnt"
         FROM "business_list"
-        WHERE NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name" LIKE ("chain_name" || '%'))
+        WHERE "business_name" NOT IN (
+            (SELECT DISTINCT "business_name" FROM "business_list") EXCEPT 
+            (SELECT DISTINCT "business_name" FROM "business_list" 
+             INNER JOIN "chain_list" ON "business_name" LIKE ("chain_name" || '%'))
+        )
         """).as(scalar[Int].*).head
       
       val num_nfc_businesses = SQL("""
