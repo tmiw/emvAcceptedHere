@@ -6,6 +6,8 @@ dump
  
 # Eclipse
 .settings
+.cache-main
+.cache-tests
 .cache
 .project
 .classpath
