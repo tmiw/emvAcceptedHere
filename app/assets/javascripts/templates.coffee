@@ -36,6 +36,10 @@ templates.per_item_entry = """
     <input type="checkbox" id="gasPumpWorking" value="true" />
     <label for="gasPumpWorking">works at pump (gas station only) (<a href="/itemlegend#gas" target="_blank">explain</a>)</label>
   </div>
+  <div class="add-options">
+    <input type="checkbox" id="payAtTable" value="true" />
+    <label for="payAtTable">has pay at the table (restaurants only) (<a href="/itemlegend#payattable" target="_blank">explain</a>)</label>
+  </div>
   <div class="add-toolbar">
     <a href="#" onclick="event.preventDefault(); window.app.addBusiness();">add business</a>
   </div>
@@ -61,6 +65,10 @@ templates.per_item_entry = """
   <div class="add-options">
     <input type="checkbox" id="gasPumpWorking" disabled {{#if gas_pump_working}}checked{{/if}} value="true" />
     <label for="gasPumpWorking">works at pump (gas station only) (<a href="/itemlegend#gas" target="_blank">explain</a>)</label>
+  </div>
+  <div class="add-options">
+    <input type="checkbox" id="payAtTable" disabled {{#if pay_at_table}}checked{{/if}} value="true" />
+    <label for="payAtTable">has pay at the table (restaurants only) (<a href="/itemlegend#payattable" target="_blank">explain</a>)</label>
   </div>
   <div class="add-toolbar">
     <a id="addBusinessLink" style="display: none;" href="#" onclick="event.preventDefault(); window.app.addBusiness();">add business</a>
@@ -90,6 +98,10 @@ templates.per_item_entry = """
     <input type="checkbox" id="gasPumpWorking" value="true" />
     <label for="gasPumpWorking">works at pump (gas station only) (<a href="/itemlegend#gas" target="_blank">explain</a>)</label>
   </div>
+  <div class="add-options">
+    <input type="checkbox" id="payAtTable" value="true" />
+    <label for="payAtTable">has pay at the table (restaurants only) (<a href="/itemlegend#payattable" target="_blank">explain</a>)</label>
+  </div>
   <div class="add-toolbar">
     <a href="#" onclick="event.preventDefault(); window.app.addBusiness();">add business</a> | <a href="#" onclick="event.preventDefault(); window.app.getDrivingDirections('{{address}}');">get directions</a>
   </div>
@@ -104,6 +116,7 @@ templates.per_item_entry = """
   	  <input type="checkbox" value="true" {{#pin_enabled}}checked{{/pin_enabled}} disabled /> PIN
       <input type="checkbox" value="true" {{#contactless_enabled}}checked{{/contactless_enabled}} disabled /> NFC
 	  <input type="checkbox" value="true" {{#gas_pump_working}}checked{{/gas_pump_working}} disabled /> Gas pump
+      <input type="checkbox" value="true" {{#pay_at_table}}checked{{/pay_at_table}} disabled /> Pay at table
       <input type="checkbox" value="true" {{#confirmed_location}}checked{{/confirmed_location}} disabled /> Confirmed
     (<span id="report-errors-{{id}}"><a href="#" onclick="event.preventDefault(); window.app.reportError('{{id}}');">report errors</a></span>)
 </div>

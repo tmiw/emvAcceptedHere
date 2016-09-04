@@ -111,6 +111,7 @@ class MainController extends SimpleMVC.Controller
                             contactless_enabled: i.contactless_enabled == "true"
                             confirmed_location: i.confirmed_location == "true"
                             gas_pump_working: i.gas_pump_working == "true"
+                            pay_at_table: i.pay_at_table == "true"
                         }
                     
                     if Object.keys(self._locations[latlon].businesses).length > 1
@@ -133,6 +134,7 @@ class MainController extends SimpleMVC.Controller
                         contactless_enabled: i.contactless_enabled == "true"
                         confirmed_location: i.confirmed_location == "true"
                         gas_pump_working: i.gas_pump_working == "true"
+                        pay_at_table: i.pay_at_table == "true"
                     }
                     self._locations[latlon] = newobj
             
@@ -182,6 +184,7 @@ class MainController extends SimpleMVC.Controller
                                 pin_enabled: false
                                 contactless_enabled: false
                                 gas_pump_working: false
+                                pay_at_table: false
         
                     if self._infoWindow?
                         self._infoWindow.close()
@@ -270,6 +273,7 @@ class MainController extends SimpleMVC.Controller
             pin_enabled = $("#pinEnabled").prop("checked")
             contactless_enabled = $("#contactlessEnabled").prop("checked")
             gas_pump_working = $("#gasPumpWorking").prop("checked")
+            pay_at_table = $("#payAtTable").prop("checked")
             request = $.ajax "/businesses/add", {type: "POST", data: {
                 name: $("#businessName").val(),
                 address: $("#businessAddress").text(),
@@ -277,7 +281,8 @@ class MainController extends SimpleMVC.Controller
                 longitude: this._place.geometry.location.lng(),
                 pin_enabled: pin_enabled,
                 contactless_enabled: contactless_enabled,
-                gas_pump_working: gas_pump_working
+                gas_pump_working: gas_pump_working,
+                pay_at_table: pay_at_table
             }}
             request.done (data) ->
                 self._infoWindow.close()
@@ -294,6 +299,7 @@ class MainController extends SimpleMVC.Controller
                         pin_enabled: data.pin_enabled == "true" or data.pin_enabled == true
                         contactless_enabled: data.contactless_enabled == "true" or data.contactless_enabled == true
                         gas_pump_working: data.gas_pump_working == "true" or data.gas_pump_working == true
+                        pay_at_table: data.pay_at_table == "true" or data.pay_at_table == "true"
                         confirmed_location: true
                     
                     # Make marker yellow since there are now 2+ items at the same lat/lon
@@ -318,6 +324,7 @@ class MainController extends SimpleMVC.Controller
                         pin_enabled: data.pin_enabled == "true" or data.pin_enabled == true
                         contactless_enabled: data.contactless_enabled == "true" or data.contactless_enabled == true
                         gas_pump_working: data.gas_pump_working == "true" or data.gas_pump_working == true
+                        pay_at_table: data.pay_at_table == "true" or data.pay_at_table == true
                         confirmed_location: true
                     
                     self._locations[key] = view
