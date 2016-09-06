@@ -5,7 +5,7 @@ import anorm.SqlParser._
 import play.api._
 import play.api.mvc._
 import play.api.db._
-import play.api.libs.json.Json
+import play.api.libs.json._
 import play.api.Play.current
 import play.api.data._
 import play.api.data.Forms._
@@ -211,6 +211,35 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
       mailerClient.send(mail)
       
       Ok(Json.toJson(true))
+    }
+  }
+  
+  def recentBusinessesJson(name : String) =  Action { implicit request =>
+    DB.withConnection { implicit conn =>
+      val q = SQL("""
+        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table",  "business_confirmed_location"
+        FROM "business_list" WHERE
+        LOWER("business_name") LIKE {name} || '%'
+        ORDER BY "id" DESC
+        LIMIT 10""").on("name" -> name.toLowerCase())
+      val q_parser = RowParser[BusinessListing] {
+        case p => Success(BusinessListing.CreateFromResult(p))
+      }
+      implicit val writes = new Writes[BusinessListing] {
+        def writes(t: BusinessListing): JsValue = {
+          Json.obj(
+              "name" -> t.name,
+              "address" -> t.address,
+              "latitude" -> t.latitude,
+              "longitude" -> t.longitude,
+              "pin_enabled" -> t.pin_enabled,
+              "contactless_enabled" -> t.contactless_enabled,
+              "gas_pump_working" -> t.gas_pump_working,
+              "pay_at_table" -> t.pay_at_table,
+              "confirmed_location" -> t.confirmed_location);
+        }
+      }
+      Ok(Json.toJson(q.as(q_parser.*)))
     }
   }
   

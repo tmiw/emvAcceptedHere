@@ -7,6 +7,7 @@ GET     /                           controllers.Application.index
 GET     /loc/:lat/:lon              controllers.Application.indexWithLatLong(lat: Double, lon: Double)
 GET     /about                      controllers.Application.about
 GET		/recent_businesses			controllers.Application.recentBusinesses
+GET		/recent_businesses/json		controllers.Application.recentBusinessesJson(name: String ?= "")
 GET		/news						controllers.Application.news
 GET		/mcx						controllers.Application.mcx
 GET		/itemlegend					controllers.Application.itemlegend

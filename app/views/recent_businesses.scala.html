@@ -6,7 +6,11 @@
 
 <h3>Latest additions</h3>
 <table width="100%">
+<thead>
+<tr><td colspan="9"><form>Show businesses beginning with:<input type="text" placeholder="Business name" id="business_name_recents" size="40" /></form></td></tr>
 <tr><th>Business name</th><th>Address</th><th>Latitude</th><th>Longitude</th><th>PIN support?</th><th>Contactless support?</th><th>Working at gas pumps?</th><th>Pay at table?</th><th>Confirmed?</th></tr>
+</thead>
+<tbody id="recent_rows">
 @for(p <- results) {
 <tr>
 <td><a href="/#@p.latitude,@p.longitude">@p.name</a></td>
@@ -20,6 +24,7 @@
 <td>@if(p.confirmed_location) { Yes } else { No }</td>
 </tr>
 }
+</tbody>
 </table>
 
 <h3>Latest small retailer additions</h3>
@@ -50,3 +55,50 @@
 <tr><th>NFC supporting locations:</th><td>@num_nfc_businesses (@("%.01f%%".format(num_nfc_businesses*100.0/num_businesses)) of all locations)</td></tr>
 </table>
 }
+
+<script language="javascript" src="@routes.Assets.versioned("javascripts/jquery-1.9.0.min.js")"></script>
+<script language="javascript">
+<!--
+
+$(document).ready(function() {
+	// Use AJAX to grab list of recents beginning with the letters typed.
+	$("#business_name_recents").on('change keyup paste', function() {
+		var entered_value = $("#business_name_recents").val();
+	
+		$.ajax({
+			url: "/recent_businesses/json",
+			data: {
+				name: entered_value
+			},
+			dataType: "json",
+			success: function(data, status, xhr) {
+				$("#recent_rows").empty();
+				for (var i = 0; i < data.length; i++)
+				{
+					$("#recent_rows").append(
+						$("<tr>").append(
+							$("<td>").append(
+								$("<a>").attr("href", "/#" + data[i].latitude + "," + data[i].longitude).append(data[i].name)))
+							.append($("<td>").append(data[i].address))
+							.append($("<td>").append(data[i].latitude))
+							.append($("<td>").append(data[i].longitude))
+							.append($("<td>").append(data[i].pin_enabled == true ? "Yes" : "No"))
+							.append($("<td>").append(data[i].contactless_enabled == true ? "Yes" : "No"))
+							.append($("<td>").append(data[i].gas_pump_working == true ? "Yes" : "No"))
+							.append($("<td>").append(data[i].pay_at_table == true ? "Yes" : "No"))
+							.append($("<td>").append(data[i].confirmed_location == true ? "Yes" : "No")));
+				}
+
+				if (data.length == 0)
+				{
+					$("#recent_rows").append(
+						$("<tr>").append(
+							$("<td>").attr("colspan", "9").append("None found.")));
+				}
+			}
+		});
+	});
+});
+
+// -->
+</script>
