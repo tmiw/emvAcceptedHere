@@ -7,7 +7,7 @@
 <h3>Latest additions</h3>
 <table width="100%">
 <thead>
-<tr><td colspan="9"><form>Show businesses beginning with:<input type="text" placeholder="Business name" id="business_name_recents" size="40" /></form></td></tr>
+<tr><td colspan="9"><form>Show businesses beginning with:<input type="text" placeholder="Business name" id="business_name_recents" size="40" /><div class="progress" id="business_recent_progress" style="top: -10px; font-size: 3px;"><div>Loading...</div></div></form></td></tr>
 <tr><th>Business name</th><th>Address</th><th>Latitude</th><th>Longitude</th><th>PIN support?</th><th>Contactless support?</th><th>Working at gas pumps?</th><th>Pay at table?</th><th>Confirmed?</th></tr>
 </thead>
 <tbody id="recent_rows">
@@ -60,44 +60,68 @@
 <script language="javascript">
 <!--
 
-$(document).ready(function() {
-	// Use AJAX to grab list of recents beginning with the letters typed.
-	$("#business_name_recents").on('change keyup paste', function() {
-		var entered_value = $("#business_name_recents").val();
-	
-		$.ajax({
-			url: "/recent_businesses/json",
-			data: {
-				name: entered_value
-			},
-			dataType: "json",
-			success: function(data, status, xhr) {
-				$("#recent_rows").empty();
-				for (var i = 0; i < data.length; i++)
-				{
-					$("#recent_rows").append(
-						$("<tr>").append(
-							$("<td>").append(
-								$("<a>").attr("href", "/#" + data[i].latitude + "," + data[i].longitude).append(data[i].name)))
-							.append($("<td>").append(data[i].address))
-							.append($("<td>").append(data[i].latitude))
-							.append($("<td>").append(data[i].longitude))
-							.append($("<td>").append(data[i].pin_enabled == true ? "Yes" : "No"))
-							.append($("<td>").append(data[i].contactless_enabled == true ? "Yes" : "No"))
-							.append($("<td>").append(data[i].gas_pump_working == true ? "Yes" : "No"))
-							.append($("<td>").append(data[i].pay_at_table == true ? "Yes" : "No"))
-							.append($("<td>").append(data[i].confirmed_location == true ? "Yes" : "No")));
-				}
+var cached_name = "";
 
-				if (data.length == 0)
-				{
-					$("#recent_rows").append(
-						$("<tr>").append(
-							$("<td>").attr("colspan", "9").append("None found.")));
-				}
+var fetch_recents = function() {
+	var entered_value = $("#business_name_recents").val();
+
+	// Don't bother trying to fetch again if we already have.
+	if (entered_value == cached_name) return;
+	
+	$("#business_recent_progress").show();
+	$.ajax({
+		url: "/recent_businesses/json",
+		data: {
+			name: entered_value
+		},
+		dataType: "json",
+		success: function(data, status, xhr) {
+			$("#recent_rows").empty();
+			for (var i = 0; i < data.length; i++)
+			{
+				$("#recent_rows").append(
+					$("<tr>").append(
+						$("<td>").append(
+							$("<a>").attr("href", "/#" + data[i].latitude + "," + data[i].longitude).append(data[i].name)))
+						.append($("<td>").append(data[i].address))
+						.append($("<td>").append(data[i].latitude))
+						.append($("<td>").append(data[i].longitude))
+						.append($("<td>").append(data[i].pin_enabled == true ? "Yes" : "No"))
+						.append($("<td>").append(data[i].contactless_enabled == true ? "Yes" : "No"))
+						.append($("<td>").append(data[i].gas_pump_working == true ? "Yes" : "No"))
+						.append($("<td>").append(data[i].pay_at_table == true ? "Yes" : "No"))
+						.append($("<td>").append(data[i].confirmed_location == true ? "Yes" : "No")));
 			}
-		});
+
+			if (data.length == 0)
+			{
+				$("#recent_rows").append(
+					$("<tr>").append(
+						$("<td>").attr("colspan", "9").append("None found.")));
+			}
+
+			cached_name = entered_value;
+		},
+		complete: function(xhr, status) {
+			$("#business_recent_progress").hide();
+		},
+		error: function(xhr, status, thrownError) {
+			$("#recent_rows").empty();
+			$("#recent_rows").append(
+				$("<tr>").append(
+					$("<td>").attr("colspan", "9")
+					         .append("Could not load data.")
+					         .append($("<a>").attr("onclick", "fetch_recents();")
+							                 .append("Try again?"))));
+		}
 	});
+};
+
+$(document).ready(function() {
+	$("#business_recent_progress").hide();
+	
+	// Use AJAX to grab list of recents beginning with the letters typed.
+	$("#business_name_recents").on('change keyup paste', fetch_recents);
 });
 
 // -->
