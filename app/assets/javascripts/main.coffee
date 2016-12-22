@@ -348,7 +348,10 @@ class MainController extends SimpleMVC.Controller
             google.maps.event.addListener this._map, "bounds_changed", this._navigateDebounce
         
             # initialize autocomplete widget
-            this._autocomplete = new google.maps.places.Autocomplete(document.getElementById("address"))
+            this._autocomplete = new google.maps.places.Autocomplete(
+            	document.getElementById("address"),
+            	{componentRestrictions: {country: 'us'}}
+            )
             google.maps.event.addListener this._autocomplete, 'place_changed', this._navigateToAddress
         else
             this._map.panTo mapOptions.center
@@ -412,7 +415,7 @@ class MainController extends SimpleMVC.Controller
 $(document).ready(() ->
    s = document.createElement("script")
    s.type = "text/javascript"
-   s.src  = "https://maps.google.com/maps/api/js?libraries=places&callback=gmap_draw"
+   s.src  = "https://maps.google.com/maps/api/js?v=3.exp&sensor=true&libraries=places,geometry&callback=gmap_draw"
    window.gmap_draw = () ->
        window.app = new MainController
        window.app.start()
