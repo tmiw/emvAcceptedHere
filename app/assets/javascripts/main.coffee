@@ -83,6 +83,8 @@ class MainController extends SimpleMVC.Controller
             data:
                 hideUnconfirmed: $("#hideUnconfirmed").prop("checked")
                 hideChains: $("#hideChains").prop("checked")
+                showPayAtTable: $("#showPayAtTable").prop("checked")
+                showGasPumps: $("#showGasPumps").prop("checked")
                 
         # Google Analytics notification so it can tell the session is active.
         ga('send', 'event', {
@@ -393,11 +395,21 @@ class MainController extends SimpleMVC.Controller
             $("#hideUnconfirmed").prop("checked", true)
         if window.localStorage.getItem('hideChains') == "true"
             $("#hideChains").prop("checked", true)
+        if window.localStorage.getItem('showGasPumps') == "true"
+            $("#showGasPumps").prop("checked", true)
+        if window.localStorage.getItem('showPayAtTable') == "true"
+            $("#showPayAtTable").prop("checked", true)
         $("#hideUnconfirmed").change(() -> 
             window.localStorage.setItem('hideUnconfirmed', $("#hideUnconfirmed").prop("checked"))
             self._navigateDebounce())
         $("#hideChains").change(() -> 
             window.localStorage.setItem('hideChains', $("#hideChains").prop("checked"))
+            self._navigateDebounce())
+        $("#showGasPumps").change(() -> 
+            window.localStorage.setItem('showGasPumps', $("#showGasPumps").prop("checked"))
+            self._navigateDebounce())
+        $("#showPayAtTable").change(() -> 
+            window.localStorage.setItem('showPayAtTable', $("#showGasPumps").prop("checked"))
             self._navigateDebounce())
             
         if window.location.hash

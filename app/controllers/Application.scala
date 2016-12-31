@@ -61,7 +61,7 @@ class Application @Inject() (mailerClient: MailerClient) extends Controller {
     JavaContext.withContext { Ok(views.html.news()) }
   }
   
-  def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean, hideChains: Boolean) = Action { implicit request =>
+  def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean, hideChains: Boolean, showGasPumps: Boolean, showPayAtTable: Boolean) = Action { implicit request =>
     val confirmed_sql = 
       if (hideUnconfirmed) 
         """
@@ -71,6 +71,16 @@ AND "business_confirmed_location" = true
       if (hideChains)
         """
 AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name" LIKE ("chain_name" || '%'))
+""" else ""
+    val pump_sql = 
+      if (showGasPumps)
+        """
+AND "business_gas_pump_working" = true
+""" else ""
+    val table_sql =
+      if (showPayAtTable)
+        """
+AND "business_pay_at_table" = true
 """ else ""
         
     DB.withConnection { implicit conn =>
@@ -82,7 +92,7 @@ AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name"
       val from_where_clause = """
         FROM "business_list" WHERE 
              ("business_latitude" >= {lat_bl} AND "business_latitude" <= {lat_ur}) AND
-             ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})""" + confirmed_sql + chain_sql
+             ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})""" + confirmed_sql + chain_sql + pump_sql + table_sql
       val result_count = SQL("""SELECT COUNT("id")""" + from_where_clause).on(
               "lng_ur" -> lon_ur, "lat_ur" -> lat_ur,
               "lng_bl" -> lon_bl, "lat_bl" -> lat_bl).as(scalar[Int].singleOpt).getOrElse(0)
