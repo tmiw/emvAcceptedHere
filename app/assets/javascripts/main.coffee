@@ -407,9 +407,19 @@ class MainController extends SimpleMVC.Controller
             self._navigateDebounce())
         $("#showGasPumps").change(() -> 
             window.localStorage.setItem('showGasPumps', $("#showGasPumps").prop("checked"))
+            if window.localStorage.getItem('showGasPumps') == "true"
+                # Restaurants cannot have gas pumps too. Hopefully.
+                $("#showPayAtTable").prop("disabled", true)
+            else
+                $("#showPayAtTable").prop("disabled", false)
             self._navigateDebounce())
         $("#showPayAtTable").change(() -> 
-            window.localStorage.setItem('showPayAtTable', $("#showGasPumps").prop("checked"))
+            window.localStorage.setItem('showPayAtTable', $("#showPayAtTable").prop("checked"))
+            if window.localStorage.getItem('showPayAtTable') == "true"
+                # Restaurants cannot have gas pumps too. Hopefully.
+                $("#showGasPumps").prop("disabled", true)
+            else
+                $("#showGasPumps").prop("disabled", false)
             self._navigateDebounce())
             
         if window.location.hash
