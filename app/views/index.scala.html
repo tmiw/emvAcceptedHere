@@ -18,6 +18,16 @@
             </div>
         </div>
     </div>
+    <div id="options-overlay">
+        <div id="options-overlay-content">
+            <h4>Map options</h4>
+            <input type="checkbox" id="hideUnconfirmed" /> <label for="hideUnconfirmed">Hide unconfirmed locations</label><br/>
+            <input type="checkbox" id="hideChains" /> <label for="hideChains"><a href="/news#news20151011" target="_blank">Hide major retailers</a></label><br/>
+            <div class="add-toolbar">
+                <a href="#" onclick="event.preventDefault(); window.app.cancelOptions();">close</a>
+            </div>
+        </div>
+    </div>
   <div class="site-container"><div id="map-canvas"></div></div>
   
   <!-- Google Maps moves the rest of this HTML into site-container. Whyyyyyyyy -->
@@ -42,7 +52,7 @@
     <div class="circle green"></div> Chip support confirmed (<a href="/recent_businesses" target="_blank">recently added</a>) <br/>
     <div class="circle red"></div> Unconfirmed location <br/>
     <div class="circle yellow"></div> Multiple businesses at location<br/>
-    Hide: <input type="checkbox" id="hideUnconfirmed" /><label for="hideUnconfirmed">unconfirmed</label> | <input type="checkbox" id="hideChains" /> <label for="hideChains"><a href="/news#news20151011" target="_blank">major retailers</a></label>
+    <a href="#" onclick="event.preventDefault(); window.app.showMapOptions();">Show map options</a>
   </div>
   <script type="text/javascript">
   <!--

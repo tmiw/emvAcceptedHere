@@ -30,6 +30,30 @@ html {
 	padding-right: 5px;
 }
 
+#options-overlay {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	z-index: 100;
+	background: rgba(0, 0, 0, 0.2)
+}
+
+#options-overlay-content {
+	position: relative;
+	margin: 0 auto;
+    top: 50%;
+    transform: translateY(-50%);
+	width: 350px;
+	background-color: white;
+	border: 1px solid black;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
 /* Changed to "none" and "block" respectively once JS loads. */
 .noscriptmsg { 
 	position: relative;
@@ -41,8 +65,6 @@ html {
 }
 .noscriptbody { padding-top: 10px; }
 .site-container { position: relative; height: 100%; display: none; }
-
-#hideUnconfirmed { margin-right: 8px; margin-left: 5px; }
 
 @media screen and (min-device-width: 481px) {
 	html { height: 100% }

@@ -236,6 +236,12 @@ class MainController extends SimpleMVC.Controller
     
     cancelReport: () ->
         $("#report-overlay").css("display", "none")
+    
+    showMapOptions: () ->
+        $("#options-overlay").css("display", "block")
+        
+    cancelOptions: () ->
+        $("#options-overlay").css("display", "none")
         
     getDrivingDirections: (addr) ->
         src = this._cur_lat + "," + this._cur_lon
