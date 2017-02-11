@@ -260,6 +260,8 @@ class MainController extends SimpleMVC.Controller
         $("#contactlessEnabled").prop("checked", false)
         $("#gasPumpWorking").prop("disabled", false)
         $("#gasPumpWorking").prop("checked", false)
+        $("#payAtTable").prop("disabled", false)
+        $("#payAtTable").prop("checked", false)
         $("#addBusinessLink").css("display", "inline")
         $("#addNewBusinessLink").css("display", "none")
         $("#getDirectionsLink").css("display", "none")
@@ -297,6 +299,7 @@ class MainController extends SimpleMVC.Controller
             
                 key = data.lat + "," + data.lng
                 if self._locations[key]?
+                    self._locations[key].needToCreatePin = true
                     self._locations[key].onlyOneBusiness = false
                     self._locations[key].businesses[data.id] =
                         id: data.id
@@ -307,15 +310,8 @@ class MainController extends SimpleMVC.Controller
                         pin_enabled: data.pin_enabled == "true" or data.pin_enabled == true
                         contactless_enabled: data.contactless_enabled == "true" or data.contactless_enabled == true
                         gas_pump_working: data.gas_pump_working == "true" or data.gas_pump_working == true
-                        pay_at_table: data.pay_at_table == "true" or data.pay_at_table == "true"
+                        pay_at_table: data.pay_at_table == "true" or data.pay_at_table == true
                         confirmed_location: true
-                    
-                    # Make marker yellow since there are now 2+ items at the same lat/lon
-                    self._locations[key].marker.marker.setIcon(
-                        new google.maps.MarkerImage(window.emv.image_urls["yellow"],
-                            new google.maps.Size(21, 34),
-                            new google.maps.Point(0,0),
-                            new google.maps.Point(10, 34)))
                 else
                     view = 
                         edit_disabled: true
