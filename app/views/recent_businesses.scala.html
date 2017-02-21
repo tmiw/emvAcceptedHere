@@ -8,7 +8,7 @@
 <table width="100%">
 <thead>
 <tr><td colspan="9"><form>Show businesses beginning with:<input type="text" placeholder="Business name" id="business_name_recents" size="40" /><div class="progress" id="business_recent_progress" style="top: -10px; font-size: 3px;"><div>Loading...</div></div></form></td></tr>
-<tr><th>Business name</th><th>Address</th><th>Latitude</th><th>Longitude</th><th>PIN support?</th><th>Contactless support?</th><th>Working at gas pumps?</th><th>Pay at table?</th><th>Confirmed?</th></tr>
+<tr><th>Business name</th><th>Address</th><th>Latitude</th><th>Longitude</th><th>PIN support?</th><th>Contactless support?</th><th>Working at gas pumps?</th><th>Pay at table?</th><th>Unattended terminals?</th><th>Confirmed?</th></tr>
 </thead>
 <tbody id="recent_rows">
 @for(p <- results) {
@@ -21,6 +21,7 @@
 <td>@if(p.contactless_enabled) { Yes } else { No }</td>
 <td>@if(p.gas_pump_working) { Yes } else { No }</td>
 <td>@if(p.pay_at_table) { Yes } else { No }</td>
+<td>@if(p.unattended_terminals) { Yes } else { No }</td>
 <td>@if(p.confirmed_location) { Yes } else { No }</td>
 </tr>
 }
@@ -29,7 +30,7 @@
 
 <h3>Latest small retailer additions</h3>
 <table width="100%">
-<tr><th>Business name</th><th>Address</th><th>Latitude</th><th>Longitude</th><th>PIN support?</th><th>Apple/Android Pay support?</th><th>Working at gas pumps?</th><th>Pay at table?</th><th>Confirmed?</th></tr>
+<tr><th>Business name</th><th>Address</th><th>Latitude</th><th>Longitude</th><th>PIN support?</th><th>Apple/Android Pay support?</th><th>Working at gas pumps?</th><th>Pay at table?</th><th>Unattended terminals?</th><th>Confirmed?</th></tr>
 @for(p <- small_results) {
 <tr>
 <td><a href="/#@p.latitude,@p.longitude">@p.name</a></td>
@@ -40,6 +41,7 @@
 <td>@if(p.contactless_enabled) { Yes } else { No }</td>
 <td>@if(p.gas_pump_working) { Yes } else { No }</td>
 <td>@if(p.pay_at_table) { Yes } else { No }</td>
+<td>@if(p.unattended_terminals) { Yes } else { No }</td>
 <td>@if(p.confirmed_location) { Yes } else { No }</td>
 </tr>
 }
