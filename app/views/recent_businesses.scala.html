@@ -49,12 +49,12 @@
 
 <h3>Map statistics</h3>
 <table>
-<tr><th>Total number of retailers:</th><td>@num_retailers</td></tr>
-<tr><th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Excluding large retailers:</th><td>@num_small_retailers</td></tr>
-<tr><th>Total number of locations:</th><td>@num_businesses</td></tr>
-<tr><th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Excluding large retailers:</th><td>@num_small_businesses</td></tr>
-<tr><th>NFC supporting retailers:</th><td>@num_nfc_retailers (@("%.01f%%".format(num_nfc_retailers*100.0/num_retailers)) of all retailers)</td></tr>
-<tr><th>NFC supporting locations:</th><td>@num_nfc_businesses (@("%.01f%%".format(num_nfc_businesses*100.0/num_businesses)) of all locations)</td></tr>
+<tr><th>Total number of retailers:</th><td>@("%,d".format(num_retailers))</td></tr>
+<tr><th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Excluding large retailers:</th><td>@("%,d".format(num_small_retailers))</td></tr>
+<tr><th>Total number of locations:</th><td>@("%,d".format(num_businesses))</td></tr>
+<tr><th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Excluding large retailers:</th><td>@("%,d".format(num_small_businesses))</td></tr>
+<tr><th>NFC supporting retailers:</th><td>@("%,d".format(num_nfc_retailers)) (@("%.01f%%".format(num_nfc_retailers*100.0/num_retailers)) of all retailers)</td></tr>
+<tr><th>NFC supporting locations:</th><td>@("%,d".format(num_nfc_businesses)) (@("%.01f%%".format(num_nfc_businesses*100.0/num_businesses)) of all locations)</td></tr>
 </table>
 }
 
