@@ -26,23 +26,23 @@ templates.per_item_entry = """
   <div class="add-address" id="businessAddress"><address>{{address}}</address></div>
   <div class="add-options">
     <input type="checkbox" id="pinEnabled" value="true" />
-    <label for="pinEnabled">business has PIN pad (<a href="/itemlegend#pin" target="_blank">explain</a>)</label>
+    <label for="pinEnabled">business has PIN pad</label>
   </div>
   <div class="add-options">
     <input type="checkbox" id="contactlessEnabled" value="true" />
-    <label for="contactlessEnabled">business supports Apple/Android Pay (<a href="/itemlegend#contactless" target="_blank">explain</a>)</label>
+    <label for="contactlessEnabled">business supports Apple/Android Pay</label>
   </div>
   <div class="add-options">
     <input type="checkbox" id="unattendedTerminals" value="true" />
-    <label for="unattendedTerminals">has unattended terminals (<a href="/itemlegend#unattended" target="_blank">explain</a>)</label>
+    <label for="unattendedTerminals">has unattended terminals</label>
   </div>
   <div class="add-options">
     <input type="checkbox" id="gasPumpWorking" value="true" />
-    <label for="gasPumpWorking">works at pump (gas station only) (<a href="/itemlegend#gas" target="_blank">explain</a>)</label>
+    <label for="gasPumpWorking">works at pump (gas station only)</label>
   </div>
   <div class="add-options">
     <input type="checkbox" id="payAtTable" value="true" />
-    <label for="payAtTable">has pay at the table (restaurants only) (<a href="/itemlegend#payattable" target="_blank">explain</a>)</label>
+    <label for="payAtTable">has pay at the table (restaurants only)</label>
   </div>
   <div class="add-toolbar">
     <a href="#" onclick="event.preventDefault(); window.app.addBusiness();">add business</a>
@@ -60,23 +60,23 @@ templates.per_item_entry = """
   <div class="add-address" id="businessAddress"><address>{{address}}</address></div>
   <div class="add-options">
     <input type="checkbox" id="pinEnabled" disabled value="true" {{#if pin_enabled}}checked{{/if}}/>
-    <label for="pinEnabled">business has PIN pad (<a href="/itemlegend#pin" target="_blank">explain</a>)</label>
+    <label for="pinEnabled">business has PIN pad</label>
   </div>
   <div class="add-options">
     <input type="checkbox" id="contactlessEnabled" disabled {{#if contactless_enabled}}checked{{/if}} value="true" />
-    <label for="contactlessEnabled">business supports Apple/Android Pay (<a href="/itemlegend#contactless" target="_blank">explain</a>)</label>
+    <label for="contactlessEnabled">business supports Apple/Android Pay</label>
   </div>
   <div class="add-options">
     <input type="checkbox" id="unattendedTerminals" disabled {{#if unattended_terminals}}checked{{/if}} value="true" />
-    <label for="unattendedTerminals">has unattended terminals (<a href="/itemlegend#unattended" target="_blank">explain</a>)</label>
+    <label for="unattendedTerminals">has unattended terminals</label>
   </div>
   <div class="add-options">
     <input type="checkbox" id="gasPumpWorking" disabled {{#if gas_pump_working}}checked{{/if}} value="true" />
-    <label for="gasPumpWorking">works at pump (gas station only) (<a href="/itemlegend#gas" target="_blank">explain</a>)</label>
+    <label for="gasPumpWorking">works at pump (gas station only)</label>
   </div>
   <div class="add-options">
     <input type="checkbox" id="payAtTable" disabled {{#if pay_at_table}}checked{{/if}} value="true" />
-    <label for="payAtTable">has pay at the table (restaurants only) (<a href="/itemlegend#payattable" target="_blank">explain</a>)</label>
+    <label for="payAtTable">has pay at the table (restaurants only)</label>
   </div>
   <div class="add-toolbar">
     <a id="addBusinessLink" style="display: none;" href="#" onclick="event.preventDefault(); window.app.addBusiness();">add business</a>
@@ -96,23 +96,23 @@ templates.per_item_entry = """
   <div class="add-address" id="businessAddress"><address>{{address}}</address></div>
   <div class="add-options">
     <input type="checkbox" id="pinEnabled" value="true" />
-    <label for="pinEnabled">business has PIN pad (<a href="/itemlegend#pin" target="_blank">explain</a>)</label>
+    <label for="pinEnabled">business has PIN pad</label>
   </div>
   <div class="add-options">
     <input type="checkbox" id="contactlessEnabled" value="true" />
-    <label for="contactlessEnabled">business supports Apple/Android Pay (<a href="/itemlegend#contactless" target="_blank">explain</a>)</label>
+    <label for="contactlessEnabled">business supports Apple/Android Pay</label>
   </div>
   <div class="add-options">
     <input type="checkbox" id="unattendedTerminals" value="true" />
-    <label for="unattendedTerminals">has unattended terminals (<a href="/itemlegend#unattended" target="_blank">explain</a>)</label>
+    <label for="unattendedTerminals">has unattended terminals</label>
   </div>
   <div class="add-options">
     <input type="checkbox" id="gasPumpWorking" value="true" />
-    <label for="gasPumpWorking">works at pump (gas station only) (<a href="/itemlegend#gas" target="_blank">explain</a>)</label>
+    <label for="gasPumpWorking">works at pump (gas station only)</label>
   </div>
   <div class="add-options">
     <input type="checkbox" id="payAtTable" value="true" />
-    <label for="payAtTable">has pay at the table (restaurants only) (<a href="/itemlegend#payattable" target="_blank">explain</a>)</label>
+    <label for="payAtTable">has pay at the table (restaurants only)</label>
   </div>
   <div class="add-toolbar">
     <a href="#" onclick="event.preventDefault(); window.app.addBusiness();">add business</a> | <a href="#" onclick="event.preventDefault(); window.app.getDrivingDirections('{{address}}');">get directions</a>
