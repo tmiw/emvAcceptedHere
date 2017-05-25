@@ -92,7 +92,7 @@ AND "business_unattended_terminals" = true
       // First we need an accurate count of the number of businesses in the bounding
       // box for the next query.
       val result_cols = """
-        "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location"
+        "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location", "business_quick_chip"
         """
       val from_where_clause = """
         FROM "business_list" WHERE 
@@ -149,7 +149,8 @@ AND "business_unattended_terminals" = true
                     "confirmed_location" -> p[Boolean]("business_confirmed_location").toString,
                     "gas_pump_working" -> p[Boolean]("business_gas_pump_working").toString,
                     "unattended_terminals" -> p[Boolean]("business_unattended_terminals").toString,
-                    "pay_at_table" -> p[Boolean]("business_pay_at_table").toString))
+                    "pay_at_table" -> p[Boolean]("business_pay_at_table").toString,
+                    "quick_chip" -> p[Boolean]("business_quick_chip").toString))
         }
         Ok(Json.toJson(result.as(result_parser.*)))
       }
@@ -170,18 +171,19 @@ AND "business_unattended_terminals" = true
           "contactless_enabled" -> boolean,
           "gas_pump_working" -> boolean,
           "pay_at_table" -> boolean,
-          "unattended_terminals" -> boolean
+          "unattended_terminals" -> boolean,
+          "quick_chip" -> boolean
       )
   )
   
   def addBusiness = Action { implicit request =>
-    val (name, address, latitude, longitude, pin_enabled, contactless_enabled, gas_pump_working, pay_at_table, unattended_terminals) = addBusinessForm.bindFromRequest.get
+    val (name, address, latitude, longitude, pin_enabled, contactless_enabled, gas_pump_working, pay_at_table, unattended_terminals, quick_chip) = addBusinessForm.bindFromRequest.get
     DB.withTransaction { implicit conn =>
       val result: Option[Long] = SQL("""
           INSERT INTO "business_list"
-          ("business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals")
+          ("business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_quick_chip")
           VALUES
-          ({name}, {address}, {latitude}, {longitude}, {pin_enabled}, {contactless_enabled}, {confirmed_location}, {gas_pump_working}, {pay_at_table}, {unattended_terminals})
+          ({name}, {address}, {latitude}, {longitude}, {pin_enabled}, {contactless_enabled}, {confirmed_location}, {gas_pump_working}, {pay_at_table}, {unattended_terminals}, {quick_chip})
       """).on(
           "name" -> name,
           "address" -> address,
@@ -192,6 +194,7 @@ AND "business_unattended_terminals" = true
           "gas_pump_working" -> gas_pump_working,
           "pay_at_table" -> pay_at_table,
           "unattended_terminals" -> unattended_terminals,
+          "quick_chip" -> quick_chip,
           "confirmed_location" -> true).executeInsert()
       Ok(Json.obj(
           "id" -> result.get,
@@ -204,6 +207,7 @@ AND "business_unattended_terminals" = true
           "gas_pump_working" -> gas_pump_working,
           "pay_at_table" -> pay_at_table,
           "unattended_terminals" -> unattended_terminals,
+          "quick_chip" -> quick_chip,
           "confirmed_location" -> true
       ))
     }
@@ -236,7 +240,7 @@ AND "business_unattended_terminals" = true
   def recentBusinessesJson(name : String) =  Action { implicit request =>
     DB.withConnection { implicit conn =>
       val q = SQL("""
-        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location"
+        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location", "business_quick_chip"
         FROM "business_list" WHERE
         LOWER("business_name") LIKE {name} || '%'
         ORDER BY "id" DESC
@@ -256,6 +260,7 @@ AND "business_unattended_terminals" = true
               "gas_pump_working" -> t.gas_pump_working,
               "pay_at_table" -> t.pay_at_table,
               "unattended_terminals" -> t.unattended_terminals,
+              "quick_chip" -> t.quick_chip,
               "confirmed_location" -> t.confirmed_location);
         }
       }
@@ -266,7 +271,7 @@ AND "business_unattended_terminals" = true
   def recentBusinesses = Action { implicit request =>
     DB.withConnection { implicit conn =>
       val q = SQL("""
-        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location"
+        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location", "business_quick_chip"
         FROM "business_list"
         ORDER BY "id" DESC
         LIMIT 10""")
@@ -276,7 +281,7 @@ AND "business_unattended_terminals" = true
       val result = q.as(q_parser.*)
       
       val small_result = SQL("""
-        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location"
+        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location", "business_quick_chip"
         FROM "business_list"
         WHERE "business_name" IN (
           (SELECT DISTINCT "business_name" FROM "business_list") EXCEPT 

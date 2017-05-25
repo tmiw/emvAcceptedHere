@@ -115,6 +115,7 @@ class MainController extends SimpleMVC.Controller
                             confirmed_location: i.confirmed_location == "true"
                             gas_pump_working: i.gas_pump_working == "true"
                             pay_at_table: i.pay_at_table == "true"
+                            quick_chip: i.quick_chip == "true"
                             unattended_terminals: i.unattended_terminals == "true"
                         }
                     
@@ -139,6 +140,7 @@ class MainController extends SimpleMVC.Controller
                         confirmed_location: i.confirmed_location == "true"
                         gas_pump_working: i.gas_pump_working == "true"
                         pay_at_table: i.pay_at_table == "true"
+                        quick_chip: i.quick_chip == "true"
                         unattended_terminals: i.unattended_terminals == "true"
                     }
                     self._locations[latlon] = newobj
@@ -190,6 +192,7 @@ class MainController extends SimpleMVC.Controller
                                 contactless_enabled: false
                                 gas_pump_working: false
                                 pay_at_table: false
+                                quick_chip: false
                                 unattended_terminals: false
         
                     if self._infoWindow?
@@ -266,6 +269,8 @@ class MainController extends SimpleMVC.Controller
         $("#gasPumpWorking").prop("checked", false)
         $("#payAtTable").prop("disabled", false)
         $("#payAtTable").prop("checked", false)
+        $("#quickChip").prop("disabled", false)
+        $("#quickChip").prop("checked", false)
         $("#unattendedTerminals").prop("disabled", false)
         $("#unattendedTerminals").prop("checked", false)
         $("#addBusinessLink").css("display", "inline")
@@ -291,6 +296,7 @@ class MainController extends SimpleMVC.Controller
             gas_pump_working = $("#gasPumpWorking").prop("checked")
             pay_at_table = $("#payAtTable").prop("checked")
             unattended_terminals = $("#unattendedTerminals").prop("checked")
+            quick_chip = $("#quickChip").prop("checked")
             request = $.ajax "/businesses/add", {type: "POST", data: {
                 name: $("#businessName").val(),
                 address: $("#businessAddress").text(),
@@ -300,6 +306,7 @@ class MainController extends SimpleMVC.Controller
                 contactless_enabled: contactless_enabled,
                 gas_pump_working: gas_pump_working,
                 pay_at_table: pay_at_table,
+                quick_chip: quick_chip,
                 unattended_terminals: unattended_terminals
             }}
             request.done (data) ->
@@ -320,6 +327,7 @@ class MainController extends SimpleMVC.Controller
                         gas_pump_working: data.gas_pump_working == "true" or data.gas_pump_working == true
                         pay_at_table: data.pay_at_table == "true" or data.pay_at_table == true
                         unattended_terminals: data.unattended_terminals == "true" or data.unattended_terminals == true
+                        quick_chip: data.quick_chip == "true" or data.quick_chip == true
                         confirmed_location: true
                 else
                     view = 
@@ -339,6 +347,7 @@ class MainController extends SimpleMVC.Controller
                         gas_pump_working: data.gas_pump_working == "true" or data.gas_pump_working == true
                         pay_at_table: data.pay_at_table == "true" or data.pay_at_table == true
                         unattended_terminals: data.unattended_terminals == "true" or data.unattended_terminals == true
+                        quick_chip: data.quick_chip == "true" or data.quick_chip == true
                         confirmed_location: true
                     
                     self._locations[key] = view
