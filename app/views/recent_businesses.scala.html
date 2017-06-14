@@ -14,7 +14,7 @@
 @for(p <- results) {
 <tr>
 <td><a href="/#@p.latitude,@p.longitude">@p.name</a></td>
-<td>@p.address<br/>(@p.latitude, @p.longitude)</td>
+<td>@p.address</td>
 <td>@if(p.pin_enabled) { Yes } else { No }</td>
 <td>@if(p.contactless_enabled) { Yes } else { No }</td>
 <td>@if(p.gas_pump_working) { Yes } else { No }</td>
@@ -33,7 +33,7 @@
 @for(p <- small_results) {
 <tr>
 <td><a href="/#@p.latitude,@p.longitude">@p.name</a></td>
-<td>@p.address<br/>(@p.latitude, @p.longitude)</td>
+<td>@p.address</td>
 <td>@if(p.pin_enabled) { Yes } else { No }</td>
 <td>@if(p.contactless_enabled) { Yes } else { No }</td>
 <td>@if(p.gas_pump_working) { Yes } else { No }</td>
