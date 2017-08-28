@@ -84,8 +84,6 @@ var fetch_recents = function() {
 						$("<td>").append(
 							$("<a>").attr("href", "/#" + data[i].latitude + "," + data[i].longitude).append(data[i].name)))
 						.append($("<td>").append(data[i].address))
-						.append($("<td>").append(data[i].latitude))
-						.append($("<td>").append(data[i].longitude))
 						.append($("<td>").append(data[i].pin_enabled == true ? "Yes" : "No"))
 						.append($("<td>").append(data[i].contactless_enabled == true ? "Yes" : "No"))
 						.append($("<td>").append(data[i].gas_pump_working == true ? "Yes" : "No"))
