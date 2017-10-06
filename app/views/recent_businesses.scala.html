@@ -88,7 +88,9 @@ var fetch_recents = function() {
 						.append($("<td>").append(data[i].contactless_enabled == true ? "Yes" : "No"))
 						.append($("<td>").append(data[i].gas_pump_working == true ? "Yes" : "No"))
 						.append($("<td>").append(data[i].pay_at_table == true ? "Yes" : "No"))
-						.append($("<td>").append(data[i].confirmed_location == true ? "Yes" : "No")));
+						.append($("<td>").append(data[i].unattended_terminals == true ? "Yes" : "No"))
+						.append($("<td>").append(data[i].quick_chip == true ? "Yes" : "No"))
+                        .append($("<td>").append(data[i].confirmed_location == true ? "Yes" : "No")));
 			}
 
 			if (data.length == 0)
