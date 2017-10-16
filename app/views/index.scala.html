@@ -26,6 +26,7 @@
             <input type="checkbox" id="showGasPumps" /> <label for="showGasPumps">Show only pay at the pump locations</label><br/>
             <input type="checkbox" id="showPayAtTable" /> <label for="showPayAtTable">Show only pay at the table locations</label><br/>
             <input type="checkbox" id="showUnattendedTerminals" /> <label for="showUnattendedTerminals">Show locations with unattended terminals</label><br/>
+            <input type="checkbox" id="showAsHeatmap" /><label for="showAsHeatmap">Show as heatmap (beta)</label><br/>
             <div class="add-toolbar">
                 <a href="#" onclick="event.preventDefault(); window.app.cancelOptions();">close</a>
             </div>
@@ -105,11 +106,17 @@
 
 	loadScript([
 	    "@routes.Assets.versioned("javascripts/jquery-1.9.0.min.js")",
+	    "@routes.Assets.versioned("javascripts/heatmap.min.js")",
 	    "@routes.Assets.versioned("javascripts/handlebars-v3.0.3.js")",
 	    "@routes.Assets.versioned("javascripts/SimpleMVC.js")"], function() {
 	    	loadScript(["@routes.Assets.versioned("javascripts/templates.js")"], function() {
 	    		loadScript(["@routes.Assets.versioned("javascripts/main.js")"], function() {
-	    			var done = 1;
+	    			loadScript(["https://maps.google.com/maps/api/js?v=3.exp&sensor=true&libraries=places,geometry"], function() {
+	    				loadScript(["@routes.Assets.versioned("javascripts/gmaps-heatmap.js")"], function() {
+	    					window.app = new MainApp.MainController();
+       						window.app.start();
+			    		});
+			    	});
 	    		});
 	    	});
 	    });

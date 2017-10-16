@@ -1,4 +1,9 @@
-class MainController extends SimpleMVC.Controller
+if not MainApp?
+    MainApp = exports? and exports or @MainApp = {}
+else
+    MainApp = @MainApp
+    
+class MainApp.MainController extends SimpleMVC.Controller
     _navigateDebounce: () =>
         if this._navTimeoutId?
             clearTimeout this._navTimeoutId
@@ -93,18 +98,87 @@ class MainController extends SimpleMVC.Controller
             'eventAction': 'move'
         })
 
-        query = $.ajax "/businesses/" + mapNE.lat() + "/" + mapNE.lng() + "/" + mapSW.lat() + "/" + mapSW.lng(), settings
+        if $("#showAsHeatmap").prop("checked") == true
+            query = $.ajax "/heatmap/" + mapNE.lat() + "/" + mapNE.lng() + "/" + mapSW.lat() + "/" + mapSW.lng(), settings
+        else
+            query = $.ajax "/businesses/" + mapNE.lat() + "/" + mapNE.lng() + "/" + mapSW.lat() + "/" + mapSW.lng(), settings
         self = this
-        query.done (data) ->
-            # Add new data to in-memory representation and mark entries that have not been
-            # removed.
-            for i in data
-                latlon = i.lat + "," + i.lng
-                if self._locations[latlon]?
-                    self._locations[latlon].notSeen = false
+        if this._heatmap?
+            this._heatmap.setData({
+                min: 0
+                max: 100
+                data: []
+            })
+        if $("#showAsHeatmap").prop("checked") == true
+            query.done (data) ->
+                # Unlike the below, we're getting all of the EMV enabled points available 
+                # in the current view (with lat/lon capped to 2 decimal places). Create the
+                # heatmap instance, if not already done, and feed the data into it for rendering.
+                if not self._heatmap?
+                    self._heatmap = new HeatmapOverlay(self._map, {
+                        radius: 0.01
+                        scaleRadius: true
+                        useLocalExtrema: false
+                        latField: "lat"
+                        lngField: "lng"
+                        valueField: "count"
+                    })
+                
+                found_max = 0
+                for v in data
+                    v.lat = parseFloat(v.lat)
+                    v.lng = parseFloat(v.lng)
+                    v.count = parseInt(v.count)
+                    if v.count > found_max
+                        found_max = v.count
+                
+                self._heatmap.setData({
+                    min: 0
+                    max: found_max
+                    data: data
+                })
+                
+                # Clear all existing points from map since we want to only show the heatmap.
+                for key, val of self._locations
+                    val.marker.marker.setMap null
                     
-                    if not self._locations[latlon].businesses[i.id]
-                        self._locations[latlon].businesses[i.id] = {
+                self._locations = {}
+        else
+            query.done (data) ->
+                # Add new data to in-memory representation and mark entries that have not been
+                # removed.
+                for i in data
+                    latlon = i.lat + "," + i.lng
+                    if self._locations[latlon]?
+                        self._locations[latlon].notSeen = false
+                    
+                        if not self._locations[latlon].businesses[i.id]
+                            self._locations[latlon].businesses[i.id] = {
+                                id: i.id
+                                name: i.name
+                                address: i.address
+                                lat: i.lat
+                                lon: i.lng
+                                pin_enabled: i.pin_enabled == "true"
+                                contactless_enabled: i.contactless_enabled == "true"
+                                confirmed_location: i.confirmed_location == "true"
+                                gas_pump_working: i.gas_pump_working == "true"
+                                pay_at_table: i.pay_at_table == "true"
+                                quick_chip: i.quick_chip == "true"
+                                unattended_terminals: i.unattended_terminals == "true"
+                            }
+                    
+                        if Object.keys(self._locations[latlon].businesses).length > 1
+                            self._locations[latlon].onlyOneBusiness = false
+                    else
+                        # Need to add new entry for this location
+                        newobj = {}
+                        newobj.notSeen = false
+                        newobj.needToCreatePin = true
+                        newobj.edit_disabled = true
+                        newobj.onlyOneBusiness = true
+                        newobj.businesses = {}
+                        newobj.businesses[i.id] = {
                             id: i.id
                             name: i.name
                             address: i.address
@@ -118,98 +192,75 @@ class MainController extends SimpleMVC.Controller
                             quick_chip: i.quick_chip == "true"
                             unattended_terminals: i.unattended_terminals == "true"
                         }
+                        self._locations[latlon] = newobj
+            
+                # Remove unmarked entries from map
+                toKeep = {}
+                for key, val of self._locations
+                    if val.notSeen
+                        val.marker.marker.setMap null
+                    else
+                        toKeep[key] = val
+            
+                self._locations = toKeep
+                if self._infoWindow?
+                    self._infoWindow.close()
                     
-                    if Object.keys(self._locations[latlon].businesses).length > 1
-                        self._locations[latlon].onlyOneBusiness = false
-                else
-                    # Need to add new entry for this location
-                    newobj = {}
-                    newobj.notSeen = false
-                    newobj.needToCreatePin = true
-                    newobj.edit_disabled = true
-                    newobj.onlyOneBusiness = true
-                    newobj.businesses = {}
-                    newobj.businesses[i.id] = {
-                        id: i.id
-                        name: i.name
-                        address: i.address
-                        lat: i.lat
-                        lon: i.lng
-                        pin_enabled: i.pin_enabled == "true"
-                        contactless_enabled: i.contactless_enabled == "true"
-                        confirmed_location: i.confirmed_location == "true"
-                        gas_pump_working: i.gas_pump_working == "true"
-                        pay_at_table: i.pay_at_table == "true"
-                        quick_chip: i.quick_chip == "true"
-                        unattended_terminals: i.unattended_terminals == "true"
-                    }
-                    self._locations[latlon] = newobj
+                # Create markers for newly downloaded businesses
+                self._createMarkersForBusinesses()
             
-            # Remove unmarked entries from map
-            toKeep = {}
-            for key, val of self._locations
-                if val.notSeen
-                    val.marker.marker.setMap null
-                else
-                    toKeep[key] = val
-            
-            self._locations = toKeep
-            
-            # Create markers for newly downloaded businesses
-            self._createMarkersForBusinesses()
-            
-            if self._handlePossibleAdd
-                self._handlePossibleAdd = false
-                if self._place? 
-                    centerLocString = self._place.geometry.location.lat() + "," + self._place.geometry.location.lng()
-                    placeName = self._place.name
-                    if self._place.formatted_address.indexOf(placeName) > -1
+                if self._handlePossibleAdd
+                    self._handlePossibleAdd = false
+                    if self._place? 
+                        centerLocString = self._place.geometry.location.lat() + "," + self._place.geometry.location.lng()
+                        placeName = self._place.name
+                        if self._place.formatted_address.indexOf(placeName) > -1
+                            placeName = ""
+                    else
                         placeName = ""
-                else
-                    placeName = ""
-                    centerLocString = self._cur_lat + "," + self._cur_lon
-                found = false
-                for k, v of self._locations
-                    loc = null
-                    for id, l of v.businesses
-                        loc = l
-                    locString = loc.lat + "," + loc.lon
-                    if locString == centerLocString
-                        v.foundPlaceName = placeName
-                        self._infoWindow = v.marker.infoWindow
-                        v.marker.infoWindow.open self._map, v.marker.marker
-                        found = true
+                        centerLocString = self._cur_lat + "," + self._cur_lon
+                    found = false
+                    for k, v of self._locations
+                        loc = null
+                        for id, l of v.businesses
+                            loc = l
+                        locString = loc.lat + "," + loc.lon
+                        if locString == centerLocString
+                            v.foundPlaceName = placeName
+                            self._infoWindow = v.marker.infoWindow
+                            v.marker.infoWindow.open self._map, v.marker.marker
+                            found = true
 
-                if not found
-                    view = 
-                        edit_disabled: false
-                        businesses: 
-                            0:
-                                id: 0
-                                name: placeName
-                                address: self._place.formatted_address
-                                pin_enabled: false
-                                contactless_enabled: false
-                                gas_pump_working: false
-                                pay_at_table: false
-                                quick_chip: false
-                                unattended_terminals: false
+                    if not found
+                        view = 
+                            edit_disabled: false
+                            businesses: 
+                                0:
+                                    id: 0
+                                    name: placeName
+                                    address: self._place.formatted_address
+                                    pin_enabled: false
+                                    contactless_enabled: false
+                                    gas_pump_working: false
+                                    pay_at_table: false
+                                    quick_chip: false
+                                    unattended_terminals: false
         
-                    if self._infoWindow?
-                        self._infoWindow.close()
+                        if self._infoWindow?
+                            self._infoWindow.close()
         
-                    self._infoWindow = new google.maps.InfoWindow({
-                        position: self._place.geometry.location
-                        content: "<div id='x'></div>"
-                    })
+                        self._infoWindow = new google.maps.InfoWindow({
+                            position: self._place.geometry.location
+                            content: "<div id='x'></div>"
+                        })
                     
-                    google.maps.event.addListener self._infoWindow, "domready", () ->
-                        self._infoWindow.setContent('<div id="x"></div>')
-                        x = document.getElementById('x')
-                        if x
-                            x.innerHTML = templates.per_item_entry(view)
+                        google.maps.event.addListener self._infoWindow, "domready", () ->
+                            self._infoWindow.setContent('<div id="x"></div>')
+                            x = document.getElementById('x')
+                            if x
+                                x.innerHTML = templates.per_item_entry(view)
                             
-                    self._infoWindow.open self._map
+                        self._infoWindow.open self._map
 
     _navigateToAddress: () =>
         # Ensure event isn't called multiple times.
@@ -416,6 +467,9 @@ class MainController extends SimpleMVC.Controller
             $("#showPayAtTable").prop("checked", true)
         if window.localStorage.getItem('showUnattendedTerminals') == "true"
             $("#showUnattendedTerminals").prop("checked", true)
+        if window.localStorage.getItem('showAsHeatmap') == "true"
+            $("#showAsHeatmap").prop("checked", true)
+            $("#address").prop("disabled", true)
             
         $("#hideUnconfirmed").change(() -> 
             window.localStorage.setItem('hideUnconfirmed', $("#hideUnconfirmed").prop("checked"))
@@ -442,6 +496,13 @@ class MainController extends SimpleMVC.Controller
         $("#showUnattendedTerminals").change(() -> 
             window.localStorage.setItem('showUnattendedTerminals', $("#showUnattendedTerminals").prop("checked"))
             self._navigateDebounce())
+        $("#showAsHeatmap").change(() -> 
+            window.localStorage.setItem('showAsHeatmap', $("#showAsHeatmap").prop("checked"))
+            if $("#showAsHeatmap").prop("checked") == true
+                $("#address").prop("disabled", true)
+            else
+                $("#address").prop("disabled", false)
+            self._navigateDebounce())
             
         if window.location.hash
             # We're going to navigate directly to a particular location on the map.
@@ -459,14 +520,4 @@ class MainController extends SimpleMVC.Controller
             # Navigate to center of the US to start. Geolocation will move us to the correct location later.        
             self._goDefaultHome()        
             self.goHome()
-            
-# initialize app once Google Maps API loads.
-$(document).ready(() ->
-   s = document.createElement("script")
-   s.type = "text/javascript"
-   s.src  = "https://maps.google.com/maps/api/js?v=3.exp&sensor=true&libraries=places,geometry&callback=gmap_draw"
-   window.gmap_draw = () ->
-       window.app = new MainController
-       window.app.start()
-   $("head").append(s)
-)
+

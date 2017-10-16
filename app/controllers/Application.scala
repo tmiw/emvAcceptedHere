@@ -160,6 +160,60 @@ AND "business_unattended_terminals" = true
       }
     }
   }
+
+  def heatmapAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean, hideChains: Boolean, showGasPumps: Boolean, showPayAtTable: Boolean, showUnattendedTerminals: Boolean) = Action { implicit request =>
+    val confirmed_sql = 
+      if (hideUnconfirmed) 
+        """
+AND "business_confirmed_location" = true
+""" else ""
+    val chain_sql = 
+      if (hideChains)
+        """
+AND NOT EXISTS (SELECT 1 FROM "chain_list" WHERE "business_list"."business_name" LIKE ("chain_name" || '%'))
+""" else ""
+    val pump_sql = 
+      if (showGasPumps)
+        """
+AND "business_gas_pump_working" = true
+""" else ""
+    val table_sql =
+      if (showPayAtTable)
+        """
+AND "business_pay_at_table" = true
+""" else ""
+    val unattended_sql =
+      if (showUnattendedTerminals)
+        """
+AND "business_unattended_terminals" = true
+""" else ""
+  
+    DB.withConnection { implicit conn =>
+      val from_where_clause = """
+        FROM "business_list" WHERE 
+             ("business_latitude" >= {lat_bl} AND "business_latitude" <= {lat_ur}) AND
+             ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})""" + confirmed_sql + chain_sql + pump_sql + table_sql + unattended_sql
+             
+      val result = SQL("""
+        SELECT ROUND(CAST("business_latitude" AS NUMERIC), 2) AS "lat", 
+               ROUND(CAST("business_longitude" AS NUMERIC), 2) AS "lng", 
+               COUNT(*) AS "cnt" 
+        """ + from_where_clause + """
+        GROUP BY "lat", "lng"
+        """).on(
+              "lng_ur" -> lon_ur, "lat_ur" -> lat_ur,
+              "lng_bl" -> lon_bl, "lat_bl" -> lat_bl)
+        
+      val result_parser = RowParser[Map[String, String]] {
+        case p => 
+          Success(Map(
+                  "lat" -> p[Double]("lat").toString,
+                  "lng" -> p[Double]("lng").toString,
+                  "count" -> p[Long]("cnt").toString))
+      }
+      Ok(Json.toJson(result.as(result_parser.*)))
+    }
+  }
   
   val addBusinessForm = Form(
       tuple(

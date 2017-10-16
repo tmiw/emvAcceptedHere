@@ -18,6 +18,7 @@ GET		/sample_receipts/:brand	controllers.Application.sample_receipts_wo_method(b
 
 # AJAX API
 GET     /businesses/:lat_ur/:lon_ur/:lat_bl/:lon_bl       controllers.Application.businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean ?= false, hideChains: Boolean ?= false, showGasPumps: Boolean ?= false, showPayAtTable: Boolean ?= false, showUnattendedTerminals: Boolean ?= false)
+GET     /heatmap/:lat_ur/:lon_ur/:lat_bl/:lon_bl       controllers.Application.heatmapAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean ?= false, hideChains: Boolean ?= false, showGasPumps: Boolean ?= false, showPayAtTable: Boolean ?= false, showUnattendedTerminals: Boolean ?= false)
 POST    /businesses/add             controllers.Application.addBusiness
 POST    /businesses/report/:id      controllers.Application.reportBusiness(id: Long)
 
