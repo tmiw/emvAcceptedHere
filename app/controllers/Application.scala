@@ -20,7 +20,7 @@ object JavaContext {
 
   def withContext[Status](block: => Status)(implicit header: RequestHeader): Status = {
     try {
-      Http.Context.current.set(JavaHelpers.createJavaContext(header))
+      Http.Context.current.set(JavaHelpers.createJavaContext(header, JavaHelpers.createContextComponents()))
       block
     }
     finally {
@@ -29,8 +29,9 @@ object JavaContext {
   }
 }
 
-class Application @Inject() (mailerClient: MailerClient) extends Controller {
-  
+class Application @Inject() (dbapi: DBApi, mailerClient: MailerClient) extends InjectedController {
+  var database = dbapi.database("default")
+ 
   def index = Action {
     implicit requestHeader: RequestHeader =>
     JavaContext.withContext { Ok(views.html.index()) }
@@ -88,7 +89,7 @@ AND "business_pay_at_table" = true
 AND "business_unattended_terminals" = true
 """ else ""
   
-    DB.withConnection { implicit conn =>
+    database.withConnection { implicit conn =>
       // First we need an accurate count of the number of businesses in the bounding
       // box for the next query.
       val result_cols = """
@@ -188,7 +189,7 @@ AND "business_pay_at_table" = true
 AND "business_unattended_terminals" = true
 """ else ""
   
-    DB.withConnection { implicit conn =>
+    database.withConnection { implicit conn =>
       val from_where_clause = """
         FROM "business_list" WHERE 
              ("business_latitude" >= {lat_bl} AND "business_latitude" <= {lat_ur}) AND
@@ -232,7 +233,7 @@ AND "business_unattended_terminals" = true
   
   def addBusiness = Action { implicit request =>
     val (name, address, latitude, longitude, pin_enabled, contactless_enabled, gas_pump_working, pay_at_table, unattended_terminals, quick_chip) = addBusinessForm.bindFromRequest.get
-    DB.withTransaction { implicit conn =>
+    database.withTransaction { implicit conn =>
       val result: Option[Long] = SQL("""
           INSERT INTO "business_list"
           ("business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_quick_chip")
@@ -268,7 +269,7 @@ AND "business_unattended_terminals" = true
   }
   
   def reportBusiness(id: Long) = Action { implicit request =>
-    DB.withConnection { implicit conn =>
+    database.withConnection { implicit conn =>
       val result = SQL("""
           SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location"
           FROM "business_list" WHERE
@@ -292,7 +293,7 @@ AND "business_unattended_terminals" = true
   }
   
   def recentBusinessesJson(name : String) =  Action { implicit request =>
-    DB.withConnection { implicit conn =>
+    database.withConnection { implicit conn =>
       val q = SQL("""
         SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location", "business_quick_chip"
         FROM "business_list" WHERE
@@ -323,7 +324,7 @@ AND "business_unattended_terminals" = true
   }
   
   def recentBusinesses = Action { implicit request =>
-    DB.withConnection { implicit conn =>
+    database.withConnection { implicit conn =>
       val q = SQL("""
         SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location", "business_quick_chip"
         FROM "business_list"
@@ -393,7 +394,7 @@ AND "business_unattended_terminals" = true
   }
   
   def sample_receipt_home = Action { implicit request =>
-    DB.withConnection { implicit conn =>
+    database.withConnection { implicit conn =>
       val q = SQL("""
           SELECT "id", "brand_name" FROM "receipt_terminal_brands" ORDER BY "brand_name"
       """)
@@ -415,7 +416,7 @@ AND "business_unattended_terminals" = true
   }
   
   def sample_receipts(brand: Int, method: String, cvm: String) = Action {
-    DB.withConnection { implicit conn =>
+    database.withConnection { implicit conn =>
       val q = SQL("""
           SELECT "id", "brand_name" FROM "receipt_terminal_brands" ORDER BY "brand_name"
       """)
@@ -439,7 +440,7 @@ AND "business_unattended_terminals" = true
   }
   
     def sample_receipts_wo_method(brand: Int) = Action {
-    DB.withConnection { implicit conn =>
+    database.withConnection { implicit conn =>
       val q = SQL("""
           SELECT "id", "brand_name" FROM "receipt_terminal_brands" ORDER BY "brand_name"
       """)
@@ -463,7 +464,7 @@ AND "business_unattended_terminals" = true
   }
     
   def sample_receipts_wo_cvm(brand: Int, method: String) = Action {
-    DB.withConnection { implicit conn =>
+    database.withConnection { implicit conn =>
       val q = SQL("""
           SELECT "id", "brand_name" FROM "receipt_terminal_brands" ORDER BY "brand_name"
       """)
