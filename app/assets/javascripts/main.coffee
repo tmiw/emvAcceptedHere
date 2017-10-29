@@ -203,8 +203,6 @@ class MainApp.MainController extends SimpleMVC.Controller
                         toKeep[key] = val
             
                 self._locations = toKeep
-                if self._infoWindow?
-                    self._infoWindow.close()
                     
                 # Create markers for newly downloaded businesses
                 self._createMarkersForBusinesses()
@@ -266,6 +264,9 @@ class MainApp.MainController extends SimpleMVC.Controller
         # Ensure event isn't called multiple times.
         google.maps.event.clearListeners this._map, "bounds_changed"
 
+        if self._infoWindow?
+            self._infoWindow.close()
+                    
         this._place = this._autocomplete.getPlace()
         placeLoc = this._place.geometry.location
         window.app.navigate "/loc/" + placeLoc.lat() + "/" + placeLoc.lng(), true, false
