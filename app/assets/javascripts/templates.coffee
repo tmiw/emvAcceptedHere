@@ -88,7 +88,8 @@ templates.per_item_entry = """
   </div>
   <div class="add-toolbar">
     <a id="addBusinessLink" style="display: none;" href="#" onclick="event.preventDefault(); window.app.addBusiness();">add business</a>
-    <span id="addNewBusinessLink"><a href="#" onclick="event.preventDefault(); window.app.addNewBusiness('{{id}}');">add additional business</a> | </span>
+    <span id="addNewBusinessLink"><a href="#" onclick="event.preventDefault(); window.app.addNewBusiness('{{id}}');">add additional</a> | </span>
+    <span id="wikiLink"><a href="https://wiki.emvacceptedhere.com/wiki/{{name}}" target="_blank">wiki</a> | </span>
     <span id="getDirectionsLink"><a href="#" onclick="event.preventDefault(); window.app.getDrivingDirections('{{address}}');">get directions</a> | </span>
     <span id="report-errors-{{id}}"><a href="#" onclick="event.preventDefault(); window.app.reportError('{{id}}');">report errors</a></span>
   </div>
@@ -136,7 +137,7 @@ templates.per_item_entry = """
 <div class="emvBusinessList">
 {{#each this}}
 <div class="slimEmvBusinessInfo">
-  	{{name}}: 
+  	<a href="https://wiki.emvacceptedhere.com/wiki/{{name}}" target="_blank">{{name}}</a>: 
   	  <input type="checkbox" value="true" {{#pin_enabled}}checked{{/pin_enabled}} disabled /> PIN
       <input type="checkbox" value="true" {{#contactless_enabled}}checked{{/contactless_enabled}} disabled /> NFC
       <input type="checkbox" value="true" {{#unattended_terminals}}checked{{/unattended_terminals}} disabled /> Unattended terminals

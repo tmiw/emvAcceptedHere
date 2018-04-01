@@ -327,6 +327,7 @@ class MainApp.MainController extends SimpleMVC.Controller
         $("#unattendedTerminals").prop("checked", false)
         $("#addBusinessLink").css("display", "inline")
         $("#addNewBusinessLink").css("display", "none")
+        $("#wikiLink").css("display", "none")
         $("#getDirectionsLink").css("display", "none")
         $("#report-errors-" + id).css("display", "none")
         
