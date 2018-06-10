@@ -274,7 +274,7 @@ class MainApp.MainController extends SimpleMVC.Controller
         google.maps.event.addListener this._map, "bounds_changed", this._navigateDebounce
         this._map.setZoom 15
     
-    confirmBusiness: (id) ->
+    confirmBusiness: (id) =>
         query = $.ajax "/businesses/confirm/" + id, {type: "POST"}
         self = this
         query.done () ->
@@ -285,7 +285,7 @@ class MainApp.MainController extends SimpleMVC.Controller
             self._infoWindow.close()
             self._createMarkersForBusinesses()
             
-    confirmBusinessMultiple: (id) ->
+    confirmBusinessMultiple: (id) =>
         query = $.ajax "/businesses/confirm/" + id, {type: "POST"}
         self = this
         query.done () ->
