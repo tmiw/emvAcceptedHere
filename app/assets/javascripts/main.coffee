@@ -282,6 +282,7 @@ class MainApp.MainController extends SimpleMVC.Controller
                 for l,j of v.businesses
                     if j.id == id
                         j.confirmed_location = true
+                        j.needToCreatePin = true
             self._infoWindow.close()
             self._createMarkersForBusinesses()
             
