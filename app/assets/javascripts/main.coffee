@@ -274,6 +274,20 @@ class MainApp.MainController extends SimpleMVC.Controller
         google.maps.event.addListener this._map, "bounds_changed", this._navigateDebounce
         this._map.setZoom 15
     
+    confirmBusiness: (id) ->
+        query = $.ajax "/businesses/confirm/" + id, {type: "POST"}
+        self = this
+        query.done () ->
+            self._infoWindow.close()
+            self._createMarkersForBusinesses()
+            
+    confirmBusinessMultiple: (id) ->
+        query = $.ajax "/businesses/confirm/" + id, {type: "POST"}
+        self = this
+        query.done () ->
+            $("#confirmed-loc-" + id).prop("disabled", true)
+            $("#confirmed-loc-" + id).prop("checked", true)
+            
     reportError: (id) ->
         this._reportId = id
         

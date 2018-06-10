@@ -21,6 +21,7 @@ GET     /businesses/:lat_ur/:lon_ur/:lat_bl/:lon_bl       controllers.Applicatio
 GET     /heatmap/:lat_ur/:lon_ur/:lat_bl/:lon_bl       controllers.Application.heatmapAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean ?= false, hideChains: Boolean ?= false, showGasPumps: Boolean ?= false, showPayAtTable: Boolean ?= false, showUnattendedTerminals: Boolean ?= false)
 POST    /businesses/add             controllers.Application.addBusiness
 POST    /businesses/report/:id      controllers.Application.reportBusiness(id: Long)
+POST    /businesses/confirm/:id     controllers.Application.confirmBusiness(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

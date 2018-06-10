@@ -89,6 +89,7 @@ templates.per_item_entry = """
   <div class="add-toolbar">
     <a id="addBusinessLink" style="display: none;" href="#" onclick="event.preventDefault(); window.app.addBusiness();">add business</a>
     <span id="addNewBusinessLink"><a href="#" onclick="event.preventDefault(); window.app.addNewBusiness('{{id}}');">add additional</a> | </span>
+    <span id="confirmLink" {{#confirmed_location}}style="display: none;"{{/confirmed_location}}><a href="#" onclick="event.preventDefault(); window.app.confirmBusiness('{{id}}');">confirm</a> | </span>
     <span id="wikiLink"><a href="https://wiki.emvacceptedhere.com/wiki/{{name}}" target="_blank">wiki</a> | </span>
     <span id="getDirectionsLink"><a href="#" onclick="event.preventDefault(); window.app.getDrivingDirections('{{address}}');">get directions</a> | </span>
     <span id="report-errors-{{id}}"><a href="#" onclick="event.preventDefault(); window.app.reportError('{{id}}');">report errors</a></span>
@@ -144,7 +145,7 @@ templates.per_item_entry = """
 	  <input type="checkbox" value="true" {{#gas_pump_working}}checked{{/gas_pump_working}} disabled /> Gas pump
       <input type="checkbox" value="true" {{#pay_at_table}}checked{{/pay_at_table}} disabled /> Pay at table
       <input type="checkbox" value="true" {{#quick_chip}}checked{{/quick_chip}} disabled /> Quick Chip
-      <input type="checkbox" value="true" {{#confirmed_location}}checked{{/confirmed_location}} disabled /> Confirmed
+      <input type="checkbox" id="confirmed-loc-{{id}}" onchange="window.app.confirmBusinessMultiple({{id}});" value="true" {{#confirmed_location}}checked disabled{{/confirmed_location}} /> Confirmed
     (<span id="report-errors-{{id}}"><a href="#" onclick="event.preventDefault(); window.app.reportError('{{id}}');">report errors</a></span>)
 </div>
 {{/each}}

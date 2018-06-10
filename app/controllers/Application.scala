@@ -231,6 +231,14 @@ AND "business_unattended_terminals" = true
       )
   )
   
+  def confirmBusiness(id: Long) = Action { implicit request =>
+    database.withConnection { implicit conn =>
+      val result = SQL("""
+          UPDATE "business_list" SET "business_confirmed_location" = true WHERE "id" = {id}""").on("id" -> id).executeUpdate()      
+      Ok(Json.toJson(true))
+    }
+  }
+  
   def addBusiness = Action { implicit request =>
     val (name, address, latitude, longitude, pin_enabled, contactless_enabled, gas_pump_working, pay_at_table, unattended_terminals, quick_chip) = addBusinessForm.bindFromRequest.get
     database.withTransaction { implicit conn =>
