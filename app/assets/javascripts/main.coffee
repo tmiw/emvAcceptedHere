@@ -279,10 +279,13 @@ class MainApp.MainController extends SimpleMVC.Controller
         self = this
         query.done () ->
             for k,v of self._locations
+                setPinProp = false
                 for l,j of v.businesses
                     if j.id == id
                         j.confirmed_location = true
-                        j.needToCreatePin = true
+                        setPinProp = true
+                if setPinProp
+                    j.needToCreatePin = true
             self._infoWindow.close()
             self._createMarkersForBusinesses()
             
