@@ -278,8 +278,8 @@ class MainApp.MainController extends SimpleMVC.Controller
         query = $.ajax "/businesses/confirm/" + id, {type: "POST"}
         self = this
         query.done () ->
-            for i in self._locations
-                for j in i.businesses
+            for k,v of self._locations
+                for l,j of v.businesses
                     if j.id == id
                         j.confirmed_location = true
             self._infoWindow.close()
@@ -289,8 +289,8 @@ class MainApp.MainController extends SimpleMVC.Controller
         query = $.ajax "/businesses/confirm/" + id, {type: "POST"}
         self = this
         query.done () ->
-            for i in self._locations
-                for j in i.businesses
+            for k,v of self._locations
+                for l,j of v.businesses
                     if j.id == id
                         j.confirmed_location = true
             $("#confirmed-loc-" + id).prop("disabled", true)
