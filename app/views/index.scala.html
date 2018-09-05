@@ -1,3 +1,5 @@
+@import java.time.LocalDateTime
+
 @main("Home", Some(true)) {
     <div class="noscriptmsg">
       <div class="progress"><div>Loading...</div></div>
@@ -48,7 +50,7 @@
   			<li><a href="https://twitter.com/intent/tweet?source=https%3A%2F%2Femvaccpetedhere.com&amp;text=I+found+local+businesses+who+care+about+security+using+%23EMV+https%3A%2F%2Femvaccpetedhere.com" target="_blank" title="Tweet" onclick="window.open('https://twitter.com/intent/tweet?text=I+found+local+businesses+who+care+about+security+using+%23EMV+'  + encodeURIComponent(document.URL)); return false;"><img src="@routes.Assets.versioned("images/Twitter.png")" alt="Share on Twitter" /></a></li>
   			<li><a href="https://plus.google.com/share?url=https%3A%2F%2Femvaccpetedhere.com" target="_blank" title="Share on Google+" onclick="window.open('https://plus.google.com/share?url=' + encodeURIComponent(document.URL)); return false;"><img src="@routes.Assets.versioned("images/Google+.png")" alt="Share on Google+" /></a></li>
 		</ul> 
-		<span class="copyright">| Copyright &copy; 2015-2017 Mooneer Salem.</span></div>
+		<span class="copyright">| Copyright &copy; 2015-@Html(LocalDateTime.now().getYear().toString()) Mooneer Salem.</span></div>
       </div>
     </div>
   </div>
