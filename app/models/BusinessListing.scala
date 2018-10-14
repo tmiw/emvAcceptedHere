@@ -17,7 +17,8 @@ object BusinessListing {
         row[Boolean]("business_gas_pump_working"),
         row[Boolean]("business_pay_at_table"),
         row[Boolean]("business_unattended_terminals"),
-        row[Boolean]("business_quick_chip")
+        row[Boolean]("business_quick_chip"),
+        row[Boolean]("business_is_chain")
     )
   }
 }
@@ -34,5 +35,6 @@ case class BusinessListing(
     gas_pump_working: Boolean,
     pay_at_table: Boolean,
     unattended_terminals: Boolean,
-    quick_chip: Boolean
+    quick_chip: Boolean,
+    is_chain: Boolean
 )
