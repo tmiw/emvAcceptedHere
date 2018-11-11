@@ -91,6 +91,8 @@ class MainApp.MainController extends SimpleMVC.Controller
                 showPayAtTable: $("#showPayAtTable").prop("checked")
                 showGasPumps: $("#showGasPumps").prop("checked")
                 showUnattendedTerminals: $("#showUnattendedTerminals").prop("checked")
+                showContactless: $("#showContactless").prop("checked")
+                hideQuickChip: $("#hideQuickChip").prop("checked")
                 
         # Google Analytics notification so it can tell the session is active.
         ga('send', 'event', {
@@ -495,6 +497,10 @@ class MainApp.MainController extends SimpleMVC.Controller
             $("#showPayAtTable").prop("checked", true)
         if window.localStorage.getItem('showUnattendedTerminals') == "true"
             $("#showUnattendedTerminals").prop("checked", true)
+        if window.localStorage.getItem('showContactless') == "true"
+            $("#showContactless").prop("checked", true)
+        if window.localStorage.getItem('hideQuickChip') == "true"
+            $("#hideQuickChip").prop("checked", true)
         if window.localStorage.getItem('showAsHeatmap') == "true"
             $("#showAsHeatmap").prop("checked", true)
             $("#address").prop("disabled", true)
@@ -523,6 +529,12 @@ class MainApp.MainController extends SimpleMVC.Controller
             self._navigateDebounce())
         $("#showUnattendedTerminals").change(() -> 
             window.localStorage.setItem('showUnattendedTerminals', $("#showUnattendedTerminals").prop("checked"))
+            self._navigateDebounce())
+        $("#showContactless").change(() -> 
+            window.localStorage.setItem('showContactless', $("#showContactless").prop("checked"))
+            self._navigateDebounce())
+        $("#hideQuickChip").change(() -> 
+            window.localStorage.setItem('hideQuickChip', $("#hideQuickChip").prop("checked"))
             self._navigateDebounce())
         $("#showAsHeatmap").change(() -> 
             window.localStorage.setItem('showAsHeatmap', $("#showAsHeatmap").prop("checked"))

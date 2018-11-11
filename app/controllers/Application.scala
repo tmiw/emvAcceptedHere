@@ -62,7 +62,7 @@ class Application @Inject() (dbapi: DBApi, mailerClient: MailerClient) extends I
     JavaContext.withContext { Ok(views.html.news()) }
   }
   
-  def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean, hideChains: Boolean, showGasPumps: Boolean, showPayAtTable: Boolean, showUnattendedTerminals: Boolean) = Action { implicit request =>
+  def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean, hideChains: Boolean, showGasPumps: Boolean, showPayAtTable: Boolean, showUnattendedTerminals: Boolean, showContactless: Boolean, hideQuickChip: Boolean) = Action { implicit request =>
     val confirmed_sql = 
       if (hideUnconfirmed) 
         """
@@ -88,6 +88,16 @@ AND "business_pay_at_table" = true
         """
 AND "business_unattended_terminals" = true
 """ else ""
+    val contactless_sql =
+      if (showContactless)
+        """
+AND "business_contactless_enabled" = true
+""" else ""
+    val quick_chip_sql =
+      if (hideQuickChip)
+        """
+AND "business_quick_chip" = false
+""" else ""
   
     database.withConnection { implicit conn =>
       // First we need an accurate count of the number of businesses in the bounding
@@ -98,7 +108,7 @@ AND "business_unattended_terminals" = true
       val from_where_clause = """
         FROM "business_list" WHERE 
              ("business_latitude" >= {lat_bl} AND "business_latitude" <= {lat_ur}) AND
-             ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})""" + confirmed_sql + chain_sql + pump_sql + table_sql + unattended_sql
+             ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})""" + confirmed_sql + chain_sql + pump_sql + table_sql + unattended_sql + contactless_sql + quick_chip_sql
       val result_count = SQL("""SELECT COUNT("id")""" + from_where_clause).on(
               "lng_ur" -> lon_ur, "lat_ur" -> lat_ur,
               "lng_bl" -> lon_bl, "lat_bl" -> lat_bl).as(scalar[Int].singleOpt).getOrElse(0)
@@ -163,7 +173,7 @@ AND "business_unattended_terminals" = true
     }
   }
 
-  def heatmapAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean, hideChains: Boolean, showGasPumps: Boolean, showPayAtTable: Boolean, showUnattendedTerminals: Boolean) = Action { implicit request =>
+  def heatmapAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean, hideChains: Boolean, showGasPumps: Boolean, showPayAtTable: Boolean, showUnattendedTerminals: Boolean, showContactless: Boolean, hideQuickChip: Boolean) = Action { implicit request =>
     val confirmed_sql = 
       if (hideUnconfirmed) 
         """
@@ -189,12 +199,22 @@ AND "business_pay_at_table" = true
         """
 AND "business_unattended_terminals" = true
 """ else ""
+    val contactless_sql =
+      if (showContactless)
+        """
+AND "business_contactless_enabled" = true
+""" else ""
+    val quick_chip_sql =
+      if (hideQuickChip)
+        """
+AND "business_quick_chip" = false
+""" else ""
   
     database.withConnection { implicit conn =>
       val from_where_clause = """
         FROM "business_list" WHERE 
              ("business_latitude" >= {lat_bl} AND "business_latitude" <= {lat_ur}) AND
-             ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})""" + confirmed_sql + chain_sql + pump_sql + table_sql + unattended_sql
+             ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})""" + confirmed_sql + chain_sql + pump_sql + table_sql + unattended_sql + contactless_sql + quick_chip_sql
              
       val result = SQL("""
         SELECT ROUND(CAST("business_latitude" AS NUMERIC), 2) AS "lat", 
