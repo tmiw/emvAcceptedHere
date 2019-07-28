@@ -30,7 +30,7 @@ templates.per_item_entry = """
   </div>
   <div class="add-options">
     <input type="checkbox" id="contactlessEnabled" value="true" />
-    <label for="contactlessEnabled">business supports Apple/Google Pay</label>
+    <label for="contactlessEnabled">business supports contactless payment</label>
   </div>
   <div class="add-options">
     <input type="checkbox" id="unattendedTerminals" value="true" />
@@ -68,7 +68,7 @@ templates.per_item_entry = """
   </div>
   <div class="add-options">
     <input type="checkbox" id="contactlessEnabled" disabled {{#if contactless_enabled}}checked{{/if}} value="true" />
-    <label for="contactlessEnabled">business supports Apple/Google Pay</label>
+    <label for="contactlessEnabled">business supports contactless payment</label>
   </div>
   <div class="add-options">
     <input type="checkbox" id="unattendedTerminals" disabled {{#if unattended_terminals}}checked{{/if}} value="true" />
@@ -110,7 +110,7 @@ templates.per_item_entry = """
   </div>
   <div class="add-options">
     <input type="checkbox" id="contactlessEnabled" value="true" />
-    <label for="contactlessEnabled">business supports Apple/Google Pay</label>
+    <label for="contactlessEnabled">business supports contactless payment</label>
   </div>
   <div class="add-options">
     <input type="checkbox" id="unattendedTerminals" value="true" />
