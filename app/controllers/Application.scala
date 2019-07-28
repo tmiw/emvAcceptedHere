@@ -12,6 +12,7 @@ import play.api.data.Forms._
 import play.api.libs.mailer._
 import models._
 import javax.inject.Inject
+import play.api.Configuration
 
 object JavaContext {
 
@@ -29,17 +30,17 @@ object JavaContext {
   }
 }
 
-class Application @Inject() (dbapi: DBApi, mailerClient: MailerClient) extends InjectedController {
+class Application @Inject() (config: Configuration, dbapi: DBApi, mailerClient: MailerClient) extends InjectedController {
   var database = dbapi.database("default")
  
   def index = Action {
     implicit requestHeader: RequestHeader =>
-    JavaContext.withContext { Ok(views.html.index()) }
+    JavaContext.withContext { Ok(views.html.index(config.underlying.getString("google.maps.key"))) }
   }
 
   def indexWithLatLong(lat: Double, lon: Double) = Action {
     implicit requestHeader: RequestHeader =>
-    JavaContext.withContext { Ok(views.html.index()) }
+    JavaContext.withContext { Ok(views.html.index(config.underlying.getString("google.maps.key"))) }
   }
 
   def about = Action {
