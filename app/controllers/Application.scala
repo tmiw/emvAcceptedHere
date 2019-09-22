@@ -376,8 +376,10 @@ AND "business_emv_enabled" = true
   
   def recentBusinesses = Action { implicit request =>
     database.withConnection { implicit conn =>
+      var isContactless = request.host.toLowerCase().contains("contactless")
+      
       var where_query = 
-        if (request.host.toLowerCase().contains("contactless"))
+        if (isContactless)
             """ "business_contactless_enabled" = true """
         else """ "business_emv_enabled" = true """
         
@@ -421,38 +423,46 @@ AND "business_emv_enabled" = true
         FROM "business_list" "bl"
         WHERE "bl"."business_is_chain" = false AND """ + where_query).as(scalar[Int].*).head
       
-      val num_nfc_businesses = SQL("""
-        SELECT COUNT("id") AS "cnt"
-        FROM "business_list"
-        WHERE "business_contactless_enabled" IS true AND """ + where_query).as(scalar[Int].*).head
+      val num_nfc_businesses = if (!isContactless)
+          SQL("""
+          SELECT COUNT("id") AS "cnt"
+          FROM "business_list"
+          WHERE "business_contactless_enabled" IS true AND """ + where_query).as(scalar[Int].*).head
+        else 0
       
-      val num_nfc_retailers = SQL("""
-        SELECT COUNT(*) AS "cnt2"
-        FROM (
-            SELECT "business_name", count("business_contactless_enabled") AS "cnt" 
-            FROM "business_list"
-            WHERE """ + where_query + """
-            GROUP BY "business_name", "business_contactless_enabled"
-            HAVING "business_contactless_enabled" IS true 
-            ORDER BY "cnt" DESC) x
-        """).as(scalar[Int].*).head
+      val num_nfc_retailers = if (!isContactless) 
+        SQL("""
+          SELECT COUNT(*) AS "cnt2"
+          FROM (
+              SELECT "business_name", count("business_contactless_enabled") AS "cnt" 
+              FROM "business_list"
+              WHERE """ + where_query + """
+              GROUP BY "business_name", "business_contactless_enabled"
+              HAVING "business_contactless_enabled" IS true 
+              ORDER BY "cnt" DESC) x
+          """).as(scalar[Int].*).head
+        else 0
       
-      val num_chip_businesses = SQL("""
-        SELECT COUNT("id") AS "cnt"
-        FROM "business_list"
-        WHERE "business_emv_enabled" IS true""").as(scalar[Int].*).head
-      
-      val num_chip_retailers = SQL("""
-        SELECT COUNT(*) AS "cnt2"
-        FROM (
-            SELECT "business_name", count("business_emv_enabled") AS "cnt" 
-            FROM "business_list"
-            GROUP BY "business_name", "business_emv_enabled"
-            HAVING "business_emv_enabled" IS true 
-            ORDER BY "cnt" DESC) x
-        """).as(scalar[Int].*).head
+      val num_chip_businesses = if (isContactless)
+        SQL("""
+          SELECT COUNT("id") AS "cnt"
+          FROM "business_list"
+          WHERE "business_emv_enabled" IS true AND """ + where_query).as(scalar[Int].*).head
+        else 0
         
-      JavaContext.withContext { Ok(views.html.recent_businesses(result, small_result, num_businesses, num_small_businesses, num_nfc_businesses, num_nfc_retailers, num_retailers, num_small_retailers, num_chip_businesses, num_chip_retailers, request.host.toLowerCase().contains("contactless"))) }
+      val num_chip_retailers = if (isContactless)
+        SQL("""
+          SELECT COUNT(*) AS "cnt2"
+          FROM (
+              SELECT "business_name", count("business_emv_enabled") AS "cnt" 
+              FROM "business_list"
+              GROUP BY "business_name", "business_emv_enabled"
+              HAVING "business_emv_enabled" IS true AND """ + where_query + """
+              ORDER BY "cnt" DESC) x
+          """).as(scalar[Int].*).head
+      else 0
+      
+      JavaContext.withContext { Ok(views.html.recent_businesses(result, small_result, num_businesses, num_small_businesses, num_nfc_businesses, num_nfc_retailers, num_retailers, num_small_retailers, num_chip_businesses, num_chip_retailers, isContactless)) }
     }
   }
   
