@@ -456,8 +456,9 @@ AND "business_emv_enabled" = true
           FROM (
               SELECT "business_name", count("business_emv_enabled") AS "cnt" 
               FROM "business_list"
+              WHERE """ + where_query + """
               GROUP BY "business_name", "business_emv_enabled"
-              HAVING "business_emv_enabled" IS true AND """ + where_query + """
+              HAVING "business_emv_enabled" IS true
               ORDER BY "cnt" DESC) x
           """).as(scalar[Int].*).head
       else 0
