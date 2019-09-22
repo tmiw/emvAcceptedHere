@@ -35,35 +35,35 @@ class Application @Inject() (config: Configuration, dbapi: DBApi, mailerClient: 
  
   def index = Action {
     implicit requestHeader: RequestHeader =>
-    JavaContext.withContext { Ok(views.html.index(config.underlying.getString("google.maps.key"))) }
+    JavaContext.withContext { Ok(views.html.index(config.underlying.getString("google.maps.key"), requestHeader.host.toLowerCase().contains("contactless"))) }
   }
 
   def indexWithLatLong(lat: Double, lon: Double) = Action {
     implicit requestHeader: RequestHeader =>
-    JavaContext.withContext { Ok(views.html.index(config.underlying.getString("google.maps.key"))) }
+    JavaContext.withContext { Ok(views.html.index(config.underlying.getString("google.maps.key"), requestHeader.host.toLowerCase().contains("contactless"))) }
   }
 
   def about = Action {
     implicit requestHeader: RequestHeader =>
-    JavaContext.withContext { Ok(views.html.about()) }
+    JavaContext.withContext { Ok(views.html.about(requestHeader.host.toLowerCase().contains("contactless"))) }
   }
   
   def itemlegend = Action {
     implicit requestHeader: RequestHeader =>
-    JavaContext.withContext { Ok(views.html.itemlegend()) }
+    JavaContext.withContext { Ok(views.html.itemlegend(requestHeader.host.toLowerCase().contains("contactless"))) }
   }
   
   def mcx = Action {
     implicit requestHeader: RequestHeader =>
-    JavaContext.withContext { Ok(views.html.mcx()) }
+    JavaContext.withContext { Ok(views.html.mcx(requestHeader.host.toLowerCase().contains("contactless"))) }
   }
   
   def news = Action {
     implicit requestHeader: RequestHeader =>
-    JavaContext.withContext { Ok(views.html.news()) }
+    JavaContext.withContext { Ok(views.html.news(requestHeader.host.toLowerCase().contains("contactless"))) }
   }
   
-  def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean, hideChains: Boolean, showGasPumps: Boolean, showPayAtTable: Boolean, showUnattendedTerminals: Boolean, showContactless: Boolean, hideQuickChip: Boolean) = Action { implicit request =>
+  def businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean, hideChains: Boolean, showGasPumps: Boolean, showPayAtTable: Boolean, showUnattendedTerminals: Boolean, showContactless: Boolean, hideQuickChip: Boolean, showEmv: Boolean) = Action { implicit request =>
     val confirmed_sql = 
       if (hideUnconfirmed) 
         """
@@ -99,17 +99,22 @@ AND "business_contactless_enabled" = true
         """
 AND "business_quick_chip" = false
 """ else ""
+    val emv_sql =
+      if (showEmv)
+        """
+AND "business_emv_enabled" = true
+""" else ""
   
     database.withConnection { implicit conn =>
       // First we need an accurate count of the number of businesses in the bounding
       // box for the next query.
       val result_cols = """
-        "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location", "business_quick_chip", "business_is_chain"
+        "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location", "business_quick_chip", "business_is_chain", "business_emv_enabled"
         """
       val from_where_clause = """
         FROM "business_list" WHERE 
              ("business_latitude" >= {lat_bl} AND "business_latitude" <= {lat_ur}) AND
-             ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})""" + confirmed_sql + chain_sql + pump_sql + table_sql + unattended_sql + contactless_sql + quick_chip_sql
+             ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})""" + confirmed_sql + chain_sql + pump_sql + table_sql + unattended_sql + contactless_sql + quick_chip_sql + emv_sql
       val result_count = SQL("""SELECT COUNT("id")""" + from_where_clause).on(
               "lng_ur" -> lon_ur, "lat_ur" -> lat_ur,
               "lng_bl" -> lon_bl, "lat_bl" -> lat_bl).as(scalar[Int].singleOpt).getOrElse(0)
@@ -163,7 +168,8 @@ AND "business_quick_chip" = false
                     "unattended_terminals" -> p[Boolean]("business_unattended_terminals").toString,
                     "pay_at_table" -> p[Boolean]("business_pay_at_table").toString,
                     "quick_chip" -> p[Boolean]("business_quick_chip").toString,
-                    "is_chain" -> p[Boolean]("business_is_chain").toString))
+                    "is_chain" -> p[Boolean]("business_is_chain").toString,
+                    "emv_enabled" -> p[Boolean]("business_emv_enabled").toString))
         }
         Ok(Json.toJson(result.as(result_parser.*)))
       }
@@ -174,7 +180,7 @@ AND "business_quick_chip" = false
     }
   }
 
-  def heatmapAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean, hideChains: Boolean, showGasPumps: Boolean, showPayAtTable: Boolean, showUnattendedTerminals: Boolean, showContactless: Boolean, hideQuickChip: Boolean) = Action { implicit request =>
+  def heatmapAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean, hideChains: Boolean, showGasPumps: Boolean, showPayAtTable: Boolean, showUnattendedTerminals: Boolean, showContactless: Boolean, hideQuickChip: Boolean, showEmv: Boolean) = Action { implicit request =>
     val confirmed_sql = 
       if (hideUnconfirmed) 
         """
@@ -210,12 +216,17 @@ AND "business_contactless_enabled" = true
         """
 AND "business_quick_chip" = false
 """ else ""
+    val emv_sql =
+      if (showEmv)
+        """
+AND "business_emv_enabled" = true
+""" else ""
   
     database.withConnection { implicit conn =>
       val from_where_clause = """
         FROM "business_list" WHERE 
              ("business_latitude" >= {lat_bl} AND "business_latitude" <= {lat_ur}) AND
-             ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})""" + confirmed_sql + chain_sql + pump_sql + table_sql + unattended_sql + contactless_sql + quick_chip_sql
+             ("business_longitude" >= {lng_bl} AND "business_longitude" <= {lng_ur})""" + confirmed_sql + chain_sql + pump_sql + table_sql + unattended_sql + contactless_sql + quick_chip_sql + emv_sql
              
       val result = SQL("""
         SELECT ROUND(CAST("business_latitude" AS NUMERIC), 2) AS "lat", 
@@ -250,7 +261,8 @@ AND "business_quick_chip" = false
           "pay_at_table" -> boolean,
           "unattended_terminals" -> boolean,
           "quick_chip" -> boolean,
-          "is_chain" -> boolean
+          "is_chain" -> boolean,
+          "emv_enabled" -> boolean
       )
   )
   
@@ -264,14 +276,14 @@ AND "business_quick_chip" = false
   
   def addBusiness = Action { implicit request =>
     // Chain is not bound; this is something that only admin sets.
-    val (name, address, latitude, longitude, pin_enabled, contactless_enabled, gas_pump_working, pay_at_table, unattended_terminals, quick_chip, _) = addBusinessForm.bindFromRequest.get
+    val (name, address, latitude, longitude, pin_enabled, contactless_enabled, gas_pump_working, pay_at_table, unattended_terminals, quick_chip, is_chain, emv_enabled) = addBusinessForm.bindFromRequest.get
     
     database.withTransaction { implicit conn =>
       val result: Option[Long] = SQL("""
           INSERT INTO "business_list"
-          ("business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_quick_chip", "business_is_chain")
+          ("business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_confirmed_location", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_quick_chip", "business_is_chain", "business_emv_enabled")
           VALUES
-          ({name}, {address}, {latitude}, {longitude}, {pin_enabled}, {contactless_enabled}, {confirmed_location}, {gas_pump_working}, {pay_at_table}, {unattended_terminals}, {quick_chip}, {is_chain})
+          ({name}, {address}, {latitude}, {longitude}, {pin_enabled}, {contactless_enabled}, {confirmed_location}, {gas_pump_working}, {pay_at_table}, {unattended_terminals}, {quick_chip}, {is_chain}, {emv_enabled})
       """).on(
           "name" -> name,
           "address" -> address,
@@ -284,7 +296,8 @@ AND "business_quick_chip" = false
           "unattended_terminals" -> unattended_terminals,
           "quick_chip" -> quick_chip,
           "confirmed_location" -> true,
-          "is_chain" -> false).executeInsert()
+          "is_chain" -> false,
+          "emv_enabled" -> emv_enabled).executeInsert()
       Ok(Json.obj(
           "id" -> result.get,
           "name" -> name,
@@ -298,7 +311,8 @@ AND "business_quick_chip" = false
           "unattended_terminals" -> unattended_terminals,
           "quick_chip" -> quick_chip,
           "confirmed_location" -> true,
-          "is_chain" -> false
+          "is_chain" -> false,
+          "emv_enabled" -> emv_enabled
       ))
     }
   }
@@ -330,7 +344,7 @@ AND "business_quick_chip" = false
   def recentBusinessesJson(name : String) =  Action { implicit request =>
     database.withConnection { implicit conn =>
       val q = SQL("""
-        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location", "business_quick_chip", "business_is_chain"
+        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location", "business_quick_chip", "business_is_chain", "business_emv_enabled"
         FROM "business_list" WHERE
         LOWER("business_name") LIKE {name} || '%'
         ORDER BY "id" DESC
@@ -352,7 +366,8 @@ AND "business_quick_chip" = false
               "unattended_terminals" -> t.unattended_terminals,
               "quick_chip" -> t.quick_chip,
               "confirmed_location" -> t.confirmed_location,
-              "is_chain" -> t.is_chain);
+              "is_chain" -> t.is_chain,
+              "emv_enabled" -> t.emv_enabled);
         }
       }
       Ok(Json.toJson(q.as(q_parser.*)))
@@ -361,9 +376,15 @@ AND "business_quick_chip" = false
   
   def recentBusinesses = Action { implicit request =>
     database.withConnection { implicit conn =>
+      var where_query = 
+        if (request.host.toLowerCase().contains("contactless"))
+            """ "business_contactless_enabled" = true """
+        else """ "business_emv_enabled" = true """
+        
       val q = SQL("""
-        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location", "business_quick_chip", "business_is_chain"
+        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location", "business_quick_chip", "business_is_chain", "business_emv_enabled"
         FROM "business_list"
+        WHERE """ +  where_query + """
         ORDER BY "id" DESC
         LIMIT 10""")
       val q_parser = RowParser[BusinessListing] {
@@ -372,51 +393,66 @@ AND "business_quick_chip" = false
       val result = q.as(q_parser.*)
       
       val small_result = SQL("""
-        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location", "business_quick_chip", "business_is_chain"
+        SELECT "id", "business_name", "business_address", "business_latitude", "business_longitude", "business_pin_enabled", "business_contactless_enabled", "business_gas_pump_working", "business_pay_at_table", "business_unattended_terminals", "business_confirmed_location", "business_quick_chip", "business_is_chain", "business_emv_enabled"
         FROM "business_list"
-        WHERE "business_is_chain" = false
+        WHERE """ + where_query + """ AND "business_is_chain" = false
         ORDER BY "id" DESC
         LIMIT 10
         """).as(q_parser.*)
       
       val num_retailers = SQL("""
         SELECT COUNT(*) AS "cnt"
-        FROM (SELECT "business_name" FROM "business_list" GROUP BY "business_name") "c"
+        FROM (SELECT "business_name" FROM "business_list" WHERE """ + where_query + """ GROUP BY "business_name") "c"
         """).as(scalar[Int].*).head
       
       val num_small_retailers = SQL("""
         SELECT COUNT(*) AS "cnt"
         FROM "business_list" "bl"
-        WHERE "bl"."business_is_chain" = false
+        WHERE "bl"."business_is_chain" = false AND """ + where_query + """
         """).as(scalar[Int].*).head
         
       val num_businesses = SQL("""
         SELECT COUNT("id") AS "cnt"
         FROM "business_list"
-        """).as(scalar[Int].*).head
+        WHERE """ + where_query).as(scalar[Int].*).head
         
       val num_small_businesses = SQL("""
         SELECT COUNT("id") AS "cnt"
         FROM "business_list" "bl"
-        WHERE "bl"."business_is_chain" = false
-        """).as(scalar[Int].*).head
+        WHERE "bl"."business_is_chain" = false AND """ + where_query).as(scalar[Int].*).head
       
       val num_nfc_businesses = SQL("""
         SELECT COUNT("id") AS "cnt"
         FROM "business_list"
-        WHERE "business_contactless_enabled" IS true""").as(scalar[Int].*).head
+        WHERE "business_contactless_enabled" IS true AND """ + where_query).as(scalar[Int].*).head
       
       val num_nfc_retailers = SQL("""
         SELECT COUNT(*) AS "cnt2"
         FROM (
             SELECT "business_name", count("business_contactless_enabled") AS "cnt" 
             FROM "business_list"
+            WHERE """ + where_query + """
             GROUP BY "business_name", "business_contactless_enabled"
             HAVING "business_contactless_enabled" IS true 
             ORDER BY "cnt" DESC) x
         """).as(scalar[Int].*).head
       
-      JavaContext.withContext { Ok(views.html.recent_businesses(result, small_result, num_businesses, num_small_businesses, num_nfc_businesses, num_nfc_retailers, num_retailers, num_small_retailers)) }
+      val num_chip_businesses = SQL("""
+        SELECT COUNT("id") AS "cnt"
+        FROM "business_list"
+        WHERE "business_emv_enabled" IS true""").as(scalar[Int].*).head
+      
+      val num_chip_retailers = SQL("""
+        SELECT COUNT(*) AS "cnt2"
+        FROM (
+            SELECT "business_name", count("business_emv_enabled") AS "cnt" 
+            FROM "business_list"
+            GROUP BY "business_name", "business_emv_enabled"
+            HAVING "business_emv_enabled" IS true 
+            ORDER BY "cnt" DESC) x
+        """).as(scalar[Int].*).head
+        
+      JavaContext.withContext { Ok(views.html.recent_businesses(result, small_result, num_businesses, num_small_businesses, num_nfc_businesses, num_nfc_retailers, num_retailers, num_small_retailers, num_chip_businesses, num_chip_retailers, request.host.toLowerCase().contains("contactless"))) }
     }
   }
   
@@ -438,7 +474,7 @@ AND "business_quick_chip" = false
         case p => Success(TerminalReceipts(p[Int]("id"), p[String]("brand_name"), p[String]("method"), p[String]("cvm"), p[String]("image_file")))
       }.*)
       
-      JavaContext.withContext { Ok(views.html.receipts(result, imgs, None, None, None)) }
+      JavaContext.withContext { Ok(views.html.receipts(result, imgs, None, None, None, request.host.toLowerCase().contains("contactless"))) }
     }
   }
   
@@ -462,7 +498,7 @@ AND "business_quick_chip" = false
       }.*)
       
       implicit requestHeader: RequestHeader =>
-      JavaContext.withContext { Ok(views.html.receipts(brand_list, imgs, Some(brand), Some(method), Some(cvm))) }
+      JavaContext.withContext { Ok(views.html.receipts(brand_list, imgs, Some(brand), Some(method), Some(cvm), requestHeader.host.toLowerCase().contains("contactless"))) }
     }
   }
   
@@ -486,7 +522,7 @@ AND "business_quick_chip" = false
       }.*)
       
       implicit requestHeader: RequestHeader =>
-      JavaContext.withContext { Ok(views.html.receipts(brand_list, imgs, Some(brand), None, None)) }
+      JavaContext.withContext { Ok(views.html.receipts(brand_list, imgs, Some(brand), None, None, requestHeader.host.toLowerCase().contains("contactless"))) }
     }
   }
     
@@ -510,7 +546,7 @@ AND "business_quick_chip" = false
       }.*)
       
       implicit requestHeader: RequestHeader =>
-      JavaContext.withContext { Ok(views.html.receipts(brand_list, imgs, Some(brand), Some(method), None)) }
+      JavaContext.withContext { Ok(views.html.receipts(brand_list, imgs, Some(brand), Some(method), None, requestHeader.host.toLowerCase().contains("contactless"))) }
     }
   }
 }

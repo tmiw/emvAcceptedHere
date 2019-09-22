@@ -1,8 +1,8 @@
-@(apiKey: String)
+@(apiKey: String, useContactless: Boolean)
 
 @import java.time.LocalDateTime
 
-@main("Home", Some(true)) {
+@main("Home", Some(true), useContactless) {
     <div class="noscriptmsg">
       <div class="progress"><div>Loading...</div></div>
       

@@ -1,10 +1,14 @@
-@(title: String, useViewport: Option[Boolean])(content: Html)
+@(title: String, useViewport: Option[Boolean], useContactless: Boolean)(content: Html)
 
 <!DOCTYPE html>
 
 <html>
     <head>
+    @if(useContactless) {
+        <title>@title | Find NFC-enabled businesses with Contactless Accepted Here</title>
+    } else {
         <title>@title | Find chip-enabled businesses with EMV Accepted Here</title>
+    }
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
         @if(useViewport.getOrElse(false) == true) { 
@@ -30,6 +34,18 @@
 var define = function(x,y) {};
         </script>
 		<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")" />
+    @if(useContactless) {
+        <meta name="description" content="Tracks NFC-enabled businesses in your local area on an interactive map and allows users to add listings." />
+        <meta property="og:title" content="@title | Find NFC-enabled businesses with Contactless Accepted Here" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://contactlessacceptedhere.com@request.uri" />
+        <meta property="og:image" content="https://contactlessacceptedhere.com/@routes.Assets.versioned("images/favicon.png")" />
+        <meta property="og:description" content="Tracks NFC-enabled businesses in your local area on an interactive map and allows users to add listings." />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:site" content="@@tmiw" />
+        <meta name="twitter:title" content="@title | Find NFC-enabled businesses with Contactless Accepted Here" />
+        <meta name="twitter:description" content="Tracks NFC-enabled businesses in your local area on an interactive map and allows users to add listings." />
+    } else {
         <meta name="description" content="Tracks EMV/chip-enabled businesses in your local area on an interactive map and allows users to add listings." />
         <meta property="og:title" content="@title | Find chip-enabled businesses with EMV Accepted Here" />
 		<meta property="og:type" content="website" />
@@ -40,6 +56,7 @@ var define = function(x,y) {};
 		<meta name="twitter:site" content="@@tmiw" />
 		<meta name="twitter:title" content="@title | Find chip-enabled businesses with EMV Accepted Here" />
 		<meta name="twitter:description" content="Tracks EMV/chip-enabled businesses in your local area on an interactive map and allows users to add listings." />
+	}
     </head>
     <body>
         @content

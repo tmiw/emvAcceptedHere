@@ -17,8 +17,8 @@ GET		/sample_receipts/:brand/:method	controllers.Application.sample_receipts_wo_
 GET		/sample_receipts/:brand	controllers.Application.sample_receipts_wo_method(brand: Int)
 
 # AJAX API
-GET     /businesses/:lat_ur/:lon_ur/:lat_bl/:lon_bl       controllers.Application.businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean ?= false, hideChains: Boolean ?= false, showGasPumps: Boolean ?= false, showPayAtTable: Boolean ?= false, showUnattendedTerminals: Boolean ?= false, showContactless: Boolean ?= false, hideQuickChip: Boolean ?= false)
-GET     /heatmap/:lat_ur/:lon_ur/:lat_bl/:lon_bl       controllers.Application.heatmapAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean ?= false, hideChains: Boolean ?= false, showGasPumps: Boolean ?= false, showPayAtTable: Boolean ?= false, showUnattendedTerminals: Boolean ?= false, showContactless: Boolean ?= false, hideQuickChip: Boolean ?= false)
+GET     /businesses/:lat_ur/:lon_ur/:lat_bl/:lon_bl       controllers.Application.businessesAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean ?= false, hideChains: Boolean ?= false, showGasPumps: Boolean ?= false, showPayAtTable: Boolean ?= false, showUnattendedTerminals: Boolean ?= false, showContactless: Boolean ?= false, hideQuickChip: Boolean ?= false, showEmv: Boolean ?= true)
+GET     /heatmap/:lat_ur/:lon_ur/:lat_bl/:lon_bl       controllers.Application.heatmapAroundLatLong(lat_ur: Double, lon_ur: Double, lat_bl: Double, lon_bl: Double, hideUnconfirmed: Boolean ?= false, hideChains: Boolean ?= false, showGasPumps: Boolean ?= false, showPayAtTable: Boolean ?= false, showUnattendedTerminals: Boolean ?= false, showContactless: Boolean ?= false, hideQuickChip: Boolean ?= false, showEmv: Boolean ?= true)
 POST    /businesses/add             controllers.Application.addBusiness
 POST    /businesses/report/:id      controllers.Application.reportBusiness(id: Long)
 POST    /businesses/confirm/:id     controllers.Application.confirmBusiness(id: Long)

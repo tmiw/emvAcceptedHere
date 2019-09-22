@@ -93,6 +93,13 @@ class MainApp.MainController extends SimpleMVC.Controller
                 showUnattendedTerminals: $("#showUnattendedTerminals").prop("checked")
                 showContactless: $("#showContactless").prop("checked")
                 hideQuickChip: $("#hideQuickChip").prop("checked")
+                showEmv: $("#showEmv").prop("checked")
+        
+        # Update settings depending on current site
+        if this._isContactless
+            settings.data.showContactless = true
+        else
+            settings.data.showEmv = true
                 
         # Google Analytics notification so it can tell the session is active.
         ga('send', 'event', {
@@ -168,6 +175,7 @@ class MainApp.MainController extends SimpleMVC.Controller
                                 pay_at_table: i.pay_at_table == "true"
                                 quick_chip: i.quick_chip == "true"
                                 unattended_terminals: i.unattended_terminals == "true"
+                                emv_enabled: i.emv_enabled == "true"
                             }
                     
                         if Object.keys(self._locations[latlon].businesses).length > 1
@@ -193,6 +201,7 @@ class MainApp.MainController extends SimpleMVC.Controller
                             pay_at_table: i.pay_at_table == "true"
                             quick_chip: i.quick_chip == "true"
                             unattended_terminals: i.unattended_terminals == "true"
+                            emv_enabled: i.emv_enabled == "true"
                         }
                         self._locations[latlon] = newobj
             
@@ -245,6 +254,7 @@ class MainApp.MainController extends SimpleMVC.Controller
                                     pay_at_table: false
                                     quick_chip: false
                                     unattended_terminals: false
+                                    emv_enabled: false
         
                         if self._infoWindow?
                             self._infoWindow.close()
@@ -351,6 +361,8 @@ class MainApp.MainController extends SimpleMVC.Controller
         $("#payAtTable").prop("checked", false)
         $("#quickChip").prop("disabled", false)
         $("#quickChip").prop("checked", false)
+        $("#emvEnabled").prop("disabled", false)
+        $("#emvEnabled").prop("checked", false)
         $("#unattendedTerminals").prop("disabled", false)
         $("#unattendedTerminals").prop("checked", false)
         $("#addBusinessLink").css("display", "inline")
@@ -378,6 +390,14 @@ class MainApp.MainController extends SimpleMVC.Controller
             pay_at_table = $("#payAtTable").prop("checked")
             unattended_terminals = $("#unattendedTerminals").prop("checked")
             quick_chip = $("#quickChip").prop("checked")
+            emv_enabled = $("#emvEnabled").prop("checked")
+            
+            # Update submitted data based on website used
+            if self._isContactless
+                contactless_enabled = "true"
+            else
+                emv_enabled = "true"
+                
             request = $.ajax "/businesses/add", {type: "POST", data: {
                 name: $("#businessName").val(),
                 address: $("#businessAddress").text(),
@@ -388,7 +408,9 @@ class MainApp.MainController extends SimpleMVC.Controller
                 gas_pump_working: gas_pump_working,
                 pay_at_table: pay_at_table,
                 quick_chip: quick_chip,
-                unattended_terminals: unattended_terminals
+                unattended_terminals: unattended_terminals,
+                is_chain: false,
+                emv_enabled: emv_enabled
             }}
             request.done (data) ->
                 self._infoWindow.close()
@@ -409,6 +431,8 @@ class MainApp.MainController extends SimpleMVC.Controller
                         pay_at_table: data.pay_at_table == "true" or data.pay_at_table == true
                         unattended_terminals: data.unattended_terminals == "true" or data.unattended_terminals == true
                         quick_chip: data.quick_chip == "true" or data.quick_chip == true
+                        emv_enabled: data.emv_enabled == "true" or data.emv_enabled == true
+                        is_chain: false
                         confirmed_location: true
                 else
                     view = 
@@ -429,6 +453,8 @@ class MainApp.MainController extends SimpleMVC.Controller
                         pay_at_table: data.pay_at_table == "true" or data.pay_at_table == true
                         unattended_terminals: data.unattended_terminals == "true" or data.unattended_terminals == true
                         quick_chip: data.quick_chip == "true" or data.quick_chip == true
+                        emv_enabled: data.emv_enabled == "true" or data.emv_enabled == true
+                        is_chain: false
                         confirmed_location: true
                     
                     self._locations[key] = view
@@ -501,6 +527,8 @@ class MainApp.MainController extends SimpleMVC.Controller
             $("#showContactless").prop("checked", true)
         if window.localStorage.getItem('hideQuickChip') == "true"
             $("#hideQuickChip").prop("checked", true)
+        if window.localStorage.getItem('showEmv') == "true"
+            $("#showEmv").prop("checked", true)
         if window.localStorage.getItem('showAsHeatmap') == "true"
             $("#showAsHeatmap").prop("checked", true)
             $("#address").prop("disabled", true)
@@ -533,6 +561,9 @@ class MainApp.MainController extends SimpleMVC.Controller
         $("#showContactless").change(() -> 
             window.localStorage.setItem('showContactless', $("#showContactless").prop("checked"))
             self._navigateDebounce())
+        $("#showEmv").change(() -> 
+            window.localStorage.setItem('showEmv', $("#showEmv").prop("checked"))
+            self._navigateDebounce())
         $("#hideQuickChip").change(() -> 
             window.localStorage.setItem('hideQuickChip', $("#hideQuickChip").prop("checked"))
             self._navigateDebounce())
@@ -543,6 +574,17 @@ class MainApp.MainController extends SimpleMVC.Controller
             else
                 $("#address").prop("disabled", false)
             self._navigateDebounce())
+            
+        # Hide EMV/contactless site specific stuff depending on URL
+        hideEmvStyle = $('<style>.emvOnly { display: none; }</style>');
+        hideContactlessStyle = $('<style>.contactlessOnly { display: none; }</style>');
+        
+        if /contactless/.test(window.location.href)
+            self._isContactless = true
+            $('html > head').append(hideEmvStyle)
+        else
+            self._isContactless = false
+            $('html > head').append(hideContactlessStyle)
             
         if window.location.hash
             # We're going to navigate directly to a particular location on the map.

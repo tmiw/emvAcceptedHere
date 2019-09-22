@@ -28,15 +28,19 @@ templates.per_item_entry = """
     <input type="checkbox" id="pinEnabled" value="true" />
     <label for="pinEnabled">business has PIN pad</label>
   </div>
-  <div class="add-options">
+  <div class="add-options emvOnly">
     <input type="checkbox" id="contactlessEnabled" value="true" />
     <label for="contactlessEnabled">business supports contactless payment</label>
   </div>
-  <div class="add-options">
+  <div class="add-options contactlessOnly">
+    <input type="checkbox" id="emvEnabled" value="true" />
+    <label for="emvEnabled">business supports chip cards</label>
+  </div>
+  <div class="add-options emvOnly">
     <input type="checkbox" id="unattendedTerminals" value="true" />
     <label for="unattendedTerminals">has unattended terminals</label>
   </div>
-  <div class="add-options">
+  <div class="add-options emvOnly">
     <input type="checkbox" id="gasPumpWorking" value="true" />
     <label for="gasPumpWorking">works at pump (gas station only)</label>
   </div>
@@ -44,7 +48,7 @@ templates.per_item_entry = """
     <input type="checkbox" id="payAtTable" value="true" />
     <label for="payAtTable">has pay at the table (restaurants only)</label>
   </div>
-  <div class="add-options">
+  <div class="add-options emvOnly">
     <input type="checkbox" id="quickChip" value="true" />
     <label for="quickChip">has Quick Chip</label>
   </div>
@@ -66,15 +70,19 @@ templates.per_item_entry = """
     <input type="checkbox" id="pinEnabled" disabled value="true" {{#if pin_enabled}}checked{{/if}}/>
     <label for="pinEnabled">business has PIN pad</label>
   </div>
-  <div class="add-options">
+  <div class="add-options emvOnly">
     <input type="checkbox" id="contactlessEnabled" disabled {{#if contactless_enabled}}checked{{/if}} value="true" />
     <label for="contactlessEnabled">business supports contactless payment</label>
   </div>
-  <div class="add-options">
+  <div class="add-options contactlessOnly">
+    <input type="checkbox" id="emvEnabled" disabled {{#if emv_enabled}}checked{{/if}} value="true" />
+    <label for="emvEnabled">business supports chip cards</label>
+  </div>
+  <div class="add-options emvOnly">
     <input type="checkbox" id="unattendedTerminals" disabled {{#if unattended_terminals}}checked{{/if}} value="true" />
     <label for="unattendedTerminals">has unattended terminals</label>
   </div>
-  <div class="add-options">
+  <div class="add-options emvOnly">
     <input type="checkbox" id="gasPumpWorking" disabled {{#if gas_pump_working}}checked{{/if}} value="true" />
     <label for="gasPumpWorking">works at pump (gas station only)</label>
   </div>
@@ -82,7 +90,7 @@ templates.per_item_entry = """
     <input type="checkbox" id="payAtTable" disabled {{#if pay_at_table}}checked{{/if}} value="true" />
     <label for="payAtTable">has pay at the table (restaurants only)</label>
   </div>
-  <div class="add-options">
+  <div class="add-options emvOnly">
     <input type="checkbox" id="quickChip" disabled {{#if quick_chip}}checked{{/if}} value="true" />
     <label for="quickChip">has Quick Chip</label>
   </div>
@@ -108,15 +116,19 @@ templates.per_item_entry = """
     <input type="checkbox" id="pinEnabled" value="true" />
     <label for="pinEnabled">business has PIN pad</label>
   </div>
-  <div class="add-options">
+  <div class="add-options emvOnly">
     <input type="checkbox" id="contactlessEnabled" value="true" />
     <label for="contactlessEnabled">business supports contactless payment</label>
   </div>
-  <div class="add-options">
+  <div class="add-options contactlessOnly">
+    <input type="checkbox" id="emvEnabled" value="true" />
+    <label for="emvEnabled">business supports chip cards</label>
+  </div>
+  <div class="add-options emvOnly">
     <input type="checkbox" id="unattendedTerminals" value="true" />
     <label for="unattendedTerminals">has unattended terminals</label>
   </div>
-  <div class="add-options">
+  <div class="add-options emvOnly">
     <input type="checkbox" id="gasPumpWorking" value="true" />
     <label for="gasPumpWorking">works at pump (gas station only)</label>
   </div>
@@ -124,7 +136,7 @@ templates.per_item_entry = """
     <input type="checkbox" id="payAtTable" value="true" />
     <label for="payAtTable">has pay at the table (restaurants only)</label>
   </div>
-  <div class="add-options">
+  <div class="add-options emvOnly">
     <input type="checkbox" id="quickChip" value="true" />
     <label for="quickChip">has Quick Chip</label>
   </div>
@@ -140,11 +152,12 @@ templates.per_item_entry = """
 <div class="slimEmvBusinessInfo">
   	<a href="https://wiki.emvacceptedhere.com/wiki/{{name}}" target="_blank">{{name}}</a>: 
   	  <input type="checkbox" value="true" {{#pin_enabled}}checked{{/pin_enabled}} disabled /> PIN
-      <input type="checkbox" value="true" {{#contactless_enabled}}checked{{/contactless_enabled}} disabled /> NFC
-      <input type="checkbox" value="true" {{#unattended_terminals}}checked{{/unattended_terminals}} disabled /> Unattended terminals
-	  <input type="checkbox" value="true" {{#gas_pump_working}}checked{{/gas_pump_working}} disabled /> Gas pump
+      <span class="emvOnly"><input type="checkbox" value="true" {{#contactless_enabled}}checked{{/contactless_enabled}} disabled /> NFC</span>
+      <span class="contactlessOnly"><input type="checkbox" value="true" {{#emv_enabled}}checked{{/emv_enabled}} disabled /> Chip</span>
+      <span class="emvOnly"><input type="checkbox" value="true" {{#unattended_terminals}}checked{{/unattended_terminals}} disabled /> Unattended terminals</span>
+	  <span class="emvOnly"><input type="checkbox" value="true" {{#gas_pump_working}}checked{{/gas_pump_working}} disabled /> Gas pump</span>
       <input type="checkbox" value="true" {{#pay_at_table}}checked{{/pay_at_table}} disabled /> Pay at table
-      <input type="checkbox" value="true" {{#quick_chip}}checked{{/quick_chip}} disabled /> Quick Chip
+      <span class="emvOnly"><input type="checkbox" value="true" {{#quick_chip}}checked{{/quick_chip}} disabled /> Quick Chip</span>
       <input type="checkbox" id="confirmed-loc-{{id}}" onchange="window.app.confirmBusinessMultiple({{id}});" value="true" {{#confirmed_location}}checked disabled{{/confirmed_location}} /> Confirmed
     (<span id="report-errors-{{id}}"><a href="#" onclick="event.preventDefault(); window.app.reportError('{{id}}');">report errors</a></span>)
 </div>
