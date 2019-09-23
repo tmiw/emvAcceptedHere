@@ -4,7 +4,50 @@
 
 <div class="faq-container">
 
-<p><a href="/">Back to emvacceptedhere.com</a></p>
+<p><a href="/">Back to site</a></p>
+
+@if (useContactless) {
+
+<h1><a name="news20190922">Welcome (09/22/2019)</a></h1>
+
+<p>Welcome to contactlessacceptedhere.com! As you might have noticed, this site
+uses the same database as its sister site, <a href="https://emvacceptedhere.com/" target="_blank">emvacceptedhere.com</a>.
+The main difference is that this site behaves as though you checked the "show contactless" option and does not
+show non-contactless supporting businesses. In addition, this site will allow you to add contactless supporting businesses
+that do not support the chip (though I expect the number that fall in that category is pretty small at this point).</p>
+
+<p>Anyway, please feel free to report any issues with listings by clicking on the listing's "report" link. Additional 
+things that are coming soon include:</p>
+
+<ul>
+<li>Potentially lifting the US-only restriction on the search box to allow for non-US listings</li>
+<li>Additional contactless-specific properties (such as working readers at gas pumps)</li>
+<li>A few initial listings of non-chip, but contactless supporting merchants</li>
+</ul>
+
+} else {
+
+<h1><a name="news20190922">New sister site (09/22/2019)</a></h1>
+
+<p>Today I created a sister site called <a href="https://contactlessacceptedhere.com/" target="_blank">contactlessacceptedhere.com</a>.
+They both use the same underlying software, but the main difference is that contactlessacceptedhere.com behaves as though you 
+checked the "show contactless" option and does not show non-contactless supporting businesses. In addition, it will allow you to add 
+contactless supporting businesses that do not support the chip (though I expect the number that fall in that category is pretty small at this point).</p>
+
+<p>Please let me know if there are any issues. I did do some initial checks and everything looked okay, but it's always possible
+something slipped through the cracks.</p>
+
+<p>* * *</p>
+
+<p>Since last update, these major stores and restaurants came online/were added:</p>
+
+<ul>
+<li>Firestone Complete Auto Care</li>
+<li>Black Bear Diner</li>
+<li>Rally's/Checkers</li>
+<li>See's Candies</li>
+<li>Amazon Books</li>
+</ul>
 
 <h1><a name="news20190728">9000 Less (07/28/2019)</a></h1>
 
@@ -1011,6 +1054,8 @@ As of 9/15/2014, Walmart has completed turning on EMV at 97% of its locations in
 I've gone ahead and added all Walmart locations that have not already been added to the map. However, this
 means that around 125 or so locations have not been turned on yet. Hopefully those remaining ones will be
 turned on before the end of the year, but please keep this in mind when visiting your local Walmart location.
+
+}
 
 </div>
 }
