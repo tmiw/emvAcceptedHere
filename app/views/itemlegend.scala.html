@@ -12,6 +12,13 @@ the customer for PIN preferring chip cards do not count despite allowing PIN
 entry. Businesses without this checked have a higher probability of acceptance
 issues with PIN preferring cards due to many of them having poor terminal positioning.</p>
 
+@if (useContactless) {
+<h1><a name="chip">Chip cards</a></h1>
+
+<p>This means that the terminal has a working slot intended for insertion of credit and debit cards. Such
+a terminal should not let you swipe a card with a chip and instead should force you (or the cashier/server)
+to insert the card into the slot instead.</p>
+} else {
 <h1><a name="contactless">Contactless Payment</a></h1>
 
 <p>If this is checked, the business has a terminal that:</p>
@@ -32,15 +39,6 @@ on a chip-enabled card and require that the chip be used. This will likely manif
 as being required to re-insert the card or not show any "remove card quickly" or similar 
 prompts after insertion. Receipts will also print a line showing the card's AID.</p>
 
-<h1><a name="payattable">Has pay at the table (restaurants only)</a></h1>
-
-<p>If this is checked, payment was performed by the server or by the customer using
-a device located at or brought to the table. This is usually accomplished by Ziosk tablets or
-similar at every table or by a device carried by the server such as
-<a href="https://www.clover.com/get-paid/mobile" target="_blank">Clover Mobile</a> and the 
-<a href="https://ingenico.us/smart-terminals/wireless-terminals" target="_blank">Ingenico iWL series</a>.
-</p>
-
 <h1><a name="unattended">Has unattended terminals</a></h1>
 
 <p>If this is checked, the business has EMV-enabled terminals that do not have an
@@ -59,6 +57,17 @@ This is an "optimization" measure designed for the US market to approximately ma
 pre-EMV behavior of some stores. Unfortunately, this also means that PIN changes
 for offline PIN capable cards will likely not be pushed at these stores; time will
 tell whether this becomes a significant problem.</p>
+
+}
+
+<h1><a name="payattable">Has pay at the table (restaurants only)</a></h1>
+
+<p>If this is checked, payment was performed by the server or by the customer using
+a device located at or brought to the table. This is usually accomplished by Ziosk tablets or
+similar at every table or by a device carried by the server such as
+<a href="https://www.clover.com/get-paid/mobile" target="_blank">Clover Mobile</a> and the 
+<a href="https://ingenico.us/smart-terminals/wireless-terminals" target="_blank">Ingenico iWL series</a>.
+</p>
 
 </div>
 }
