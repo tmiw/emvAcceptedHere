@@ -111,12 +111,12 @@ var fetch_recents = function() {
 							$("<a>").attr("href", "/#" + data[i].latitude + "," + data[i].longitude).append(data[i].name)))
 						.append($("<td>").append(data[i].address))
 						.append($("<td>").append(data[i].pin_enabled == true ? "Yes" : "No"))
-						.append($("<td>").append(data[i].contactless_enabled == true ? "Yes" : "No"))
-						.append($("<td>").append(data[i].emv_enabled == true ? "Yes" : "No"))
-						.append($("<td>").append(data[i].gas_pump_working == true ? "Yes" : "No"))
+						.append($("<td class='emvOnly'>").append(data[i].contactless_enabled == true ? "Yes" : "No"))
+						.append($("<td class='contactlessOnly'>").append(data[i].emv_enabled == true ? "Yes" : "No"))
+						.append($("<td class='emvOnly'>").append(data[i].gas_pump_working == true ? "Yes" : "No"))
 						.append($("<td>").append(data[i].pay_at_table == true ? "Yes" : "No"))
-						.append($("<td>").append(data[i].unattended_terminals == true ? "Yes" : "No"))
-						.append($("<td>").append(data[i].quick_chip == true ? "Yes" : "No"))
+						.append($("<td class='emvOnly'>").append(data[i].unattended_terminals == true ? "Yes" : "No"))
+						.append($("<td class='emvOnly'>").append(data[i].quick_chip == true ? "Yes" : "No"))
                         .append($("<td>").append(data[i].confirmed_location == true ? "Yes" : "No")));
 			}
 
