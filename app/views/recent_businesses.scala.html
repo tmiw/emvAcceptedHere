@@ -2,13 +2,86 @@
 
 @main("Recently added businesses", None, useContactless) {
 
+<style>
+@@media 
+only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+	/* Force table to not be like tables anymore */
+	table, thead, tbody, th, td, tr { 
+		display: block; 
+	}
+    
+    tr.headerRow { display: none; }
+	
+	tr { border: 1px solid #ccc; }
+	
+	td { 
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee; 
+		position: relative;
+		padding-left: 50%; 
+        padding-bottom: 1em;
+	}
+	
+	td:before { 
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%; 
+		padding-right: 10px; 
+		white-space: nowrap;
+        font-weight: bold;
+	}
+	
+    th.definitionCell { display: none; }    
+	td.definitionCell:before { 
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%; 
+		padding-right: 10px; 
+		white-space: nowrap;
+        font-weight: bold;
+	}
+    
+	/*
+	Label the data
+	*/
+	tr.responsiveRow > td:nth-child(1):before { content: "Business name"; }
+	tr.responsiveRow > td:nth-child(2):before { content: "Address/Location"; }
+	tr.responsiveRow > td:nth-child(3):before { content: "PIN support?"; }
+	tr.responsiveRow > td:nth-child(4):before { content: "Contactless support?"; }
+	tr.responsiveRow > td:nth-child(5):before { content: "Chip support?"; }
+	tr.responsiveRow > td:nth-child(6):before { content: "Working at gas pumps?"; }
+	tr.responsiveRow > td:nth-child(7):before { content: "Pay at table?"; }
+	tr.responsiveRow > td:nth-child(8):before { content: "Unattended terminals?"; }
+	tr.responsiveRow > td:nth-child(9):before { content: "Quick Chip?"; }
+	tr.responsiveRow > td:nth-child(10):before { content: "Confirmed?"; }
+    
+    td.total-retailers::before { content: "Total number of retailers"; }
+    td.total-retailers-excluding-large::before { content: "     Excluding large retailers:" }
+    td.total-locations::before { content: "Total number of locations"; }
+    td.total-locations-excluding-large::before { content: "     Excluding large retailers:" }
+    td.nfc-retailers::before { content: "NFC supporting retailers:"; }
+    td.nfc-locations::before { content: "NFC supporting locations:"; }
+    td.chip-retailers::before { content: "Chip supporting retailers:"; }
+    td.chip-locations::before { content: "Chip supporting locations:"; }
+}
+</style>
+
 <p><a href="/">Back to map</a></p>
 
 <h3>Latest additions</h3>
 <table width="100%">
 <thead>
-<tr><td colspan="9"><form>Show businesses beginning with:<input type="text" placeholder="Business name" id="business_name_recents" size="40" /><div class="progress" id="business_recent_progress" style="top: -10px; font-size: 3px;"><div>Loading...</div></div></form></td></tr>
-<tr>
+<tr><td colspan="9"><form>Show businesses beginning with:<input type="text" placeholder="Business name" id="business_name_recents" size="35" /><div class="progress" id="business_recent_progress" style="top: -10px; font-size: 3px;"><div>Loading...</div></div></form></td></tr>
+<tr class="headerRow">
     <th>Business name</th>
     <th>Address/Location</th>
     <th>PIN support?</th>
@@ -23,16 +96,16 @@
 </thead>
 <tbody id="recent_rows">
 @for(p <- results) {
-<tr>
+<tr class="responsiveRow">
 <td><a href="/#@p.latitude,@p.longitude">@p.name</a></td>
 <td>@p.address</td>
 <td>@if(p.pin_enabled) { Yes } else { No }</td>
-<td class="emvOnly">@if(p.contactless_enabled) { Yes } else { No }</td>
-<td class="contactlessOnly">@if(p.emv_enabled) { Yes } else { No }</td>
-<td class="emvOnly">@if(p.gas_pump_working) { Yes } else { No }</td>
+<td class="emvOnly ">@if(p.contactless_enabled) { Yes } else { No }</td>
+<td class="contactlessOnly ">@if(p.emv_enabled) { Yes } else { No }</td>
+<td class="emvOnly ">@if(p.gas_pump_working) { Yes } else { No }</td>
 <td>@if(p.pay_at_table) { Yes } else { No }</td>
-<td class="emvOnly">@if(p.unattended_terminals) { Yes } else { No }</td>
-<td class="emvOnly">@if(p.quick_chip) { Yes } else { No }</td>
+<td class="emvOnly ">@if(p.unattended_terminals) { Yes } else { No }</td>
+<td class="emvOnly ">@if(p.quick_chip) { Yes } else { No }</td>
 <td>@if(p.confirmed_location) { Yes } else { No }</td>
 </tr>
 }
@@ -41,7 +114,7 @@
 
 <h3>Latest small retailer additions</h3>
 <table width="100%">
-<tr>
+<tr class="headerRow">
     <th>Business name</th>
     <th>Address/Location</th>
     <th>PIN support?</th>
@@ -54,16 +127,16 @@
     <th>Confirmed?</th>
 </tr>
 @for(p <- small_results) {
-<tr>
+<tr class="responsiveRow">
 <td><a href="/#@p.latitude,@p.longitude">@p.name</a></td>
 <td>@p.address</td>
 <td>@if(p.pin_enabled) { Yes } else { No }</td>
-<td class="emvOnly">@if(p.contactless_enabled) { Yes } else { No }</td>
-<td class="contactlessOnly">@if(p.emv_enabled) { Yes } else { No }</td>
-<td class="emvOnly">@if(p.gas_pump_working) { Yes } else { No }</td>
+<td class="emvOnly ">@if(p.contactless_enabled) { Yes } else { No }</td>
+<td class="contactlessOnly ">@if(p.emv_enabled) { Yes } else { No }</td>
+<td class="emvOnly ">@if(p.gas_pump_working) { Yes } else { No }</td>
 <td>@if(p.pay_at_table) { Yes } else { No }</td>
-<td class="emvOnly">@if(p.unattended_terminals) { Yes } else { No }</td>
-<td class="emvOnly">@if(p.quick_chip) { Yes } else { No }</td>
+<td class="emvOnly ">@if(p.unattended_terminals) { Yes } else { No }</td>
+<td class="emvOnly ">@if(p.quick_chip) { Yes } else { No }</td>
 <td>@if(p.confirmed_location) { Yes } else { No }</td>
 </tr>
 }
@@ -71,14 +144,14 @@
 
 <h3>Map statistics</h3>
 <table>
-<tr><th>Total number of retailers:</th><td>@("%,d".format(num_retailers))</td></tr>
-<tr><th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Excluding large retailers:</th><td>@("%,d".format(num_small_retailers))</td></tr>
-<tr><th>Total number of locations:</th><td>@("%,d".format(num_businesses))</td></tr>
-<tr><th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Excluding large retailers:</th><td>@("%,d".format(num_small_businesses))</td></tr>
-<tr class="emvOnly"><th>NFC supporting retailers:</th><td>@("%,d".format(num_nfc_retailers)) (@("%.01f%%".format(num_nfc_retailers*100.0/num_retailers)) of all retailers)</td></tr>
-<tr class="emvOnly"><th>NFC supporting locations:</th><td>@("%,d".format(num_nfc_businesses)) (@("%.01f%%".format(num_nfc_businesses*100.0/num_businesses)) of all locations)</td></tr>
-<tr class="contactlessOnly"><th>Chip supporting retailers:</th><td>@("%,d".format(num_chip_retailers)) (@("%.01f%%".format(num_chip_retailers*100.0/num_retailers)) of all retailers)</td></tr>
-<tr class="contactlessOnly"><th>Chip supporting locations:</th><td>@("%,d".format(num_chip_businesses)) (@("%.01f%%".format(num_chip_businesses*100.0/num_businesses)) of all locations)</td></tr>
+<tr class="definitionRow"><th class="definitionCell">Total number of retailers:</th><td class="definitionCell total-retailers">@("%,d".format(num_retailers))</td></tr>
+<tr class="definitionRow"><th class="definitionCell">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Excluding large retailers:</th><td class="definitionCell total-retailers-excluding-large">@("%,d".format(num_small_retailers))</td></tr>
+<tr class="definitionRow"><th class="definitionCell">Total number of locations:</th><td class="definitionCell total-locations">@("%,d".format(num_businesses))</td></tr>
+<tr class="definitionRow"><th class="definitionCell">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Excluding large retailers:</th><td class="definitionCell total-locations-excluding-large">@("%,d".format(num_small_businesses))</td></tr>
+<tr class="emvOnly definitionRow"><th class="definitionCell">NFC supporting retailers:</th><td class="definitionCell nfc-retailers">@("%,d".format(num_nfc_retailers)) (@("%.01f%%".format(num_nfc_retailers*100.0/num_retailers)) of all retailers)</td></tr>
+<tr class="emvOnly definitionRow"><th class="definitionCell">NFC supporting locations:</th><td class="definitionCell nfc-locations">@("%,d".format(num_nfc_businesses)) (@("%.01f%%".format(num_nfc_businesses*100.0/num_businesses)) of all locations)</td></tr>
+<tr class="contactlessOnly definitionRow"><th class="definitionCell">Chip supporting retailers:</th><td class="definitionCell chip-retailers">@("%,d".format(num_chip_retailers)) (@("%.01f%%".format(num_chip_retailers*100.0/num_retailers)) of all retailers)</td></tr>
+<tr class="contactlessOnly definitionRow"><th class="definitionCell">Chip supporting locations:</th><td class="definitionCell chip-locations">@("%,d".format(num_chip_businesses)) (@("%.01f%%".format(num_chip_businesses*100.0/num_businesses)) of all locations)</td></tr>
 </table>
 }
 
