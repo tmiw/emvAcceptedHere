@@ -59,7 +59,7 @@
 
 @for(p <- receipt_urls) {
 <table>
-<tr><td colspan="2"><img src="@p.url" /></td></tr>
+<tr><td colspan="2"><div style="width: 100%"><img src="@p.url" /></div></td></tr>
 <tr><th>Terminal brand:</th><td>@p.brand</td></tr>
 <tr><th>Transaction method:</th><td>@p.method match {
 	case "swiped" => {Swiped (non-EMV card)}
