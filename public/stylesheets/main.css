@@ -365,3 +365,5 @@ ul.share-buttons li img {
 .yellow { background-color: yellow; }
 
 #site-key { padding-left: 5px; padding-top: 5px; }
+
+img { max-width: 70%; max-height: 70%; }
