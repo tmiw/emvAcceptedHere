@@ -102,7 +102,7 @@ class MainApp.MainController extends SimpleMVC.Controller
             settings.data.showEmv = true
                 
         # Google Analytics notification so it can tell the session is active.
-        ga('send', 'event', {
+        gtag('event', {
             'eventCategory': 'map',
             'eventAction': 'move'
         })
